@@ -1,11 +1,43 @@
-from flask import Flask, render_template
+from flask import Flask, appcontext_popped, render_template
+from flask_sqlalchemy import SQLAlchemy
+from os import path
+from flask_login import LoginManager
+import sys
+import os
+sys.path.insert(1, 'C:\saiscripts\intercept_branch\Payment Web App Project')
+from paymentWebApp import imbedded as i
 
-from . import app
+DB_NAME = "main"
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+app = Flask(__name__)
+db = SQLAlchemy(app)
+mysqlString = 'mysql+pymysql://'+i.s.usr+':'+i.s.psswd+'@'+i.s.hst+'/'+DB_NAME
+app.config['SQLALCHEMY_DATABASE_URI'] = mysqlString
 
-@app.route('/user/<name>')
-def user(name):
-    return render_template('user.html')
+
+def create_app():
+    #Flask Instance
+    
+
+    #Database
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
+    
+    #+print(mysqlString)
+    
+    db.init_app(app)
+    
+    from .views import views
+    from .auth import auth
+    from .models.user import Users
+    from .models.person import People
+
+    app.register_blueprint(views, url_prefix='/')
+    app.register_blueprint(auth, url_prefix='/')
+
+    
+
+    return app
+
+
+def handle_session_add_error(addContent, db):
+    pass 

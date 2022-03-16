@@ -1,0 +1,10 @@
+{%extends 'base.html'%}
+{% block content %}
+<table class="table table-hover table-border table-striped">
+{% for our_user in our_users%}
+    <tr>
+    <td>{{our_user.id}}, {{our_user.first_name}} - {{our_user.email}} - {{our_user.password}}</td>
+    </tr>
+{%endfor%}
+{% endblock %}
+</table>

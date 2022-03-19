@@ -1,0 +1,19 @@
+{%extends 'base.html'%}
+{% block content %}
+<table class="table table-hover table-border table-striped">
+{% for our_user in our_users%}
+    <tr>
+    <td id="displayData">
+        {{our_user.id}}. <a href="{{
+        url_for('auth.user_update', id=our_user.id)}}">{{
+            our_user.first_name}} {{
+            our_user.last_name}}</a> - {{
+            our_user.email}} - {{
+            our_user.password_hash}}
+    </td>
+    <td id="deleteTable"><a href="{{url_for('auth.user_delete', id=our_user.id)}}" role="button" class="btn btn-outline-danger" >Delete</button></td>
+    </tr>
+{%endfor%}
+</table>
+{% endblock %}
+

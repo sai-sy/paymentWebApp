@@ -1,0 +1,18 @@
+{%extends 'base.html'%}
+{% block content %}
+<table class="table table-hover table-border table-striped">
+{% for campaign in campaigns%}
+    <tr>
+    <td id="displayData">
+        {{campaign.id}}. <a href="{{
+        url_for('campaign_route.campaign_update', id=campaign.id)}}">{{
+            campaign.candidate}} {{
+            campaign.alias}}</a> - {{
+            campaign.riding}}
+    </td>
+    <td id="deleteTable"><a href="{{url_for('campaign_route.campaign_delete', id=campaign.id)}}" role="button" class="btn btn-outline-danger" >Delete</button></td>
+    </tr>
+{%endfor%}
+</table>
+{% endblock %}
+

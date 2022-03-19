@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    {% extends 'base.html' %}
+    {% block content %}
+    <div class="shadow p-3 mb-5 bg-body rounded">   
+    <h3 align="center">Update Campaign</h3>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.candidate.label(class='form-label')}}
+        {{ form.candidate(class='form-control', value=campaign_to_update.candidate)}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.alias.label(class='form-label')}}
+        {{ form.alias(class='form-control', value=campaign_to_update.alias)}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.riding.label(class='form-label')}}
+        {{ form.riding(class='form-control', value=campaign_to_update.riding)}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.year.label(class='form-label')}}
+        {{ form.year(class='form-control', value=campaign_to_update.year)}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.gov_level.label(class='form-label')}}
+        {{ form.gov_level(class='form-control', value=campaign_to_update.gov_level)}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.admins.label(class='form-label')}}
+        {{ form.admins(class='form-control', value=campaign_to_update.admins)}}
+        <br/>   
+        {{ form.submit(class='btn btn-danger')}}
+    </form>
+</div>
+    {% endblock %}
+</body>
+</html>

@@ -8,7 +8,7 @@
     {% block content %}
     <div class="shadow p-3 mb-5 bg-body rounded">
     <h3 align="center">Update-User</h3>
-    <form action="/update/{{name_to_update.id}}"method="POST">
+    <form method="POST" action="/update/{{name_to_update.id}}">
         {{ form.hidden_tag() }}
 
         {{ form.first_name.label(class='form-label')}}

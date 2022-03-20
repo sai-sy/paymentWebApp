@@ -19,17 +19,20 @@ def shift_add():
     form.user.choices = choiceMath
     form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
     if form.validate_on_submit():
-        
-        founduser = Users.query.filter_by(id=form.user.data).first()
-        shiftstamp = ShiftStamps(user_id=founduser.id, start_time=datetime.combine(form.date.data, datetime.strptime(form.start_time.data, '%H:%M:%S').time()),
-            end_time=datetime.combine(form.date.data, datetime.strptime(form.end_time.data, '%H:%M:%S').time()),
-            activity=form.activity.data
-            )
-        shiftstamp.minutes = shiftstamp.end_time - shiftstamp.start_time.total_seconds() / 60
-        comparedShift = ShiftStamps.query.filter_by(user_id=shiftstamp.user_id, start_time=shiftstamp.start_time).first()
+
+        calcedStart = datetime.combine(form.date.data, datetime.strptime(form.start_time.data, '%H:%M:%S').time())
+        comparedShift = ShiftStamps.query.filter_by(user_id=form.user.data, start_time=calcedStart).first()
         if comparedShift:
             flash("This Shift Already Exists.", category='error')
         else:
+            founduser = Users.query.filter_by(id=form.user.data).first()
+            foundactivity = Activities.query.filter_by(activity=form.activity.data).first()
+            shiftstamp = ShiftStamps(user_id=founduser.id, user=founduser, start_time=calcedStart,
+                end_time=datetime.combine(form.date.data, datetime.strptime(form.end_time.data, '%H:%M:%S').time()),
+                activity_id=form.activity.data,
+                activity=foundactivity
+            )
+            shiftstamp.minutes = (shiftstamp.end_time - shiftstamp.start_time).total_seconds() / 60
             db.session.add(shiftstamp)
             db.session.commit()
 

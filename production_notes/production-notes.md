@@ -6,6 +6,8 @@ Under scores for spaces in EVERYTHIING not camel case or hyphens UNLESS class na
     [ ] Set Up Class Migrations for Tables
 [x] Add Campaign Adder
 [ ] Fix Campaign Update (Admin)
+[ ] Alias for users
+[ ] User Dashboard
 [ ] Add receipt adder
 [ ] Setup Login
     [ ] Owner of campaign
@@ -15,10 +17,11 @@ Under scores for spaces in EVERYTHIING not camel case or hyphens UNLESS class na
 [ ] Normalize and Organize HTML 
     [ ] Update all the HTML Files
     [ ] Update all the routes
-[ ] Create custom form select
-    [ ] Make that form select validate if it was used
-        this replaces the need for a DataRequired() validator on SelectForm()
-    [ ] Then pass that data to SelectForm().data
+[ ] Figure out searchable multi and regular select  
+    [ ] Create custom form select
+        [ ] Make that form select validate if it was used
+            this replaces the need for a DataRequired() validator on SelectForm()
+        [ ] Then pass that data to SelectForm().data
 [ ] Get loader in app factory so every time app gets run the default values get included
 
 # Notes

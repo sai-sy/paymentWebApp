@@ -31,8 +31,8 @@ class SignUpForm(FlaskForm):
 
 class SystemLevels(db.Model):
     __tablename__ = 'systemlevels'
-    level = db.Column(db.String(50), nullable=False, primary_key=True)
-    numeric_level = db.Column(db.Integer, nullable=False)
+    numeric_level = db.Column(db.Integer, nullable=False, primary_key=True)
+    level = db.Column(db.String(50), nullable=False)
     users = db.relationship('Users', back_populates='system_level')
 
 class Users(People, UserMixin):
@@ -40,12 +40,14 @@ class Users(People, UserMixin):
     id = db.Column(db.Integer, ForeignKey('people.id'), primary_key=True)
     #password = db.Column(db.String(150), nullable=False)
     password_hash = db.Column(db.String(150), nullable=False)
-    system_level_id = db.Column(db.String(50), ForeignKey('systemlevels.level'), nullable=False,  default='GROUND')
+    system_level_id = db.Column(db.Integer, ForeignKey('systemlevels.numeric_level'), nullable=False,  default='1')
     system_level = db.relationship('SystemLevels', back_populates='users')
     #make sure to uncoment Campaigns along with this
     #candidacies = db.relationship('Campaigns', back_populates="candidate")
     admin_campaigns = db.relationship('Campaigns', secondary=admins, back_populates="admins")
+    campaigns_owned = db.relationship('Campaigns', back_populates='owner')
     shiftstamps = db.relationship('ShiftStamps', back_populates="user")
+    receipts = db.relationship('Receipts', back_populates="user")
 
     @property
     def password(self):

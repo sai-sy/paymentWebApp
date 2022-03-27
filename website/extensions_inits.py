@@ -1,9 +1,12 @@
 from ast import Try
 
 from mysqlx import IntegrityError
-from .models.shiftstamp import Activities
+from .models.shiftstamps import Activities
 from .models.users import Users, SystemLevels
+from .models.admincommands import AdminPassword
 from sqlalchemy import exc
+from flask_migrate import Migrate
+from werkzeug.security import generate_password_hash
 
 def adder(app, db, add):
     try:
@@ -24,7 +27,6 @@ def load_preset_data(app, db):
         adder(app, db, mod)
         adder(app, db, serverking)
 
-
     # ADD ACTIVITES
     calling = Activities(activity="calling")
     canvas = Activities(activity="canvas")
@@ -35,3 +37,8 @@ def load_preset_data(app, db):
         adder(app, db, canvas)
         adder(app, db, litdrop)
         adder(app, db, admin)
+
+    # ADD SQL ACCESS PASSWORD
+    admin_password = AdminPassword(password=generate_password_hash('alexSpears'))
+    with app.app_context():
+        adder(app, db, admin_password)

@@ -5,46 +5,50 @@
     </button>
   
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
       <ul class="navbar-nav mr-auto">
+        {%if current_user.is_authenticated %}
         <li class="nav-item">
           <a class="nav-link" href="/home">Home</a>
         </li>
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/login">Login</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/signup">Sign Up</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/user_list">User List</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/campaign_add">Add Campaign</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/campaign_list">Campaign List</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/shift_add">Add Shift</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/logout">Logout</a>
-          </li>
-        </ul>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('views.profile', id=current_user.id)}}">Profile</a>
+        </li>
+        {%if current_user.system_level_id > 3%}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Lists
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="/user_list">User List</a></li>
+            <li><a class="dropdown-item" href="/campaign_list">Campaign List</a></li>
+            <li><a class="dropdown-item" href="/shift_list">Shift List</a></li>
+            <li><a class="dropdown-item" href="/receipt_list">Receipt List</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Data
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="/shift_add">Add Shift</a></li>
+            <li><a class="dropdown-item" href="/campaign_add">Add Campaign</a></li>
+            <li><a class="dropdown-item" href="/receipt_upload">Upload Receipt</a></li>
+            <li><a class="dropdown-item" href="/shift_add">Import</a></li>
+            <li><a class="dropdown-item" href="/shift_add">Export</a></li>
+          </ul>
+        </li>
+        {%endif%}
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Logout</a>
+        </li>
+        {%else%}
+        <li class="nav-item">
+          <a class="nav-link" href="/login">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/signup">Sign Up</a>
+        </li>
+        {%endif%}
       </ul>
     </div>
   </nav>

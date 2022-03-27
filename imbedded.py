@@ -11,6 +11,7 @@ secret_key = private_constants.secret_key
 host=private_constants.host
 user=private_constants.user
 passwd=private_constants.passwd
+sqlaccess=private_constants.sqlaccess
 
 @dataclass
 class c():
@@ -18,6 +19,7 @@ class c():
     hst: string
     usr: string
     psswd: string
+    sqlaccess: string
 
-s = c(secret_key, host, user, passwd)
+s = c(secret_key, host, user, passwd, sqlaccess)
 

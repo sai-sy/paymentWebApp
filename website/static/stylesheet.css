@@ -8,10 +8,11 @@
     padding-left: 2rem;
 }
 
-.body {
+body {
     font-family: 'Open Sans', sans-serif !important;
 }
 
+/*
 a {
     color: #007bff;
 }
@@ -22,11 +23,12 @@ a {
 }
 
 .navbar-dark .navbar-nav .nav-link {
-    /*color: rgba(255, 255, 255, 0.753);*/
+    /*color: rgba(255, 255, 255, 0.753);
 }
 
 .navbar-brand{
     font-weight: 500;
     font-size: 3rem;
 }
+*/
 

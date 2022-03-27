@@ -15,10 +15,13 @@ CMD: set FLASK_APP=website
 flask db init
 ### Migrate
 flask db migrate -m 'Message'
+flask db upgrade
 
 
 ### Dependencies
 ```
+pip install dotenv
+
 pip install flask
 pip install Flask-Migrate
 pip install flask_login

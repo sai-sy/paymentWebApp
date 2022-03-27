@@ -84,10 +84,12 @@ def signup():
             form.password2.data = ''
             form.email.data = ''
             flash("User Added Successfully!", category='success')
+            login_user(user, remember=True)
             return redirect(url_for('views.home'))
     return render_template('/user/signup.html', form=form, name=first_name)
 
 @auth.route("/user/update/<int:id>", methods=['GET', 'POST'])
+@login_required
 def user_update(id):
     theForm = SignUpForm()
     name_to_update = Users.query.get_or_404(id)
@@ -114,6 +116,7 @@ def user_update(id):
     return render_template('/user/user_update.html', form=theForm, name_to_update=name_to_update)
 
 @auth.route('/user_list/delete/<int:id>')
+@login_required
 def user_delete(id):
     user_to_delete = Users.query.get_or_404(id)
     try:

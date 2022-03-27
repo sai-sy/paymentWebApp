@@ -1,0 +1,17 @@
+{%extends 'base.html'%}
+{% block content %}
+<table class="table table-hover table-border table-striped">
+{% for shift in shifts%}
+    <tr>
+    <td id="displayData">
+        {{shift.id}}. {{shift.user.first_name}} {{shift.user.last_name}} | {{shift.start_time}} -
+        {{shift.end_time}} | {{
+            shift.minutes}} | {{shift.campaign.alias}} | {{
+            shift.activity.activity}}
+    </td>
+    <td id="deleteTable"><a href="{{url_for('shift_route.shift_delete', id=shift.id)}}" role="button" class="btn btn-outline-danger" >Delete</button></td>
+    </tr>
+{%endfor%}
+</table>
+{% endblock %}
+

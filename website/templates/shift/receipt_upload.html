@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    {% extends 'base.html' %}
+    {% block content %}
+    <div class="shadow p-3 mb-5 bg-body rounded">
+    <h3 align="center">Upload Receipt</h3>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        {{ form.users.label(class='form-label')}}
+        {{ form.users(class='form-control')}}    
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.date.label(class='form-label')}}
+        {{ form.date(class='form-control')}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.amount.label(class='form-label')}}
+        {{ form.amount(class='form-control')}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.campaigns.label(class='form-label')}}
+        {{ form.campaigns(class='form-control')}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.image.label(class='form-label')}}
+        {{ form.image()}}
+        <br/> 
+        {{ form.hidden_tag() }}
+        {{ form.submit(class='btn btn-danger')}}
+    </form>
+</div>
+    {% endblock %}
+</body>
+</html>

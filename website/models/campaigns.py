@@ -1,3 +1,4 @@
+from email.policy import default
 import enum
 from statistics import variance
 from sqlalchemy import Column, ForeignKey, true
@@ -49,7 +50,11 @@ class Campaigns(db.Model):
     riding = db.Column(db.String(200), nullable=False)
     year = db.Column(db.Integer, nullable=False)
     gov_level = db.Column(db.String(200), nullable=False)
-    #owner = db.Column(db.Integer, db.ForeignKey('users.id'))
+    pay = db.Column(db.Float, nullable=False, default=15.0)
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    owner = db.relationship('Users', back_populates='campaigns_owned')
     admins = db.relationship('Users', secondary=admins, back_populates="admin_campaigns")
+    shiftstamps_on_campaign = db.relationship('ShiftStamps', back_populates='campaign')
+    receipts = db.relationship('Receipts', back_populates='campaign')
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
     

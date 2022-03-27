@@ -8,22 +8,26 @@ import sys
 import os
 sys.path.insert(1, 'C:\saiscripts\intercept_branch\Payment Web App Project')
 from paymentWebApp import imbedded as i
+from paymentWebApp.website import config
 
 db = SQLAlchemy()
+migrate = Migrate()
 DB_NAME = "main"
 
 def create_app():
     #Flask Instance
     app = Flask(__name__)
-
+    #app.config.from_pyfile('config.py')
+    app.config.from_object(config.DevConfig)
+    
     #Database
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
-    mysqlString = 'mysql+pymysql://'+i.s.usr+':'+i.s.psswd+'@'+i.s.hst+'/'+DB_NAME
-    print(mysqlString)
-    app.config['SQLALCHEMY_DATABASE_URI'] = mysqlString
+    #app.config['SECRET_KEY'] = '123'
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/main'
     db.init_app(app)
+    migrate.init_app(app, db)
     
-    migrate = Migrate(app, db)
+    #migrate = Migrate(app, db)
     
     
     from .views import views
@@ -34,7 +38,9 @@ def create_app():
     from .models.campaigns import Campaigns, admins
     from .models.users import Users, SystemLevels
     from .models.people import People
-    from .models.shiftstamp import ShiftStamps, Activities
+    from .models.shiftstamps import ShiftStamps, Activities
+    from .models.admincommands import AdminCommands
+    from .models.receipts import Receipts
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')

@@ -18,6 +18,7 @@ class ShiftStampForm(FlaskForm):
     date = DateField('Date (yyyy/mm/dd): ', validators=[DataRequired()])
     start_time = SelectField('Start Time: ', validators=[DataRequired()], choices=listoftimes())
     end_time = SelectField('End Time: ', validators=[DataRequired()], choices=listoftimes())
+    campaign = SelectField('Campaign: ', validators=[DataRequired()])
     activity = SelectField('Activity: ' )
     submit = SubmitField('Submit')
 
@@ -34,6 +35,9 @@ class ShiftStamps(db.Model):
     start_time = db.Column(db.DateTime, nullable=False)
     end_time = db.Column(db.DateTime, nullable=False)
     minutes= db.Column(db.Integer, nullable=False)
+    campaign_id = db.Column(db.Integer, ForeignKey('campaigns.id'), nullable=False)
+    campaign = db.relationship('Campaigns', back_populates='shiftstamps_on_campaign')
+    #campaign = db.relationship('Campaigns')
     activity_id = db.Column(db.String(50), ForeignKey('activities.activity'))
     activity = db.relationship("Activities", back_populates='shiftstamps')
     date_added = db.Column(db.DateTime, default=datetime.utcnow())

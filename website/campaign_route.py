@@ -2,7 +2,7 @@ from secrets import choice
 from flask import Blueprint, jsonify, redirect, render_template, request, flash, jsonify, Flask, url_for
 from flask_login import login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from sqlalchemy import alias, insert
+from sqlalchemy import insert
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from . import db
@@ -12,6 +12,7 @@ from .models.campaigns import CampaignForm, Campaigns, admins
 campaign_route = Blueprint('campaign_route', __name__)
 
 @campaign_route.route('/campaign_add', methods=['GET', 'POST'])
+@login_required
 def campaign_add():
     form = CampaignForm()
     choiceMath = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
@@ -55,6 +56,7 @@ def campaign_add():
     return render_template('/campaign/campaign_add.html', form=form)
 
 @campaign_route.route("/campaign_update/<int:id>", methods=['GET', 'POST'])
+@login_required
 def campaign_update(id):
     form = CampaignForm()
     campaign_to_update = Campaigns.query.get_or_404(id)
@@ -83,11 +85,13 @@ def campaign_update(id):
 
 
 @campaign_route.route('/campaign_list')
+@login_required
 def campaign_list():
     campaigns = Campaigns.query.order_by(Campaigns.date_added)
     return render_template('/campaign/campaign_list.html', campaigns=campaigns)
 
 @campaign_route.route('/campaign/delete/<int:id>')
+@login_required
 def campaign_delete(id):
     campaign_to_delete = Campaigns.query.get_or_404(id)
     try:

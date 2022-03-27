@@ -1,8 +1,7 @@
 from os import environ, path
 from dotenv import load_dotenv
 
-basedir = path.abspath(path.dirname(__file__))
-load_dotenv('C:\saiscripts\intercept_branch\Payment Web App Project\.env')
+
 
 DB_NAME = "main"
 
@@ -17,13 +16,16 @@ class Config:
     TEMPLATES_FOLDER = 'templates'
 
 class ProdConfig(Config):
+    env_dict = dict(environ)
     FLASK_ENV = 'production'
     DEBUG = False
     TESTING = False
-    DATABASE_URI = environ.get('PROD_DATABASE_URI')
+    DATABASE_URI = env_dict['PROD_DATABASE_URI']
 
 
 class DevConfig(Config):
+    basedir = path.abspath(path.dirname(__file__))
+    load_dotenv('C:\saiscripts\intercept_branch\Payment Web App Project\.env')
     FLASK_ENV = 'development'
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = environ.get('DEV_DATABASE_URI')

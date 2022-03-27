@@ -21,6 +21,7 @@ class ProdConfig(Config):
     DEBUG = False
     TESTING = False
     DATABASE_URI = env_dict['PROD_DATABASE_URI']
+    SECRET_KEY = env_dict['SECRET_KEY']
 
 
 class DevConfig(Config):

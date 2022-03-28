@@ -53,6 +53,7 @@ class Campaigns(db.Model):
     admins = db.relationship('Users', secondary=admins, back_populates="admin_campaigns")
     shiftstamps_on_campaign = db.relationship('ShiftStamps', back_populates='campaign')
     paystamps_on_campaign = db.relationship('PayStamps', back_populates='campaign')
+    abstractstamps_on_campaign = db.relationship('AbstractStamps', back_populates='campaign')
     receipts = db.relationship('Receipts', back_populates='campaign')
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
     

@@ -34,6 +34,8 @@ def create_app():
         from .campaign_route import campaign_route
         from .shift_route import shift_route
 
+        # Models
+        from .models.abstracts import AbstractStamps
         from .models.paystamps import PayStamps
         from .models.campaigns import Campaigns, admins
         from .models.users import Users, SystemLevels

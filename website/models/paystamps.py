@@ -1,14 +1,11 @@
-from sqlalchemy import true, Table, ForeignKey
+from sqlalchemy import ForeignKey
 from .. import db
 from datetime import datetime
 #Flask WTF
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, EmailField, SelectField, DateField, TimeField, FloatField
-from wtforms.validators import DataRequired, EqualTo
-from sqlalchemy.orm import declarative_base
+from wtforms import StringField, SubmitField, SelectField, DateField, FloatField
+from wtforms.validators import DataRequired
 from datetime import datetime
-
-from ..helper_functions.timeresponse import listoftimes
 
 class PayStampForm(FlaskForm):
     user = SelectField('User: ')
@@ -30,7 +27,7 @@ class PayStamps(db.Model):
     campaign = db.relationship('Campaigns', back_populates='paystamps_on_campaign')
     activity_id = db.Column(db.String(50), ForeignKey('activities.activity'))
     activity = db.relationship("Activities", back_populates='paystamps')
-    notes = db.column(db.String(1000))
+    notes = db.column(db.Text())
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __repr__(self) -> str:

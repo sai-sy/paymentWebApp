@@ -3,10 +3,6 @@ from website.extensions_inits import load_preset_data
 from dataclasses import dataclass
 import imbedded as i
 
-<<<<<<< HEAD
-=======
-
->>>>>>> main
 def start():
     app = create_app()
     app.app_context().push()
@@ -15,12 +11,6 @@ def start():
 
     return app
 
-<<<<<<< HEAD
-app = start()
-
-if __name__=='__main__':
-=======
 if __name__=='__main__':
     app = start()
->>>>>>> main
     app.run()

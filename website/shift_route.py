@@ -116,6 +116,8 @@ def shift_delete(id):
         flash("Shift Was Not Deleted Successfully", category='error')
         return redirect(url_for('shift_route.shift_list'))
 
+# RECEIPTS
+
 @shift_route.route('/receipt_upload', methods=['GET', 'POST'])
 @login_required
 def receipt_upload():
@@ -151,6 +153,98 @@ def receipt_upload():
 
 
 def receipt_upload_func(form: ReceiptForm):
+    user = Users.query.filter_by(id=form.users.data).first()
+    campaign = Campaigns.query.filter_by(id=form.campaigns.data).first()
+    db_filename = campaign.alias + '_' + user.first_name + '_' + user.last_name + '_' + '_'+ str(form.date.data)
+    while(True):
+        i = 1
+        searched_file = Receipts.query.filter_by(image_name=db_filename).first()
+        if searched_file:
+            db_filename = db_filename + '_' + str(i) 
+            i = i + 1
+        else:
+            receipt = Receipts(
+                user_id = form.users.data,
+                date = form.date.data,
+                image_name = db_filename,
+                amount = form.amount.data,
+                campaign_id = form.campaigns.data
+            )
+            db.session.add(receipt)
+            db.session.commit()
+            break
+    assets_dir = os.path.join(os.path.dirname(current_app.instance_path), 'assets', 'receipts')
+    current_app.logger.info('validated')
+    uploaded_file = form.image.data
+    filename = secure_filename(uploaded_file.filename)
+    if uploaded_file.filename != '':
+        file_ext = os.path.splitext(filename)[1]
+        if file_ext not in current_app.config['UPLOAD_EXTENSIONS']:
+            abort(400)
+        uploaded_file.save(os.path.join(assets_dir, db_filename+file_ext))
+        flash("File Saved Successfully", category='success')
+    return redirect(url_for('views.home'))
+
+
+@shift_route.route('/receipt_list', methods=['GET', 'POST'])
+@login_required
+def receipt_list():
+    if current_user.system_level_id < 3:
+        return render_template('no_access.html')
+    elif current_user.system_level_id < 5:
+        campaigns = [c.id for c in current_user.admin_campaigns]
+        current_app.logger.info(campaigns)
+        receipts = Receipts.query.filter(Receipts.campaign_id.in_(campaigns)).order_by(desc(Receipts.date))
+        return render_template('/shift/receipt_list.html', receipts=receipts)
+    else:
+        receipts = Receipts.query.filter_by().order_by(desc(Receipts.date))
+        return render_template('/shift/receipt_list.html', receipts=receipts)
+
+@shift_route.route('/receipt/delete/<int:id>')
+@login_required
+def receipt_delete(id):
+    receipt_to_delete = Receipts.query.get_or_404(id)
+    try:
+        db.session.delete(receipt_to_delete)
+        db.session.commit()
+        flash("Receipt Deleted Successfully", category='success')
+        return redirect(url_for('shift_route.receipt_list'))
+    except:
+        flash("Receipt Was Not Deleted Successfully", category='error')
+        return redirect(url_for('shift_route.receipt_list'))
+
+# PAYMENTS
+@shift_route.route('/payment_upload', methods=['GET', 'POST'])
+@login_required
+def receipt_upload():
+    form = PayStampForm()
+    if current_user.system_level_id < 3:
+        return render_template('no_access.html')
+    elif current_user.system_level_id < 5:
+        campaigns = [(c.id, str(c.alias)) for c in current_user.admin_campaigns]
+        form.campaigns.choices = campaigns
+        choiceMath = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
+        form.users.choices = choiceMath
+        if form.validate_on_submit():
+            payment_upload_func(form)
+        else:
+            current_app.logger.info('notvalidated')
+            current_app.logger.info(form.errors)
+        return render_template('/shift/payment_upload.html', form=form)
+    else:
+        campaigns = [(c.id, str(c.alias)) for c in Campaigns.query.filter_by()]
+        form.campaigns.choices = campaigns
+        users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
+        form.users.choices = users
+        if form.validate_on_submit():
+            payment_upload_func(form)
+        else:
+            current_app.logger.info('notvalidated')
+            current_app.logger.info(form.errors)
+        return render_template('/shift/payment_upload.html', form=form)
+
+
+def payment_upload_func(form: ReceiptForm):
     user = Users.query.filter_by(id=form.users.data).first()
     campaign = Campaigns.query.filter_by(id=form.campaigns.data).first()
     db_filename = campaign.alias + '_' + user.first_name + '_' + user.last_name + '_' + '_'+ str(form.date.data)

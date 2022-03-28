@@ -6,9 +6,7 @@ from flask_migrate import Migrate
 #Path Math
 import sys
 import os
-sys.path.insert(1, 'C:\saiscripts\intercept_branch\Payment Web App Project')
-from paymentWebApp import imbedded as i
-from paymentWebApp.website import config
+from . import config
 
 db = SQLAlchemy()
 migrate = Migrate()

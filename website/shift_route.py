@@ -7,7 +7,7 @@ from sqlalchemy import alias, insert, desc
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from werkzeug.utils import secure_filename
-
+from .models.paystamps import PayStamps, PayStampForm
 from .models.campaigns import Campaigns
 from . import db
 from .models.users import Users

@@ -1,5 +1,3 @@
-from tkinter.tix import Select
-from tracemalloc import start
 from pymysql import Date
 from sqlalchemy import true, Table, ForeignKey
 from .. import db

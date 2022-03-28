@@ -1,7 +1,6 @@
 # Directories
 assets/receipts
 migrations/
-production_notes/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -22,6 +22,11 @@ Under scores for spaces in EVERYTHIING not camel case or hyphens UNLESS class na
 [ ] Environment Clean Up
     [ ] Test Start Up Process
     [ ] Test migration process
+### Migration Tests
+1. create column
+2. migrate
+3. create other column 
+4. migrate
 
 ## Done
 [x] Set Up Receipt Import

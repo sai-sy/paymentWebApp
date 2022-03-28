@@ -1,3 +1,5 @@
+This is a program made for internal use for liberal campaigns to manage volunteer hours and pay
+
 ## Running Notes
 Wipe Database using
 ```python

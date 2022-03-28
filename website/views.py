@@ -6,7 +6,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
-from paymentWebApp.website.campaign_route import campaign_add
 from . import db
 from .models.users import SystemLevels, Users
 from .models.shiftstamps import ShiftStamps, Activities, ShiftStampForm

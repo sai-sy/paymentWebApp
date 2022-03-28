@@ -1,4 +1,3 @@
-from pymysql import Date
 from sqlalchemy import true, Table, ForeignKey
 from .. import db
 from datetime import datetime

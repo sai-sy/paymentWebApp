@@ -35,6 +35,7 @@ mycursor.execute(f'CREATE DATABASE {name};')
 pip install dotenv 
   
 pip install flask  
+pip install flask-wtf
 pip install Flask-Migrate 
 pip install flask_login 
   

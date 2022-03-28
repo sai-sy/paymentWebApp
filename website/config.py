@@ -19,8 +19,8 @@ class ProdConfig(Config):
     FLASK_ENV = 'production'
     DEBUG = False
     TESTING = False
-    SQL_ALCHEMY_DATABASE_URI = env_dict['PROD_DATABASE_URI']
-    SECRET_KEY = env_dict['SECRET_KEY']
+    SQLALCHEMY_DATABASE_URI = environ.get('PROD_DATABASE_URI')
+    SECRET_KEY = environ.get('SECRET_KEY')
 
 class DevConfig(Config):
     basedir = path.abspath(path.dirname(__file__))
@@ -28,8 +28,8 @@ class DevConfig(Config):
     env_dict = dict(environ)
     FLASK_ENV = 'development'
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = env_dict['DEV_DATABASE_URI']
-    SECRET_KEY = env_dict['SECRET_KEY']
+    SQLALCHEMY_DATABASE_URI = environ.get('DEV_DATABASE_URI')
+    SECRET_KEY = environ.get('SECRET_KEY')
 
 if __name__ == '__main__':
     print(environ.get('SQLALCHEMY_DATABASE_URI'))

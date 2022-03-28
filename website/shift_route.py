@@ -8,8 +8,6 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from werkzeug.utils import secure_filename
 
-from paymentWebApp.website.campaign_route import campaign_add, campaign_list
-
 from .models.campaigns import Campaigns
 from . import db
 from .models.users import Users

@@ -21,4 +21,3 @@ else:
         db.create_all()
         load_preset_data(app, db)
         return app
-        #comment

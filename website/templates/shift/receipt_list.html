@@ -5,7 +5,7 @@
     <tr>
     <td id="displayData">
         {{receipt.image_name}} | {{receipt.user.first_name}} {{receipt.user.last_name}} |
-        {{receipt.date}} | {{receipt.amount}}
+        {{(receipt.date).date}} | {{receipt.amount}}
     </td>
     <td id="deleteTable"><a href="{{url_for('shift_route.receipt_delete', id=receipt.id)}}" role="button" class="btn btn-outline-danger" >Delete</button></td>
     </tr>

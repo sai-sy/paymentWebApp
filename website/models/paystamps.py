@@ -16,7 +16,7 @@ class PayStampForm(FlaskForm):
     amount = FloatField('Amount: ', validators=[DataRequired()])
     campaign = SelectField('Campaign: ', validators=[DataRequired()])
     activity = SelectField('Activity: ' )
-    note = StringField('Notes: ')
+    notes = StringField('Notes: ')
     submit = SubmitField('Submit')
 
 class PayStamps(db.Model):
@@ -30,7 +30,7 @@ class PayStamps(db.Model):
     campaign = db.relationship('Campaigns', back_populates='paystamps_on_campaign')
     activity_id = db.Column(db.String(50), ForeignKey('activities.activity'))
     activity = db.relationship("Activities", back_populates='paystamps')
-    note = db.column(db.String(1000))
+    notes = db.column(db.String(1000))
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __repr__(self) -> str:

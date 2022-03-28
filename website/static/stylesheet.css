@@ -12,6 +12,10 @@ body {
     font-family: 'Open Sans', sans-serif !important;
 }
 
+#list_header {
+    margin-top: 0.5rem;
+}
+
 /*
 a {
     color: #007bff;

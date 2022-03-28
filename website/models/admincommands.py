@@ -5,6 +5,7 @@ from .. import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from enum import Enum, auto
 from .campaigns import admins
+from datetime import datetime
 
 from flask_login import UserMixin
 
@@ -24,6 +25,7 @@ class AdminCommands(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
     command = db.Column(db.String(1000), nullable=False)
     message = db.Column(db.Text())
+    date_added = db.Column(db.DateTime, default=datetime.utcnow())
 
 class AdminPasswordForm(FlaskForm):
     password = StringField('Admin Access Password:', validators=[DataRequired()])

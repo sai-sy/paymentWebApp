@@ -18,7 +18,6 @@ from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
 from .shift_route import shift_add_func
 
-
 @views.route('/')
 def home():    
     return render_template('home.html')

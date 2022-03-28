@@ -28,6 +28,7 @@ def create_app():
     #migrate = Migrate(app, db)
     
     with app.app_context():
+        db.create_all()
         from .views import views
         from .auth import auth
         from .campaign_route import campaign_route

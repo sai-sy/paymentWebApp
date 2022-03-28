@@ -1,5 +1,9 @@
 This is a program made for internal use for liberal campaigns to manage volunteer hours and pay
 
+## Contributors
+Shakib Ahmed
+Saihaan Syed
+
 ## Running Notes
 Wipe Database using
 ```python

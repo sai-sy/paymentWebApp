@@ -152,7 +152,8 @@ def receipt_upload():
 
 def receipt_upload_func(form: ReceiptForm):
     user = Users.query.filter_by(id=form.users.data).first()
-    db_filename = form.campaigns.data + '_' + user.first_name + '_' + user.last_name + '_' + '_'+ str(form.date.data)
+    campaign = Campaigns.query.filter_by(id=form.campaigns.data).first()
+    db_filename = campaign.aias + '_' + user.first_name + '_' + user.last_name + '_' + '_'+ str(form.date.data)
     while(True):
         i = 1
         searched_file = Receipts.query.filter_by(image_name=db_filename).first()

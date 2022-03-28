@@ -46,6 +46,7 @@ class Users(People, UserMixin):
     admin_campaigns = db.relationship('Campaigns', secondary=admins, back_populates="admins")
     campaigns_owned = db.relationship('Campaigns', back_populates='owner')
     shiftstamps = db.relationship('ShiftStamps', back_populates="user")
+    paystamps = db.relationship('PayStamps', back_populates="user")
     receipts = db.relationship('Receipts', back_populates="user")
 
     @property

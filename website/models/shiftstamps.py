@@ -1,4 +1,6 @@
 from sqlalchemy import true, Table, ForeignKey
+
+from paymentWebApp.website.models.paystamps import PayStamps
 from .. import db
 from datetime import datetime
 #Flask WTF
@@ -23,6 +25,7 @@ class Activities(db.Model):
     __tablename__ = 'activities'
     activity = db.Column(db.String(50), nullable=False, primary_key=True)
     shiftstamps = db.relationship("ShiftStamps", back_populates="activity")
+    paystamps = db.relationship("PayStamps", back_populates="activity")
 
 class ShiftStamps(db.Model):
     __tablename__ = 'shiftstamps'
@@ -43,6 +46,6 @@ class ShiftStamps(db.Model):
         return self.first_name + ' ' + self.last_name
 
     __mapper_args__ = {
-        'polymorphic_identity':'person',
+        'polymorphic_identity':'shiftstamp',
     }
 

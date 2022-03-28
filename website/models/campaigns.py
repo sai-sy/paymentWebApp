@@ -52,6 +52,7 @@ class Campaigns(db.Model):
     owner = db.relationship('Users', back_populates='campaigns_owned')
     admins = db.relationship('Users', secondary=admins, back_populates="admin_campaigns")
     shiftstamps_on_campaign = db.relationship('ShiftStamps', back_populates='campaign')
+    paystamps_on_campaign = db.relationship('PayStamps', back_populates='campaign')
     receipts = db.relationship('Receipts', back_populates='campaign')
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
     

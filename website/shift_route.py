@@ -218,13 +218,14 @@ def receipt_delete(id):
 @login_required
 def paystamp_upload():
     form = PayStampForm()
+    form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
+    users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
     if current_user.system_level_id < 3:
         return render_template('no_access.html')
     elif current_user.system_level_id < 5:
         campaigns = [(c.id, str(c.alias)) for c in current_user.admin_campaigns]
-        form.campaigns.choices = campaigns
-        choiceMath = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
-        form.users.choices = choiceMath
+        form.campaigns.choices = campaigns   
+        form.users.choices = users
         if form.validate_on_submit():
             paystamp_upload_func(form)
         else:
@@ -234,7 +235,6 @@ def paystamp_upload():
     else:
         campaigns = [(c.id, str(c.alias)) for c in Campaigns.query.filter_by()]
         form.campaigns.choices = campaigns
-        users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
         form.users.choices = users
         if form.validate_on_submit():
             paystamp_upload_func(form)

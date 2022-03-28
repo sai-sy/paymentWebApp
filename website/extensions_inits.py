@@ -32,11 +32,13 @@ def load_preset_data(app, db):
     canvas = Activities(activity="canvas")
     litdrop = Activities(activity="litdrop")
     admin = Activities(activity="admin")
+    general = Activities(activity="general")
     with app.app_context():
         adder(app, db, calling)
         adder(app, db, canvas)
         adder(app, db, litdrop)
         adder(app, db, admin)
+        adder(app, db, general)
 
     # ADD SQL ACCESS PASSWORD
     admin_password = AdminPassword(password=generate_password_hash('alexSpears'))

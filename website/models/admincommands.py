@@ -1,4 +1,3 @@
-from email.policy import default
 from lib2to3.pgen2.pgen import generate_grammar
 from sqlalchemy import ForeignKey, true
 from .people import People

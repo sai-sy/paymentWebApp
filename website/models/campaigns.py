@@ -1,6 +1,3 @@
-from email.policy import default
-import enum
-from statistics import variance
 from sqlalchemy import Column, ForeignKey, true
 from .. import db
 from datetime import datetime

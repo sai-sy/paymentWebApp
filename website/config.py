@@ -16,6 +16,8 @@ class Config:
     TEMPLATES_FOLDER = 'templates'
 
 class ProdConfig(Config):
+    basedir = path.abspath(path.dirname(__file__))
+    load_dotenv('/home/sai/.env')
     env_dict = dict(environ)
     FLASK_ENV = 'production'
     DEBUG = False

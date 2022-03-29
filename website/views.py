@@ -82,39 +82,7 @@ def user_list():
 @views.route('/home', methods=['GET', 'POST'])
 @login_required
 def user_home():
-    form = ShiftStampForm()
-    choiceMath = [(Users.query.get_or_404(current_user.id).id, str(Users.query.get_or_404(current_user.id).first_name) + ' ' + str(Users.query.get_or_404(current_user.id).last_name))]
-    form.user.choices = choiceMath
-    form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
-    form.campaign.choices = [(str(c.id), str(c.alias))  for c in Campaigns.query.order_by()]
-    if form.validate_on_submit():
-
-        calcedStart = datetime.datetime.combine(form.date.data, datetime.datetime.strptime(form.start_time.data, '%H:%M:%S').time())
-        comparedShift = ShiftStamps.query.filter_by(user_id=form.user.data, start_time=calcedStart).first()
-        if comparedShift:
-            flash("This Shift Already Exists.", category='error')
-        else:
-            founduser = Users.query.filter_by(id=form.user.data).first()
-            foundactivity = Activities.query.filter_by(activity=form.activity.data).first()
-            shiftstamp = ShiftStamps(user_id=founduser.id, start_time=calcedStart,
-                end_time=datetime.datetime.combine(form.date.data, datetime.datetime.strptime(form.end_time.data, '%H:%M:%S').time()),
-                activity_id=form.activity.data,
-                activity=foundactivity,
-                campaign_id=form.campaign.data
-            )
-            shiftstamp.minutes = (shiftstamp.end_time - shiftstamp.start_time).total_seconds() / 60
-            db.session.add(shiftstamp)
-            db.session.commit()
-
-            form.user.data = ''
-            form.date.data = ''
-            form.start_time.data = ''
-            form.end_time.data = ''
-            form.activity.data = ''
-            flash("Shift Added Successfully!", category='success')
-            return redirect(url_for('views.home'))
-
-    return render_template('/shift/shift_add.html', form=form)
+    return redirect(url_for('shift_route.shift_add'))
 
 @views.route('/user/profile/<id>')
 @login_required

@@ -30,7 +30,7 @@ def campaign_add():
                 #candidate_id = form.candidate.data,
                 candidate = form.candidate.data,
                 alias = form.alias.data,
-                riding = form.alias.data,
+                riding = form.riding.data,
                 year = form.year.data,
                 gov_level = form.gov_level.data,
             )

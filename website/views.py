@@ -135,3 +135,8 @@ def internal_server_error(e):
     '''Internal Server Error'''
     return render_template("500.html"), 500
 
+@views.app_errorhandler(403)
+def internal_server_error(e):
+    '''Internal Server Error'''
+    return render_template("403.html"), 403
+

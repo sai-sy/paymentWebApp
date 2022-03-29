@@ -22,6 +22,8 @@ Under scores for spaces in EVERYTHIING not camel case or hyphens UNLESS class na
 [ ] Environment Clean Up
     [ ] Test Start Up Process
     [ ] Test migration process
+[ ] Database Backup
+    [ ] cron job
 ### Migration Tests
 1. create column
 2. migrate

@@ -1,14 +1,13 @@
 {%extends 'base.html'%}
 {% block content %}
 <div class="shadow p-3 mb-5 bg-body rounded">
-    <h3 id='list_header' align="center">Shift List</h3>
+    <h3 id='list_header' align="center">Abstract List</h3>
 </div>
 <table class="table table-hover table-border table-striped">
-{% for abstract in shifts%}
+{% for abstract in abstracts%}
     <tr>
     <td id="displayData">
-        {{abstract.id}}. {{abstract.user.first_name}} {{abstract.user.last_name}} | {{{abstract.campaign.alias}} | {{
-            abstract.note}}
+        {{abstract.id}} {{abstract.user.first_name}} {{abstract.user.last_name}} | {{abstract.campaign.alias}} | {{abstract.amount}} | {{abstract.notes}} | {{abstract.date_added.date()}} 
     </td>
     <td id="deleteTable"><a href="{{url_for('shift_route.abstract_delete', id=abstract.id)}}" role="button" class="btn btn-outline-danger" >Delete</button></td>
     </tr>

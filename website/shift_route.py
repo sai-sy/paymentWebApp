@@ -1,4 +1,5 @@
 from calendar import c
+from dataclasses import dataclass
 from secrets import choice
 from flask import Blueprint, jsonify, redirect, render_template, current_app, request, flash, jsonify, Flask, url_for, abort
 from flask_login import login_required, logout_user, current_user
@@ -8,6 +9,7 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from werkzeug.utils import secure_filename
 
+from .models.abstracts import AbstractForm, AbstractStamps
 from .models.paystamps import PayStamps, PayStampForm
 from .models.campaigns import Campaigns
 from . import db
@@ -19,79 +21,61 @@ from datetime import datetime
 import os
 shift_route = Blueprint('shift_route', __name__)
 
-def shift_add_func(form: ShiftStampForm):
-    form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
-    form.campaign.choices = [str(c.alias) for c in Campaigns.query.order_by()]
-    if form.validate_on_submit():
-
-        calcedStart = datetime.combine(form.date.data, datetime.strptime(form.start_time.data, '%H:%M:%S').time())
-        comparedShift = ShiftStamps.query.filter_by(user_id=form.user.data, start_time=calcedStart, campaign_id=form.campaign.data).first()
-        if comparedShift:
-            flash("This Shift Already Exists.", category='error')
-        else:
-            founduser = Users.query.filter_by(id=form.user.data).first()
-            foundactivity = Activities.query.filter_by(activity=form.activity.data).first()
-            shiftstamp = ShiftStamps(user_id=founduser.id, user=founduser, start_time=calcedStart,
-                end_time=datetime.combine(form.date.data, datetime.strptime(form.end_time.data, '%H:%M:%S').time()),
-                activity_id=form.activity.data,
-                activity=foundactivity
-            )
-            shiftstamp.minutes = (shiftstamp.end_time - shiftstamp.start_time).total_seconds() / 60
-            db.session.add(shiftstamp)
-            db.session.commit()
-
-            form.user.data = ''
-            form.date.data = ''
-            form.start_time.data = ''
-            form.end_time.data = ''
-            form.activity.data = ''
-            flash("Shift Added Successfully!", category='success')
-            return redirect(url_for('views.home'))
-
-    return render_template('/shift/shift_add.html', form=form)
-
 @shift_route.route('/shift_add', methods=['GET', 'POST'])
 @login_required
 def shift_add():
     form = ShiftStampForm()
-    choiceMath = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by()]
-    form.user.choices = choiceMath
+    form.campaign.choices = [(str(c.id), str(c.alias))  for c in Campaigns.query.order_by(desc(Campaigns.alias))]
     form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
-    form.campaign.choices = [(str(c.id), str(c.alias))  for c in Campaigns.query.order_by()]
-    if form.validate_on_submit():
-
-        calcedStart = datetime.combine(form.date.data, datetime.strptime(form.start_time.data, '%H:%M:%S').time())
-        comparedShift = ShiftStamps.query.filter_by(user_id=form.user.data, start_time=calcedStart).first()
-        if comparedShift:
-            flash("This Shift Already Exists.", category='error')
+    if current_user.system_level_id < 3:
+        form.user.choices = [(str(current_user.id), str(current_user.first_name + ' ' + current_user.last_name)) for u in Users.query.filter_by(id=current_user.id).order_by('first_name')]
+        if form.validate_on_submit():
+            shift_add_func(form)
+            return redirect(url_for('shift_route.shift_add'))
         else:
-            founduser = Users.query.filter_by(id=form.user.data).first()
-            foundactivity = Activities.query.filter_by(activity=form.activity.data).first()
-            shiftstamp = ShiftStamps(user_id=founduser.id, user=founduser, start_time=calcedStart,
-                end_time=datetime.combine(form.date.data, datetime.strptime(form.end_time.data, '%H:%M:%S').time()),
-                activity_id=form.activity.data,
-                activity=foundactivity,
-                campaign_id=form.campaign.data
-            )
-            shiftstamp.minutes = (shiftstamp.end_time - shiftstamp.start_time).total_seconds() / 60
-            db.session.add(shiftstamp)
-            db.session.commit()
-
-            form.user.data = ''
-            form.date.data = ''
-            form.start_time.data = ''
-            form.end_time.data = ''
-            form.activity.data = ''
-            flash("Shift Added Successfully!", category='success')
-            return redirect(url_for('views.home'))
+            current_app.logger.info('notvalidated')
+            current_app.logger.info(form.errors)            
+    else:
+        form.user.choices = users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
+        if form.validate_on_submit():
+            shift_add_func(form)
+            return redirect(url_for('shift_route.shift_add'))
+        else:
+            current_app.logger.info('notvalidated')
+            current_app.logger.info(form.errors) 
 
     return render_template('/shift/shift_add.html', form=form)
+
+def shift_add_func(form: ShiftStampForm):
+
+    calcedStart = datetime.combine(form.date.data, datetime.strptime(form.start_time.data, '%H:%M:%S').time())
+    comparedShift = ShiftStamps.query.filter_by(user_id=form.user.data, start_time=calcedStart).first()
+    if comparedShift:
+        flash("This Shift Already Exists.", category='error')
+    else:
+        founduser = Users.query.filter_by(id=form.user.data).first()
+        foundactivity = Activities.query.filter_by(activity=form.activity.data).first()
+        shiftstamp = ShiftStamps(user_id=founduser.id, user=founduser, start_time=calcedStart,
+            end_time=datetime.combine(form.date.data, datetime.strptime(form.end_time.data, '%H:%M:%S').time()),
+            campaign_id=form.campaign.data,
+            activity_id=form.activity.data,
+            activity=foundactivity
+        )
+        shiftstamp.minutes = (shiftstamp.end_time - shiftstamp.start_time).total_seconds() / 60
+        db.session.add(shiftstamp)
+        db.session.commit()
+
+        form.user.data = ''
+        form.date.data = ''
+        form.start_time.data = ''
+        form.end_time.data = ''
+        form.activity.data = ''
+        flash("Shift Added Successfully!", category='success')
 
 @shift_route.route('/shift_list', methods=['GET', 'POST'])
 @login_required
 def shift_list():
     if current_user.system_level_id < 3:
-        
         return render_template('no_access.html')
     elif current_user.system_level_id < 5:
         campaigns = [c.id for c in current_user.admin_campaigns]
@@ -134,6 +118,7 @@ def receipt_upload():
         form.users.choices = choiceMath
         if form.validate_on_submit():
             receipt_upload_func(form)
+            return redirect(url_for('shift_route.receipt_upload'))
         else:
             current_app.logger.info('notvalidated')
             current_app.logger.info(form.errors)
@@ -147,11 +132,11 @@ def receipt_upload():
         form.users.choices = choiceMath
         if form.validate_on_submit():
             receipt_upload_func(form)
+            return redirect(url_for('shift_route.receipt_upload'))
         else:
             current_app.logger.info('notvalidated')
             current_app.logger.info(form.errors)
         return render_template('/shift/receipt_upload.html', form=form)
-
 
 def receipt_upload_func(form: ReceiptForm):
     user = Users.query.filter_by(id=form.users.data).first()
@@ -184,8 +169,6 @@ def receipt_upload_func(form: ReceiptForm):
             abort(400)
         uploaded_file.save(os.path.join(assets_dir, db_filename+file_ext))
         flash("File Saved Successfully", category='success')
-    return redirect(url_for('views.home'))
-
 
 @shift_route.route('/receipt_list', methods=['GET', 'POST'])
 @login_required
@@ -229,6 +212,7 @@ def paystamp_upload():
         form.user.choices = users
         if form.validate_on_submit():
             paystamp_upload_func(form)
+            return redirect(url_for('shift_route.paystamp_upload'))
         else:
             current_app.logger.info('notvalidated')
             current_app.logger.info(form.errors)
@@ -239,11 +223,11 @@ def paystamp_upload():
         form.user.choices = users
         if form.validate_on_submit():
             paystamp_upload_func(form)
+            return redirect(url_for('shift_route.paystamp_upload'))
         else:
             current_app.logger.info('notvalidated')
             current_app.logger.info(form.errors)
         return render_template('/shift/payment_upload.html', form=form)
-
 
 def paystamp_upload_func(form: PayStampForm):
     # Load variables
@@ -261,7 +245,6 @@ def paystamp_upload_func(form: PayStampForm):
             amount = form.amount.data,
             campaign_id = form.campaign.data,
             activity_id = form.activity.data,
-            notes = form.notes.data,
         )
         db.session.add(paystamp)
         db.session.commit()
@@ -271,10 +254,8 @@ def paystamp_upload_func(form: PayStampForm):
         form.amount.data = ''
         form.campaign.data = ''
         form.activity.data = ''
-        form.notes.data = ''
 
         flash("Payment Record Saved Successfully", category='success')
-        return redirect(url_for('views.home'))
 
 @shift_route.route("/paystamp_list", methods=['GET', 'POST'])
 @login_required
@@ -304,95 +285,78 @@ def paystamp_delete(id):
         return redirect(url_for('shift_route.payment_list'))
 
 # ABSTRACTS
-"""
-def abstract_add_func(form: AbstractForm):
-    form.campaign.choices = [str(c.alias) for c in Campaigns.query.order_by()]
-    if form.validate_on_submit():
 
-        comparedAbstract = AbstractStamps.query.filter_by(user_id=form.user.data, campaign_id=form.campaign.data, notes=form.notes.data).first()
-        if comparedAbstract:
-            flash("This Abstract Already Exists.", category='error')
-        else:
-            founduser = Users.query.filter_by(id=form.user.data).first()
-            abstractstamp = AbstractStamps(user_id=founduser.id, user=founduser,
-                campaign_id=form.campaign.data,
-                notes=form.notes.data,
-            )
-            db.session.add(abstractstamp)
-            db.session.commit()
-
-            form.user.data = ''
-            form.campaign.data 
-            form.notes.data = ''
-            flash("Shift Added Successfully!", category='success')
-            return redirect(url_for('views.home'))
-
-    return render_template('/shift/shift_add.html', form=form)
-
-@shift_route.route('/shift_add', methods=['GET', 'POST'])
+@shift_route.route('/abstract_add', methods=['GET', 'POST'])
 @login_required
 def abstract_add():
-    form = ShiftStampForm()
-    choiceMath = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by()]
-    form.user.choices = choiceMath
-    form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
-    form.campaign.choices = [(str(c.id), str(c.alias))  for c in Campaigns.query.order_by()]
-    if form.validate_on_submit():
-
-        calcedStart = datetime.combine(form.date.data, datetime.strptime(form.start_time.data, '%H:%M:%S').time())
-        comparedShift = ShiftStamps.query.filter_by(user_id=form.user.data, start_time=calcedStart).first()
-        if comparedShift:
-            flash("This Shift Already Exists.", category='error')
+    form = AbstractForm()
+    users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
+    form.user.choices = users
+    if current_user.system_level_id < 3:
+        return render_template('no_access.html')
+    elif current_user.system_level_id < 5:
+        campaigns = [(c.id, str(c.alias)) for c in current_user.admin_campaigns]
+        form.campaign.choices = campaigns
+        if form.validate_on_submit():
+            abstract_add_func(form)
+            return redirect(url_for('shift_route.abstract_add'))
         else:
-            founduser = Users.query.filter_by(id=form.user.data).first()
-            foundactivity = Activities.query.filter_by(activity=form.activity.data).first()
-            shiftstamp = ShiftStamps(user_id=founduser.id, user=founduser, start_time=calcedStart,
-                end_time=datetime.combine(form.date.data, datetime.strptime(form.end_time.data, '%H:%M:%S').time()),
-                activity_id=form.activity.data,
-                activity=foundactivity,
-                campaign_id=form.campaign.data
-            )
-            shiftstamp.minutes = (shiftstamp.end_time - shiftstamp.start_time).total_seconds() / 60
-            db.session.add(shiftstamp)
-            db.session.commit()
+            current_app.logger.info('notvalidated')
+            current_app.logger.info(form.errors)
+    else:
+        campaigns = [(c.id, str(c.alias)) for c in Campaigns.query.filter_by()]
+        form.campaign.choices = campaigns
+        if form.validate_on_submit():
+            abstract_add_func(form)
+            return redirect(url_for('shift_route.abstract_add'))
+        else:
+            current_app.logger.info('notvalidated')
+            current_app.logger.info(form.errors)
+    return render_template('/shift/abstract_add.html', form=form)
 
-            form.user.data = ''
-            form.date.data = ''
-            form.start_time.data = ''
-            form.end_time.data = ''
-            form.activity.data = ''
-            flash("Shift Added Successfully!", category='success')
-            return redirect(url_for('views.home'))
+def abstract_add_func(form: AbstractForm):
+    comparedAbstract = AbstractStamps.query.filter_by(user_id=form.user.data, campaign_id=form.campaign.data, notes=form.notes.data).first()
+    if comparedAbstract:
+        flash("This Abstract Already Exists.", category='error')
+    else:
+        founduser = Users.query.filter_by(id=form.user.data).first()
+        abstractstamp = AbstractStamps(user_id=founduser.id, user=founduser,
+            campaign_id=form.campaign.data,
+            amount=form.amount.data,
+            notes=form.notes.data
+        )
+        db.session.add(abstractstamp)
+        db.session.commit()
 
-    return render_template('/shift/shift_add.html', form=form)
+        form.user.data = ''
+        form.campaign.data = ''
+        form.amount.data = ''
+        form.notes.data = ''
+        flash("Abstract Added Successfully!", category='success')
 
-@shift_route.route('/shift_list', methods=['GET', 'POST'])
+@shift_route.route('/abstract_list', methods=['GET', 'POST'])
 @login_required
 def abstract_list():
     if current_user.system_level_id < 3:
-        
         return render_template('no_access.html')
     elif current_user.system_level_id < 5:
         campaigns = [c.id for c in current_user.admin_campaigns]
         current_app.logger.info(campaigns)
-        shifts = ShiftStamps.query.filter(ShiftStamps.campaign_id.in_(campaigns)).order_by(desc(ShiftStamps.start_time))
-        current_app.logger.info(shifts)
-        return render_template('/shift/shift_list.html', shifts=shifts)
+        abstracts = AbstractStamps.query.filter(AbstractStamps.campaign_id.in_(campaigns)).order_by(desc(AbstractStamps.date_added))
+        return render_template('/shift/abstract_list.html', abstracts=abstracts)
     else:
-        current_app.logger
-        shifts = ShiftStamps.query.filter_by().order_by(desc(ShiftStamps.start_time))
-        return render_template('/shift/shift_list.html', shifts=shifts)
+        abstracts = AbstractStamps.query.filter_by().order_by(desc(AbstractStamps.date_added))
+        return render_template('/shift/abstract_list.html', abstracts=abstracts)
 
-@shift_route.route('/shift/delete/<int:id>')
+@shift_route.route('/abstract/delete/<int:id>')
 @login_required
 def abstract_delete(id):
-    shift_to_delete = ShiftStamps.query.get_or_404(id)
+    abstract_to_delete = AbstractStamps.query.get_or_404(id)
     try:
-        db.session.delete(shift_to_delete)
+        db.session.delete(abstract_to_delete)
         db.session.commit()
-        flash("Shift Deleted Successfully", category='success')
-        return redirect(url_for('shift_route.shift_list'))
+        flash("Abstract Deleted Successfully", category='success')
+        return redirect(url_for('shift_route.abstract_list'))
     except:
-        flash("Shift Was Not Deleted Successfully", category='error')
-        return redirect(url_for('shift_route.shift_list'))
-    """
+        flash("Abstract Was Not Deleted Successfully", category='error')
+        return redirect(url_for('shift_route.abstract_list'))

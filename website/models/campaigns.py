@@ -11,11 +11,11 @@ from datetime import datetime
 from enum import Enum, auto
 
 class GovLevels(Enum):
-    Munical = auto()
+    Municipal = auto()
     Provincial = auto()
     Federal = auto()
 
-gov_levels = [("1", 'Munipal'), ('2', 'Provincial'), ('3', 'Federal')]
+gov_levels = [("1", 'Municipal'), ('2', 'Provincial'), ('3', 'Federal')]
 
 def get_value_label_gov():
     arr = []

@@ -9,6 +9,11 @@ Under scores for spaces in EVERYTHIING not camel case or hyphens UNLESS class na
 [ ] Payment Stamp
 [ ] Campaign Dash
 [ ] User Dash
+    [ ] Top is a box that displays all content
+    [ ] if admin
+        [ ] have edit buttons
+        [ ] have add commission feed button
+        [ ] have add commisson receieve button
 [ ] Set Up Campaign owners
 [ ] 400 and 403 error pages
 [ ] Set Up Imports

@@ -87,8 +87,8 @@ def campaign_update(id):
 @campaign_route.route('/campaign_list')
 @login_required
 def campaign_list():
-    campaigns = Campaigns.query.order_by(Campaigns.date_added)
-    return render_template('/campaign/campaign_list.html', campaigns=campaigns)
+    campaigns_grabbed = Campaigns.query.order_by(Campaigns.date_added)
+    return render_template('/campaign/campaign_list.html', campaigns=campaigns_grabbed)
 
 @campaign_route.route('/campaign/delete/<int:id>')
 @login_required

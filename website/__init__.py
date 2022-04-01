@@ -16,7 +16,7 @@ def create_app():
     #Flask Instance
     app = Flask(__name__)
     #app.config.from_pyfile('config.py')
-    app.config.from_object(config.ProdConfig)
+    app.config.from_object(config.ProdTestConfig)
     
     #Database
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'

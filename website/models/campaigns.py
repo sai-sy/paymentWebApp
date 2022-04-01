@@ -29,7 +29,7 @@ class CampaignForm(FlaskForm):
     riding = StringField('Riding:', validators=[DataRequired()])
     year = IntegerField('Election Year:', validators=[DataRequired()])
     gov_level = SelectField('Gov Level:', validators=[DataRequired()], choices=gov_levels)
-    admins = SelectMultipleField('Admins:')
+    admins = SelectMultipleField('Admins (Ctl + Click to select multiple):')
     submit = SubmitField('Submit')
 
 admins = db.Table('admins', db.Model.metadata, 
@@ -56,4 +56,9 @@ class Campaigns(db.Model):
     abstractstamps_on_campaign = db.relationship('AbstractStamps', back_populates='campaign')
     receipts = db.relationship('Receipts', back_populates='campaign')
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
+
+    def __init__(self, **kwargs):
+        super(Campaigns, self).__init__(**kwargs)
+        for user in self.admins:
+            user.system_level_id = 4
     

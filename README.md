@@ -17,6 +17,9 @@ mycursor.execute(f'CREATE DATABASE {name};')
 ```
 - Then run the app   
 - Then create the database by running ```database_create_all_script()```  
+## Server Tips
+restart nginx `sudo systemctl restart nginx` 
+restart gunicorn `sudo supervisorctl reload`
 
 ## Migrations  
 ### Setting Up 

@@ -1,4 +1,5 @@
 from re import L
+from sre_constants import SUCCESS
 from click import command
 from flask import Blueprint, jsonify, render_template, request, flash, jsonify, Flask, redirect, url_for, current_app
 from flask_login import login_required, logout_user, current_user
@@ -19,7 +20,12 @@ from .shift_route import shift_add_func
 
 @views.route('/')
 def home():    
-    return render_template('home.html')
+    return redirect(url_for('shift_route.shift_add'))
+
+@views.route('/home', methods=['GET', 'POST'])
+@login_required
+def user_home():
+    return redirect(url_for('shift_route.shift_add'))
 
 @views.route('/admin_commands', methods=['GET', 'POST'])
 def secret_admin():
@@ -34,6 +40,7 @@ def secret_admin():
             flash(result)
         db.session.add(commandObj)
         db.session.commit()
+        flash('SQL Command Sent!', category='success')
 
         return render_template('admin_command.html', form=form)
     else:
@@ -78,11 +85,6 @@ def user(name):
 def user_list():
     our_users_grabbed = Users.query.order_by(Users.date_added)
     return render_template('/user/user_list.html', our_users=our_users_grabbed)
-
-@views.route('/home', methods=['GET', 'POST'])
-@login_required
-def user_home():
-    return redirect(url_for('shift_route.shift_add'))
 
 @views.route('/user/profile/<id>')
 @login_required

@@ -35,7 +35,7 @@ def login():
                 next = request.args.get('next')
                 # is_safe_url should check if the url is safe for redirects.
                 # See http://flask.pocoo.org/snippets/62/ for an example.
-                return redirect(url_for(next or 'views.home'))
+                return redirect(url_for('views.home' + next))
             else:
                 form.email.data = ''
                 form.password.data = ''
@@ -87,7 +87,8 @@ def signup():
             form.email.data = ''
             flash("User Added Successfully!", category='success')
             login_user(user, remember=True)
-            return redirect(url_for('views.home'))
+            next = request.args.get('next')
+            return redirect(url_for(next or 'views.home'))
     return render_template('/user/signup.html', form=form, name=first_name)
 
 @auth.route("/update/<int:id>", methods=['GET', 'POST'])

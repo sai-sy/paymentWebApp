@@ -91,10 +91,11 @@ def signup():
             form.email.data = ''
             flash("User Added Successfully!", category='success')
             login_user(user, remember=True)
-            next_url = request.form.get("next")
-            if next_url:
-                return redirect(next_url)
-            return redirect(url_for("views.home"))
+            #next_url = request.form.get("next")
+            #if next_url:
+            #    return redirect(next_url)
+            #return redirect(url_for("views.home"))
+            return redirect(request.args.get("next") or url_for("views.home"))
     return render_template('/user/signup.html', form=form, name=first_name)
 
 @auth.route("/update/<int:id>", methods=['GET', 'POST'])

@@ -30,6 +30,11 @@ class DevConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = environ.get('DEV_DATABASE_URI')
     SECRET_KEY = environ.get('SECRET_KEY')
+class ProdTestConfig(DevConfig):
+    '''
+    Developer config settings but production database server
+    '''
+    SQLALCHEMY_DATABASE_URI = environ.get('PROD_DATABASE_URI')
 
 if __name__ == '__main__':
     print(environ.get('SQLALCHEMY_DATABASE_URI'))

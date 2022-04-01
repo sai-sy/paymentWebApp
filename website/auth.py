@@ -35,7 +35,7 @@ def login():
                 next = request.args.get('next')
                 # is_safe_url should check if the url is safe for redirects.
                 # See http://flask.pocoo.org/snippets/62/ for an example.
-                return redirect(url_for('views.home' + next))
+                return redirect(url_for('views.' + next))
             else:
                 form.email.data = ''
                 form.password.data = ''

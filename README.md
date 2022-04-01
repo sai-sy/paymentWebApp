@@ -32,7 +32,9 @@ restart gunicorn `sudo supervisorctl reload`
 ```flask db migrate -m 'Message'```  
 ```flask db upgrade```  
   
-  
+## Url Prefix
+https://dlukes.github.io/flask-wsgi-url-prefix.html
+
 ### Dependencies  
 ```
 pip install dotenv 

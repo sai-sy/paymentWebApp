@@ -2,6 +2,8 @@ import re
 from flask import Blueprint, render_template, request, flash, redirect, url_for, Flask, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
+
+from paymentWebApp.website import views
 #Internal
 from . import db
 #Flask WTF
@@ -95,7 +97,8 @@ def signup():
             #if next_url:
             #    return redirect(next_url)
             #return redirect(url_for("views.home"))
-            return redirect(request.args.get("next") or url_for("views.home"))
+            next = request.args.get('next')
+            #return redirect(url_for('views.home'))
     return render_template('/user/signup.html', form=form, name=first_name)
 
 @auth.route("/update/<int:id>", methods=['GET', 'POST'])

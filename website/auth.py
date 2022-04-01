@@ -2,6 +2,7 @@ import re
 from flask import Blueprint, render_template, request, flash, redirect, url_for, Flask, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
+from urllib.parse import urlparse, urljoin
 
 from paymentWebApp.website import views
 #Internal
@@ -15,6 +16,12 @@ from .models.people import People
 from .models.users import Users, LoginForm, SignUpForm
 
 auth = Blueprint('auth', __name__)
+
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and \
+           ref_url.netloc == test_url.netloc
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -35,6 +42,17 @@ def login():
                 login_user(user, remember=True)
                 form.email.data = ''
                 form.password.data = ''
+                
+                #Default
+                #return redirect(url_for('views.home'))
+
+                # Method Two
+                if not is_safe_url(next):
+                    return abort(400)
+                else:
+                    return redirect(next or url_for('views.home'))
+
+                # Method Three
                 next_url = request.form.get("next")
                 if next_url:
                     return redirect(next_url)

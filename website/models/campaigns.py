@@ -63,4 +63,10 @@ class Campaigns(db.Model):
             user.system_level_id = 4
 
         db.session.commit()
+
+    def upgrade_to_admin(self):
+        for user in self.admins:
+            user.system_level_id = 4
+
+        db.session.commit()
     

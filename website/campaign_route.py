@@ -33,17 +33,24 @@ def campaign_add():
                 riding = form.riding.data,
                 year = form.year.data,
                 gov_level = form.gov_level.data,
+                owner_id = current_user.id,
             )
             db.session.add(campaign)
             db.session.commit()
 
+            # Update Owner
+            owner = Users.get_or_404(current_user.id)
+            owner.system_level_id = 4
+            # Create Admin Table
             campaign = Campaigns.query.filter_by(alias=alias_check).first()
-
             #campaign.admins.append(form.admins.data)
             for dataItem in form.admins.data:
                 db.session.execute(admins.insert().values(user_id=dataItem, campaign_id=campaign.id))
                 db.session.commit()
 
+            db.session.execute(admins.insert().values(user_id=current_user.id, campaign_id = campaign.id))
+
+            #Empty DataBase
             form.candidate.data = ''
             form.alias.data = ''
             form.alias.data = ''

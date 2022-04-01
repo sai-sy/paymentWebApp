@@ -88,7 +88,7 @@ def signup():
             flash("User Added Successfully!", category='success')
             login_user(user, remember=True)
             next = request.args.get('next')
-            return redirect(url_for(next or 'views.home'))
+            return redirect(url_for('views.home' or next))
     return render_template('/user/signup.html', form=form, name=first_name)
 
 @auth.route("/update/<int:id>", methods=['GET', 'POST'])

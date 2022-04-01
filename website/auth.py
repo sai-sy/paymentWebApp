@@ -47,7 +47,7 @@ def login():
                 #return redirect(url_for('views.home'))
 
                 # Method Two
-                next = flask.request.args.get('next')
+                next = request.args.get('next')
                 if not is_safe_url(next):
                     return abort(400)
                 else:

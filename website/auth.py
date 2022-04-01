@@ -1,3 +1,4 @@
+import re
 from flask import Blueprint, render_template, request, flash, redirect, url_for, Flask, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
@@ -90,8 +91,10 @@ def signup():
             form.email.data = ''
             flash("User Added Successfully!", category='success')
             login_user(user, remember=True)
-            next = request.args.get('next')
-            return redirect(url_for('views.home' or next))
+            next_url = request.form.get("next")
+            if next_url:
+                return redirect(next_url)
+            return redirect(url_for("views.home"))
     return render_template('/user/signup.html', form=form, name=first_name)
 
 @auth.route("/update/<int:id>", methods=['GET', 'POST'])

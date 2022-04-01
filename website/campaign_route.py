@@ -63,11 +63,11 @@ def campaign_update(id):
     choiceMath = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
     form.admins.choices = choiceMath
     if form.validate_on_submit():
-        campaign_to_update.candidate = request.form['first_name']
-        campaign_to_update.alias = request.form['last_name']
-        campaign_to_update.riding = request.form['email']
-        campaign_to_update.year = request.form['phone']
-        campaign_to_update.gov_levels = request.form['password1']
+        campaign_to_update.candidate = request.form['candidate']
+        campaign_to_update.alias = request.form['alias']
+        campaign_to_update.riding = request.form['riding']
+        campaign_to_update.year = request.form['year']
+        campaign_to_update.gov_level = request.form['gov_level']
         try:
             db.session.commit()
             flash('Campaign Updated Successfully', category='success')

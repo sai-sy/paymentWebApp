@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, Flask
+from flask import Blueprint, render_template, request, flash, redirect, url_for, Flask, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 #Internal
@@ -32,6 +32,9 @@ def login():
                 login_user(user, remember=True)
                 form.email.data = ''
                 form.password.data = ''
+                next = request.args.get('next')
+                # is_safe_url should check if the url is safe for redirects.
+                # See http://flask.pocoo.org/snippets/62/ for an example.
                 return redirect(url_for('views.home'))
             else:
                 form.email.data = ''
@@ -87,7 +90,7 @@ def signup():
             return redirect(url_for('views.home'))
     return render_template('/user/signup.html', form=form, name=first_name)
 
-@auth.route("/user/update/<int:id>", methods=['GET', 'POST'])
+@auth.route("/update/<int:id>", methods=['GET', 'POST'])
 @login_required
 def user_update(id):
     theForm = SignUpForm()
@@ -101,7 +104,7 @@ def user_update(id):
         try:
             db.session.commit()
             flash('User Updated Successfully', category='success')
-            return render_template('home.html', form=theForm, name_to_update=name_to_update)
+            return redirect(url_for('views.home'))
         except:
             flash('Error: Looks like there was a problem. Try Again Later', category='error')
             first_name = theForm.first_name.data

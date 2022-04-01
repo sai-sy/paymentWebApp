@@ -61,4 +61,6 @@ class Campaigns(db.Model):
         super(Campaigns, self).__init__(**kwargs)
         for user in self.admins:
             user.system_level_id = 4
+
+        db.session.commit()
     

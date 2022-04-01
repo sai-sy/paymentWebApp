@@ -2,6 +2,7 @@ from flask import Flask, appcontext_popped, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_migrate import Migrate
+import logging
 
 #Path Math
 import sys
@@ -12,12 +13,17 @@ db = SQLAlchemy()
 migrate = Migrate()
 DB_NAME = "main"
 
-def create_app():
+def create_app(name):
     #Flask Instance
     app = Flask(__name__)
     #app.config.from_pyfile('config.py')
     app.config.from_object(config.ProdTestConfig)
     
+    if name  != '__main__':
+        gunicorn_logger=logging.getLogger('gunicorn.error')
+        app.logger.handlers = gunicorn_logger.handlers
+        app.logger.setLevel(gunicorn_logger.level)
+
     #Database
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
     #app.config['SECRET_KEY'] = '123'

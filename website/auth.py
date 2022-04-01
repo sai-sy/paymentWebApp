@@ -1,5 +1,4 @@
-import re
-from flask import Blueprint, render_template, request, flash, redirect, url_for, Flask, abort
+from flask import Blueprint, render_template, request, flash, redirect, url_for, Flask, abort, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from urllib.parse import urlparse, urljoin
@@ -48,6 +47,7 @@ def login():
 
                 # Method Two
                 next = request.args.get('next')
+                current_app.logger.info(next)
                 if not is_safe_url(next):
                     return abort(400)
                 else:

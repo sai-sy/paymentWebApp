@@ -18,7 +18,7 @@
         {{ form.password(class='form-control')}}
         <br/>
         
-        <!--<input type="hidden" name="next" value="{{ request.args.get('next', '') }}"/>-->
+        <input type="hidden" name="next" value="{{ request.args.get('next', '') }}"/>
         {{ form.submit(class='btn btn-danger')}}
     </form>
     </div>

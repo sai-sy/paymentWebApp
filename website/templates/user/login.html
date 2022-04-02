@@ -9,14 +9,16 @@
     <div class="shadow p-3 mb-5 bg-body rounded">
     <h3 align="center">Login</h3>
     <form method="POST">
-        {{ form.hidden_tag() }}
+        {{ form.csrf_token(id = "unique.id") }}
         
         {{ form.email.label(class='form-label')}}
         {{ form.email(class='form-control')}}
         <br/>
+        {{ form.csrf_token(id = "unique.id") }}
         {{ form.password.label(class='form-label')}}
         {{ form.password(class='form-control')}}
         <br/>
+        {{ form.csrf_token(id = "unique.id") }}
         {{ form.submit(class='btn btn-danger')}}
     </form>
     </div>

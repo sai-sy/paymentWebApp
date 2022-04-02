@@ -43,15 +43,15 @@ def login():
                 form.password.data = ''
                 
                 #Default
-                return redirect('views.home')
+                #return redirect('views.home')
 
                 # Method Two
-                #next = request.args.get('next')
+                next = request.args.get('next')
                 #current_app.logger.info(next)
-                #if not is_safe_url(next):
-                #    return abort(400)
-                #else:
-                #    return redirect(next or url_for('views.home'))
+                if not is_safe_url(next):
+                    return abort(400)
+                else:
+                    return redirect(next or url_for('views.home'))
 
                 # Method Three
                 #next_url = request.form.get("next")

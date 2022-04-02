@@ -81,6 +81,9 @@ def login():
 
         form.email.data = ''
         form.password.data = ''
+    else:
+        current_app.logger.info(form.errors)
+
     return render_template('/user/login.html', form=form)
 
 @auth.route('/logout')

@@ -43,7 +43,7 @@ def login():
                 form.password.data = ''
                 
                 #Default
-                return redirect('/home')
+                return redirect('views.home')
 
                 # Method Two
                 #next = request.args.get('next')

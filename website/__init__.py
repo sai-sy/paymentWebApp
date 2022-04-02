@@ -2,6 +2,7 @@ from flask import Flask, appcontext_popped, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_migrate import Migrate
+from flask_wtf import CSRFProtect
 import logging
 
 #Path Math
@@ -11,6 +12,7 @@ from . import config
 
 db = SQLAlchemy()
 migrate = Migrate()
+csrf = CSRFProtect()
 DB_NAME = "main"
 
 def create_app(name):

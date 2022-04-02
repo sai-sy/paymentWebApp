@@ -22,6 +22,7 @@ class ProdConfig(Config):
     TESTING = False
     SQLALCHEMY_DATABASE_URI = environ.get('PROD_DATABASE_URI')
     SECRET_KEY = environ.get('SECRET_KEY')
+    SERVER_NAME = environ.get('SERVER_NAME')
 
 class DevConfig(Config):
     basedir = path.abspath(path.dirname(__file__))

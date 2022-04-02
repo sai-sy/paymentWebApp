@@ -60,7 +60,7 @@ def login():
                 #return redirect(url_for('views.home' or next))
 
                 # Method Four
-                return redirect(request.args.get("next") or url_for("admin"))
+                return redirect('views.' + request.args.get("next") or url_for("admin"))
             else:
                 form.email.data = ''
                 form.password.data = ''

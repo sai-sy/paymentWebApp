@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, Flask, abort, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, login_required, logout_user, current_user
+from flask_login import login_user, login_required, logout_user, current_user, login_manager
 from urllib.parse import urlparse, urljoin
 
 from paymentWebApp.website import views
@@ -15,6 +15,11 @@ from .models.people import People
 from .models.users import Users, LoginForm, SignUpForm
 
 auth = Blueprint('auth', __name__)
+
+@login_manager.unauthorized_handler
+def handle_needs_login():
+    flash("You have to be logged in to access this page.")
+    return redirect(url_for('auth.login', next=request.endpoint))
 
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
@@ -43,15 +48,15 @@ def login():
                 form.password.data = ''
                 
                 #Default
-                #return redirect('views.home')
+                return redirect(url_for('views.home'))
 
                 # Method Two
                 next = request.args.get('next')
                 #current_app.logger.info(next)
-                if not is_safe_url(next):
-                    return abort(400)
-                else:
-                    return redirect(next or url_for('views.home'))
+                #if not is_safe_url(next):
+                #    return abort(400)
+                #else:
+                #    return redirect(next or url_for('views.home'))
 
                 # Method Three
                 #next_url = request.form.get("next")

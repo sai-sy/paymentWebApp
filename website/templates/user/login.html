@@ -8,7 +8,7 @@
     {% block content %}
     <div class="shadow p-3 mb-5 bg-body rounded">
     <h3 align="center">Login</h3>
-    <form method="POST">
+    <form method="POST" action="{{url_for('auth.lgin')}}">
         {{ form.hidden_tag() }}
         {{ form.email.label(class='form-label')}}
         {{ form.email(class='form-control')}}

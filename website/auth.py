@@ -48,19 +48,19 @@ def login():
                 # Method Two
                 next = request.args.get('next')
                 current_app.logger.info(next)
-                if not is_safe_url(next):
-                    return abort(400)
-                else:
-                    return redirect(next or url_for('views.home'))
+                #if not is_safe_url(next):
+                    #return abort(400)
+                #else:
+                    #return redirect(next or url_for('views.home'))
 
                 # Method Three
                 next_url = request.form.get("next")
-                if next_url:
-                    return redirect(next_url)
-                return redirect(url_for("views.home"))
-                # is_safe_url should check if the url is safe for redirects.
-                # See http://flask.pocoo.org/snippets/62/ for an example.
-                return redirect(url_for('views.home' or next))
+                #if next_url:
+                    #return redirect(next_url)
+                #return redirect(url_for('views.home' or next))
+
+                # Method Four
+                return redirect(request.args.get("next") or url_for("admin"))
             else:
                 form.email.data = ''
                 form.password.data = ''

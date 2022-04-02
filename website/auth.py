@@ -1,3 +1,4 @@
+from nis import cat
 from flask import Blueprint, render_template, request, flash, redirect, url_for, Flask, abort, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user, login_manager
@@ -41,6 +42,7 @@ def login():
 
         user = Users.query.filter_by(email=email).first()
         if user:
+            flash('user in', category='success')
             if check_password_hash(user.password_hash, password):
                 flash('Logged in successfully!', category='success')
                 login_user(user, remember=True)

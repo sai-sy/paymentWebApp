@@ -11,6 +11,7 @@ class Config:
     UPLOAD_EXTENSIONS = ['.jpg', '.png', '.pdf']
     STATIC_FOLDER = 'static'
     TEMPLATES_FOLDER = 'templates'
+    SESSION_COOKIE_SECURE = True
 
 class ProdConfig(Config):
     basedir = path.abspath(path.dirname(__file__))

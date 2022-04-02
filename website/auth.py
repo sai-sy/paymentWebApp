@@ -74,6 +74,7 @@ def login():
                 form.password.data = ''
                 flash('Incorrect password, ty again.', category='error')
         else:
+            current_app.logger.info('enter else')
             form.email.data = ''
             form.password.data = ''
             flash('Email does not exist', category='error')

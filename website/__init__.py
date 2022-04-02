@@ -32,6 +32,7 @@ def create_app(name):
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/main'
     db.init_app(app)
     migrate.init_app(app, db)
+    csrf.init_app(app)
     
     #migrate = Migrate(app, db)
     

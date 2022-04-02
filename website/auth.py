@@ -17,11 +17,6 @@ from .models.users import Users, LoginForm, SignUpForm
 
 auth = Blueprint('auth', __name__)
 
-@login_manager.unauthorized_handler
-def handle_needs_login():
-    flash("You have to be logged in to access this page.")
-    return redirect(url_for('auth.login', next=request.endpoint))
-
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
@@ -42,7 +37,6 @@ def login():
 
         user = Users.query.filter_by(email=email).first()
         if user:
-            flash('user in', category='success')
             if check_password_hash(user.password_hash, password):
                 flash('Logged in successfully!', category='success')
                 login_user(user, remember=True)

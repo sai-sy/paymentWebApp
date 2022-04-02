@@ -48,7 +48,7 @@ def login():
                 form.password.data = ''
                 
                 #Default
-                #return redirect(url_for('views.home'))
+                return redirect('/shift_add')
 
                 # Method Two
                 next = request.args.get('next')
@@ -65,7 +65,7 @@ def login():
                 #return redirect(url_for('views.home') or next)
 
                 # Method Four
-                return redirect(str(request.args.get("next")) or "/shift_add")
+                # return redirect(str(request.args.get("next")) or "/shift_add")
             else:
                 form.email.data = ''
                 form.password.data = ''

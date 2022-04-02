@@ -25,6 +25,7 @@ def is_safe_url(target):
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    current_app.logger.info('enter login')
     email = None
     password = None
     pw_to_check = None
@@ -32,12 +33,18 @@ def login():
     form = LoginForm()
     
     if form.validate_on_submit():
+        current_app.logger.info('enter submit')
+
         email = form.email.data
         password = form.password.data
 
         user = Users.query.filter_by(email=email).first()
         if user:
+            current_app.logger.info('enter user')
+
             if check_password_hash(user.password_hash, password):
+                current_app.logger.info('enter password')
+
                 flash('Logged in successfully!', category='success')
                 login_user(user, remember=True)
                 form.email.data = ''

@@ -33,16 +33,14 @@ def shift_add():
             shift_add_func(form)
             return redirect(url_for('shift_route.shift_add'))
         else:
-            current_app.logger.info('notvalidated')
-            current_app.logger.info(form.errors)            
+            pass
     else:
         form.user.choices = users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
         if form.validate_on_submit():
             shift_add_func(form)
             return redirect(url_for('shift_route.shift_add'))
         else:
-            current_app.logger.info('notvalidated')
-            current_app.logger.info(form.errors) 
+            pass
 
     return render_template('/shift/shift_add.html', form=form)
 

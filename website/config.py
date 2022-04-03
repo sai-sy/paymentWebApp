@@ -12,6 +12,7 @@ class Config:
     STATIC_FOLDER = 'static'
     TEMPLATES_FOLDER = 'templates'
     SESSION_COOKIE_SECURE = True
+    WTF_CSRF_TIME_LIMIT = 30
 
 class ProdConfig(Config):
     basedir = path.abspath(path.dirname(__file__))

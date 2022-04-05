@@ -1,27 +1,31 @@
-# Naming Scheme  
-Under scores for spaces in EVERYTHIING not camel case or hyphens UNLESS class name, then   Capitalized Camel Case  
+# Style Guide
+Please preview /paymentwebapp/README.md
 
 # TODO  
-  
-## Main Pages  
+### Main Pages  
 - [ ] Commission  
+- [ ] Pay Infrustructure
+- [ ] Imports
+    - [ ] Front End
+    - [ ] Back End
+- Exports
+    - [ ] Front End
+    - [ ] Back End
 - [ ] Abstract Stamp  
 - [ ] Payment Stamp  
 - [ ] Campaign Dash  
+- [ ] Receipt Display
 - [ ] User Dash  
     - [ ] Top is a box that displays all content  
     - [ ] if admin  
         - [ ] have edit buttons  
         - [ ] have add commission feed button  
         - [ ] have add commisson receieve button  
-- [ ] Set Up Campaign owners  
-- [ ] 400 and 403 error pages  
-- [ ] Set Up Imports  
-- [ ] Set up pay math  
-- [ ] Set Up Exports  
-    - [ ] Set Up Match Select Page  
-  
-## Production Prep  
+- [ ] Set Up Campaign owners and auto admin  
+- [ ] 400 and 403 error pages   
+- absolute or relative path in production notes git ignore config file section @sshakibbb
+
+### Production Prep  
 - [ ] Code Clean Up  
     - [ ] Standardize Naming  
 - [ ] Environment Clean Up  
@@ -30,14 +34,20 @@ Under scores for spaces in EVERYTHIING not camel case or hyphens UNLESS class na
 - [ ] Database Backup  
     - [ ] cron job  
 
+## Done  
+- [x] Set Up Receipt Import 
+
 ### Migration Tests  
 1. create column  
 2. migrate  
 3. create other column  
 4. migrate  
-  
-## Done  
-- [x] Set Up Receipt Import  
+
+# Development Setup
+### Get the personal config file git ignored
+- In class ```DevConfig```, update path for .env file  
+- Ensure Git ignores local changes to the config file using the following command:  
+    ```git update-index --assume-unchanged <path>``` where ```<path>``` represents the path to config.py
   
 ## Side ToDos  
 - [ ] Set Up Flask Environment  

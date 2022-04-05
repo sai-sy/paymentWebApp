@@ -3,6 +3,9 @@ Please preview /paymentwebapp/README.md
 
 # TODO  
 ### Main Pages  
+- [ ] Campaign Ownership
+    - [ ] Each Campaign Should Create a code and have a many-to-many relationship with users
+    - [ ] Each Campaign Should  
 - [ ] Commission  
 - [ ] Pay Infrustructure
 - [ ] Imports

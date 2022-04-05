@@ -1,10 +1,7 @@
-from nis import cat
 from flask import Blueprint, render_template, request, flash, redirect, url_for, Flask, abort, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user, login_manager
 from urllib.parse import urlparse, urljoin
-
-from paymentWebApp.website import views
 #Internal
 from . import db
 #Flask WTF
@@ -125,12 +122,7 @@ def signup():
             form.email.data = ''
             flash("User Added Successfully!", category='success')
             login_user(user, remember=True)
-            #next_url = request.form.get("next")
-            #if next_url:
-            #    return redirect(next_url)
-            #return redirect(url_for("views.home"))
-            next = request.args.get('next')
-            #return redirect(url_for('views.home'))
+            return redirect(url_for('views.home'))
     return render_template('/user/signup.html', form=form, name=first_name)
 
 @auth.route("/update/<int:id>", methods=['GET', 'POST'])
@@ -168,7 +160,7 @@ def user_delete(id):
         db.session.delete(user_to_delete)
         db.session.commit()
         flash("User Deleted Successfully", category='success')
-        return redirect(url_for('views.home'))
+        return redirect('/shift_add')
     except:
         flash("User Was Not Deleted Successfully", category='error')
         return redirect(url_for('views.user_list'))

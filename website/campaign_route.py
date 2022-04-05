@@ -8,16 +8,16 @@ from wtforms.validators import DataRequired
 from . import db
 from .models.users import Users
 from .models.people import People
-from .models.campaigns import CampaignForm, Campaigns, admins
+from .models.campaigns import CampaignForm, Campaigns, admins, users_under_campaign
+from .helper_functions.uniqueHex import uniqueCampaignHex
 campaign_route = Blueprint('campaign_route', __name__)
 
 @campaign_route.route('/campaign_add', methods=['GET', 'POST'])
 @login_required
-def campaign_add():
+def campaign_create():
     form = CampaignForm()
-    choiceMath = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
-    form.admins.choices = choiceMath
-    form.candidate.choices = choiceMath
+    form.admins.choices = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
+    form.candidate.choices = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
     if form.validate_on_submit():
         alias_check = form.alias.data
         print('looking')
@@ -34,23 +34,31 @@ def campaign_add():
                 year = form.year.data,
                 gov_level = form.gov_level.data,
                 owner_id = current_user.id,
+                hex_code = uniqueCampaignHex(Campaigns)
             )
             db.session.add(campaign)
             db.session.commit()
 
-            # Update Owner
-            owner = Users.get_or_404(current_user.id)
+            # Update Owner to Admin
+            current_user_id = current_user.id
+            owner = Users.query.get_or_404(current_user_id)
             owner.system_level_id = 4
-            # Create Admin Table
+
+            # Add to Admin Table and User Under Campaign Table
             campaign = Campaigns.query.filter_by(alias=alias_check).first()
-            #campaign.admins.append(form.admins.data)
+
             for dataItem in form.admins.data:
+                admin = Users.query.get_or_404(dataItem)
+                admin.system_level_id = 4
                 db.session.execute(admins.insert().values(user_id=dataItem, campaign_id=campaign.id))
-                db.session.commit()
+                db.session.execute(users_under_campaign.insert().values(user_id=dataItem, campaign_id=campaign.id))
 
             db.session.execute(admins.insert().values(user_id=current_user.id, campaign_id = campaign.id))
+            db.session.execute(users_under_campaign.insert().values(user_id=current_user.id, campaign_id = campaign.id))
 
-            #Empty DataBase
+            db.session.commit()
+
+            #Empty Form
             form.candidate.data = ''
             form.alias.data = ''
             form.alias.data = ''
@@ -60,7 +68,7 @@ def campaign_add():
             flash("Campaign Added Successfully!", category='success')
             return redirect(url_for('views.home'))
 
-    return render_template('/campaign/campaign_add.html', form=form)
+    return render_template('/campaign/campaign_create.html', form=form)
 
 @campaign_route.route("/campaign_update/<int:id>", methods=['GET', 'POST'])
 @login_required

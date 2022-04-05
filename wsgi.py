@@ -1,5 +1,5 @@
 from website import create_app, db
-from website.extensions_inits import load_preset_data
+from website.initializers import load_preset_data
 
 def start(name):
     app = create_app(name)

@@ -11,8 +11,6 @@ class Config:
     UPLOAD_EXTENSIONS = ['.jpg', '.png', '.pdf']
     STATIC_FOLDER = 'static'
     TEMPLATES_FOLDER = 'templates'
-    SESSION_COOKIE_SECURE = True
-    WTF_CSRF_TIME_LIMIT = 30
 
 class ProdConfig(Config):
     basedir = path.abspath(path.dirname(__file__))
@@ -24,6 +22,8 @@ class ProdConfig(Config):
     SQLALCHEMY_DATABASE_URI = environ.get('PROD_DATABASE_URI')
     SECRET_KEY = environ.get('SECRET_KEY')
     SERVER_NAME = environ.get('SERVER_NAME')
+    SESSION_COOKIE_SECURE = True
+    WTF_CSRF_TIME_LIMIT = 30
 
 class DevConfig(Config):
     basedir = path.abspath(path.dirname(__file__))
@@ -33,6 +33,7 @@ class DevConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = environ.get('DEV_DATABASE_URI')
     SECRET_KEY = environ.get('SECRET_KEY')
+    
 class ProdTestConfig(DevConfig):
     '''
     Developer config settings but production database server

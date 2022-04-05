@@ -1,9 +1,9 @@
-from ast import Try
-
-from mysqlx import IntegrityError
+# IMPORT MODELS
 from .models.shiftstamps import Activities
 from .models.users import Users, SystemLevels
 from .models.admincommands import AdminPassword
+from .models.campaigns import GovLevels
+
 from sqlalchemy import exc
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash
@@ -39,6 +39,15 @@ def load_preset_data(app, db):
         adder(app, db, litdrop)
         adder(app, db, admin)
         adder(app, db, general)
+
+    # ADD GOVERNMENT LEVELS
+    federal = GovLevels(level="Federal")
+    provincial = GovLevels(level="Provincial")
+    munical = GovLevels(level="Municipal")
+    with app.app_context():
+        adder(app, db, federal)
+        adder(app, db, provincial)
+        adder(app, db, munical)
 
     # ADD SQL ACCESS PASSWORD
     admin_password = AdminPassword(password=generate_password_hash('alexSpears'))

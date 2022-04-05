@@ -8,13 +8,6 @@ from wtforms.validators import DataRequired, EqualTo
 from sqlalchemy.orm import declarative_base
 from datetime import datetime
 
-from enum import Enum, auto
-
-class GovLevels(Enum):
-    Municipal = auto()
-    Provincial = auto()
-    Federal = auto()
-
 gov_levels = [("1", 'Municipal'), ('2', 'Provincial'), ('3', 'Federal')]
 
 def get_value_label_gov():
@@ -22,6 +15,8 @@ def get_value_label_gov():
     for value, label in enumerate(GovLevels):
         arr.append((value, str(label).strip('GovLevels.')))
 
+class GovLevels(db.Model):
+    level = db.Column(db.String(50), nullable=False, primary_key=true)
 
 class CampaignForm(FlaskForm):
     candidate = StringField('Candidate', validators=[DataRequired()])
@@ -37,6 +32,11 @@ admins = db.Table('admins', db.Model.metadata,
     db.Column('campaign_id', db.Integer, db.ForeignKey('campaigns.id'))
 )
 
+users_under_campaign = db.Table('users_under_campaign', db.Model.metadata, 
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id')), 
+    db.Column('campaign_id', db.Integer, db.ForeignKey('campaigns.id'))
+)
+
 class Campaigns(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     #if this gets uncommented, make sure to uncomment Users.py candidacies
@@ -46,15 +46,17 @@ class Campaigns(db.Model):
     alias = db.Column(db.String(50), nullable=False)
     riding = db.Column(db.String(200), nullable=False)
     year = db.Column(db.Integer, nullable=False)
-    gov_level = db.Column(db.String(200), nullable=False)
+    gov_level = db.Column(db.String(50), nullable=False)
     pay = db.Column(db.Float, nullable=False, default=15.0)
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     owner = db.relationship('Users', back_populates='campaigns_owned')
     admins = db.relationship('Users', secondary=admins, back_populates="admin_campaigns")
+    users_under = db.relationship('Users', secondary=users_under_campaign, back_populates="campaigns_under")
     shiftstamps_on_campaign = db.relationship('ShiftStamps', back_populates='campaign')
     paystamps_on_campaign = db.relationship('PayStamps', back_populates='campaign')
     abstractstamps_on_campaign = db.relationship('AbstractStamps', back_populates='campaign')
     receipts = db.relationship('Receipts', back_populates='campaign')
+    hex_code = db.Column(db.String(30), nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __init__(self, **kwargs):
@@ -70,3 +72,4 @@ class Campaigns(db.Model):
 
         db.session.commit()
     
+    import random

@@ -24,6 +24,14 @@ View the production notes section: Production Prep
 
 Production Notes: /paymentwebapp/production_notes
 
+## Useful Server Commands
+restart nginx `sudo systemctl restart nginx` 
+restart gunicorn `sudo supervisorctl reload`
+nginx config `sudo nano /etc/nginx/sites-enabled/paymentwebapp`
+gunicorn config `sudo nano /etc/supervisor/conf.d/paymentwebapp.conf`
+nginx logs `sudo tail -n 5 -f /var/log/nginx/access.log`
+gunicorn and app logs `sudo tail -n 5 -f /var/log/paymentwebapp/paymentwebapp.err.log`
+
 ## Running Notes
 - Wipe Database using:  
 ```python  
@@ -32,13 +40,6 @@ mycursor.execute(f'CREATE DATABASE {name};')
 ```
 - Then run the app   
 - Then create the database by running ```database_create_all_script()```  
-## Server Commands
-restart nginx `sudo systemctl restart nginx` 
-restart gunicorn `sudo supervisorctl reload`
-nginx config `sudo nano /etc/nginx/sites-enabled/paymentwebapp`
-gunicorn config `sudo nano /etc/supervisor/conf.d/paymentwebapp.conf`
-nginx logs `sudo tail -n 5 -f /var/log/nginx/acess.log`
-gunicorn and app logs `sudo tail -n 5 -f /var/log/paymentwebapp/paymentwebapp.err.log`
 
 ## Migrations  
 ### Setting Up 

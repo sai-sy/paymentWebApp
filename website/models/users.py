@@ -44,6 +44,7 @@ class Users(People, UserMixin):
     #make sure to uncoment Campaigns along with this
     #candidacies = db.relationship('Campaigns', back_populates="candidate")
     admin_campaigns = db.relationship('Campaigns', secondary=admins, back_populates="admins")
+    campaigns_under = db.relationship('Campaigns', secondary=admins, back_populates="users_under")
     campaigns_owned = db.relationship('Campaigns', back_populates='owner')
     shiftstamps = db.relationship('ShiftStamps', back_populates="user")
     paystamps = db.relationship('PayStamps', back_populates="user")

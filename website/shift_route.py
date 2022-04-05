@@ -25,7 +25,13 @@ shift_route = Blueprint('shift_route', __name__)
 @login_required
 def shift_add():
     form = ShiftStampForm()
-    form.campaign.choices = [(str(c.id), str(c.alias))  for c in Campaigns.query.order_by(desc(Campaigns.alias))]
+    campaign_choices = []
+    for c in Campaigns.query.order_by(desc(Campaigns.alias)):
+        for u in c.users_under:
+            if u.id == current_user.id:
+                campaign_choices.append((str(c.id), str(c.alias)))
+
+    form.campaign.choices =campaign_choices
     form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
     if current_user.system_level_id < 3:
         form.user.choices = [(str(current_user.id), str(current_user.first_name + ' ' + current_user.last_name)) for u in Users.query.filter_by(id=current_user.id).order_by('first_name')]
@@ -34,7 +40,28 @@ def shift_add():
             return redirect(url_for('shift_route.shift_add'))
         else:
             pass
+    elif current_user.system_level_id < 8:
+        
+        userChoices = []
+
+        for c in current_user.campaigns_under:
+            for u in c.users_under:
+                tup = (str(u.id), str(u.first_name + ' ' + u.last_name))
+                if tup in userChoices:
+                    continue
+                else:
+                    userChoices.append(tup)
+                
+        form.user.choices = userChoices
+
+        #form.user.choices = users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
+        if form.validate_on_submit():
+            shift_add_func(form)
+            return redirect(url_for('shift_route.shift_add'))
+        else:
+            pass
     else:
+        form.campaign.choices = [(str(c.id), str(c.alias))  for c in Campaigns.query.order_by(desc(Campaigns.alias))]
         form.user.choices = users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
         if form.validate_on_submit():
             shift_add_func(form)

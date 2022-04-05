@@ -1,4 +1,29 @@
 {%extends 'base.html'%}
 {% block content %}
-{% include 'unbuilt.html' %}
+{{current_user.first_name}}
+<strong>Campaigns Owned</strong>
+<table class="table table-hover table-border table-striped">
+{% for campaign in current_user.campaigns_owned%}
+    <tr>
+    <td id="displayData">
+        <a href="">{{
+            campaign.alias}}</a> {{
+            campaign.hex_code}}
+    </td>
+    </tr>
+{%endfor%}
+</table>
+<strong>Campaigns Apart</strong>
+<table class="table table-hover table-border table-striped">
+{% for campaign in current_user.campaigns_owned%}
+    <tr>
+    <td id="displayData">
+        <a href="">{{
+            campaign.alias}}</a> {{
+            campaign.hex_code}}
+    </td>
+    </tr>
+{%endfor%}
+</table>
+
 {% endblock %}

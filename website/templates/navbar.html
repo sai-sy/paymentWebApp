@@ -13,6 +13,9 @@
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('views.profile', id=current_user.id)}}">Profile</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('campaign_route.campaign_create')}}">Join/Create Campaign</a>
+        </li>
         {%if current_user.system_level_id > 3%}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -34,7 +37,6 @@
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="/shift_add">Add Shift</a></li>
             <li><a class="dropdown-item" href="/abstract_add">Add Abstract</a></li>
-            <li><a class="dropdown-item" href="/campaign_add">Add Campaign</a></li>
             <li><a class="dropdown-item" href="/paystamp_upload">Upload Payment Record</a></li>
             <li><a class="dropdown-item" href="/receipt_upload">Upload Receipt</a></li>
             <li><a class="dropdown-item" href="/shift_add">Import</a></li>

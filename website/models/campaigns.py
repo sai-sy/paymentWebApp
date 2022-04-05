@@ -3,7 +3,7 @@ from .. import db
 from datetime import datetime
 #Flask WTF
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, EmailField, SelectField, IntegerField, SelectMultipleField
+from wtforms import StringField, SubmitField, PasswordField, EmailField, SelectField, IntegerField, SelectMultipleField, FloatField
 from wtforms.validators import DataRequired, EqualTo
 from sqlalchemy.orm import declarative_base
 from datetime import datetime
@@ -24,7 +24,12 @@ class CampaignForm(FlaskForm):
     riding = StringField('Riding:', validators=[DataRequired()])
     year = IntegerField('Election Year:', validators=[DataRequired()])
     gov_level = SelectField('Gov Level:', validators=[DataRequired()], choices=gov_levels)
+    hourly_rate = FloatField('Hourly Value:')
     admins = SelectMultipleField('Admins (Ctl + Click to select multiple):')
+    submit = SubmitField('Submit')
+
+class JoinCampaignForm(FlaskForm):
+    hex_code=StringField('Enter the proved code for your campaign')
     submit = SubmitField('Submit')
 
 admins = db.Table('admins', db.Model.metadata, 
@@ -57,6 +62,7 @@ class Campaigns(db.Model):
     abstractstamps_on_campaign = db.relationship('AbstractStamps', back_populates='campaign')
     receipts = db.relationship('Receipts', back_populates='campaign')
     hex_code = db.Column(db.String(30), nullable=False)
+    hourly_rate = db.Column(db.Float, nullable=False, default=15.0)
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __init__(self, **kwargs):

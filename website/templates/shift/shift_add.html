@@ -6,7 +6,10 @@
 <body>
     {% extends 'base.html' %}
     {% block content %}
-    <div class="shadow p-3 mb-5 bg-body rounded">
+    <div class="d-grid gap-2 mx-auto">
+        <a href="{{url_for('campaign_route.campaign_join')}}" class="btn btn-outline-danger" type="button">If you have no campaigns yet | JOIN A CAMPAIGN!</button></a>
+    </div>
+    <div class="shadow p-3 mb-5 bg-body rounded" id="shift_add_form">
     <h3 align="center">Add Shift</h3>
     <form method="POST">
         {{ form.hidden_tag() }}

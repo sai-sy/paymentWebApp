@@ -27,7 +27,7 @@
         <br/>
         {{ form.hidden_tag() }}
         {{ form.image.label(class='form-label')}}
-        {{ form.image()}}
+        {{ form.image(class="form-control", type="file", id="formFile")}}
         <br/> 
         {{ form.hidden_tag() }}
         {{ form.submit(class='btn btn-danger')}}

@@ -1,3 +1,4 @@
+from email.policy import default
 from sqlalchemy import ForeignKey
 from .. import db
 from datetime import datetime
@@ -37,6 +38,7 @@ class ShiftStamps(db.Model):
     #campaign = db.relationship('Campaigns')
     activity_id = db.Column(db.String(50), ForeignKey('activities.activity'))
     activity = db.relationship("Activities", back_populates='shiftstamps')
+    hourly_rate = db.Column(db.Float, nullable=False, default=15.0)
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __repr__(self) -> str:

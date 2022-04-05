@@ -1,5 +1,5 @@
 from secrets import choice
-from flask import Blueprint, jsonify, redirect, render_template, request, flash, jsonify, Flask, url_for
+from flask import Blueprint, current_app, jsonify, redirect, render_template, request, flash, jsonify, Flask, url_for
 from flask_login import login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from sqlalchemy import insert
@@ -8,17 +8,18 @@ from wtforms.validators import DataRequired
 from . import db
 from .models.users import Users
 from .models.people import People
-from .models.campaigns import CampaignForm, Campaigns, admins, users_under_campaign
+from .models.campaigns import CampaignForm, Campaigns, admins, users_under_campaign, JoinCampaignForm
 from .helper_functions.uniqueHex import uniqueCampaignHex
 campaign_route = Blueprint('campaign_route', __name__)
 
-@campaign_route.route('/campaign_add', methods=['GET', 'POST'])
+@campaign_route.route('/campaign/add', methods=['GET', 'POST'])
 @login_required
 def campaign_create():
     form = CampaignForm()
     form.admins.choices = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
     form.candidate.choices = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
     if form.validate_on_submit():
+        current_app.logger.info('1')
         alias_check = form.alias.data
         print('looking')
         campaign = Campaigns.query.filter_by(alias=alias_check).first()
@@ -34,7 +35,8 @@ def campaign_create():
                 year = form.year.data,
                 gov_level = form.gov_level.data,
                 owner_id = current_user.id,
-                hex_code = uniqueCampaignHex(Campaigns)
+                hex_code = uniqueCampaignHex(Campaigns),
+                hourly_rate = form.hourly_rate.data
             )
             db.session.add(campaign)
             db.session.commit()
@@ -70,7 +72,7 @@ def campaign_create():
 
     return render_template('/campaign/campaign_create.html', form=form)
 
-@campaign_route.route("/campaign_update/<int:id>", methods=['GET', 'POST'])
+@campaign_route.route("/campaign/update/<int:id>", methods=['GET', 'POST'])
 @login_required
 def campaign_update(id):
     form = CampaignForm()
@@ -99,7 +101,7 @@ def campaign_update(id):
     return render_template('/campaign/campaign_update.html', form=form, campaign_to_update=campaign_to_update)
 
 
-@campaign_route.route('/campaign_list')
+@campaign_route.route('/campaign/list')
 @login_required
 def campaign_list():
     campaigns_grabbed = Campaigns.query.order_by(Campaigns.date_added)
@@ -117,3 +119,20 @@ def campaign_delete(id):
     except:
         flash("Campaign Was Not Deleted Successfully", category='error')
         return redirect(url_for('campaign_route.campaign_list'))
+
+
+@campaign_route.route('/campaign/join')
+@login_required
+def campaign_join():
+    form = JoinCampaignForm()
+    if form.validate_on_submit():
+        campaign = Campaigns.query.filter_by(hex_code=form.hex_code)
+        if campaign:
+            db.session.execute(users_under_campaign.insert().values(user_id=current_user.id, campaign_id=campaign.id))
+            db.session.commit()
+            flash('You have successfuly joined this campaign!', category='success')
+            return redirect(url_for('views.home'))
+        else:
+            flash('No campaign with that code was found', category='error')
+    
+    return render_template('/campaign/campaign_join.html', form=form)

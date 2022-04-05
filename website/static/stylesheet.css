@@ -16,6 +16,13 @@ body {
     margin-top: 0.5rem;
 }
 
+#shift_add_form {
+    margin-top: 1rem;
+}
+
+.navbar-brand {
+    padding-left: 1.25rem;;
+}
 /*
 a {
     color: #007bff;

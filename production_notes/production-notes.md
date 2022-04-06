@@ -10,6 +10,7 @@ Please preview /paymentwebapp/README.md
             - make a program that willl throw an error, see what the error is, parse it and do things for specifc attributes
             - https://stackoverflow.com/questions/11313490/how-to-find-the-offending-attribute-with-a-sqlalchemy-integrityerror
 - [ ] Receipts File Directory pointing manually not off of config file
+- [ ] Self-Referential Many-to-Many relationship for commission
 - [ ] Pay Infrustructure
     - [x] Attatch a rate to each campaign
     - [x] Attatch a rate to each shift

@@ -1,30 +1,35 @@
 # Style Guide
-Please preview /paymentwebapp/README.md
+Please preview `/paymentwebapp/README.md`
 
 # TODO  
 ### Main Pages  
-- [ ] Git ignore contents of upload folder, not file structure 
-- [ ] Try Catch in auth.signup
-    -This try-except is made to work for unique alias'
-        - Desc: If something else throws that error, it'll get stuck in an infinite loop. There needs to be a better solution for this
-        - Solutions:
-            - make a program that willl throw an error, see what the error is, parse it and do things for specifc attributes
-            - https://stackoverflow.com/questions/11313490/how-to-find-the-offending-attribute-with-a-sqlalchemy-integrityerror
-- [ ] Receipts File Directory pointing manually not off of config file
-- [ ] Self-Referential Many-to-Many relationship for commission
-- [ ] Pay Infrustructure
-    - [x] Attatch a rate to each campaign
-    - [x] Attatch a rate to each shift
-    - [ ] Make the shift rate based on the campaign rate
-    - [ ] retroactive pay change on output report
-- [ ] Imports
-    - [ ] Front End
-    - [ ] Back End
-- [ ] Exports
-    - [ ] Front End
-    - [ ] Back End
-- [ ] Campaign Dash  
-- [ ] Receipt Display
+- [ ] Git ignore contents of upload folder, not file structure  
+- [ ] Try Catch in auth.signup  
+    - This try-except is made to work for unique alias'  
+        - Desc: If something else throws that error, it'll get stuck in an infinite loop. There needs to be a better solution for this  
+        - Solutions:  
+            - make a program that will throw an error, see what the error is, parse it and do things for specifc attributes  
+            - https://stackoverflow.com/questions/11313490/how-to-find-the-offending-attribute-with-a-sqlalchemy-integrityerror  
+- [ ] Receipts File Directory pointing manually not off of config file  
+- [ ] Self-Referential Many-to-Many relationship for commission  
+- [ ] Pay Infrustructure  
+    - [x] Attatch a rate to each campaign  
+    - [x] Attatch a rate to each shift  
+    - [ ] Make the shift rate based on the campaign rate  
+    - [ ] retroactive pay change on output report  
+- [ ] Imports  
+    - [x] Front End  
+    - [ ] Back End  
+- [ ] Exports  
+    - [ ] Front End  
+    - [ ] Back End  
+    - [ ] Bulk Export
+        - [ ] Naming scheme: Date Added_Version
+- [ ] Campaign Dash
+- [ ] Campaign List
+    - [ ] Filter campaigns by admin status
+    - [ ] 
+- [ ] Receipt Display  
 - [ ] User Dash  
     - [ ] Top is a box that displays all content  
     - [ ] if admin  
@@ -33,12 +38,12 @@ Please preview /paymentwebapp/README.md
         - [ ] have add commisson receieve button  
 - [ ] Set Up Campaign owners and auto admin  
 - [ ] Error pages   
-    - [x] 403
-    - [x] 404
-    - [x] 500
-    - [ ] 400
-    - [ ] 512  
-- absolute or relative path in production notes git ignore config file section @sshakibbb
+    - [x] 403  
+    - [x] 404  
+    - [x] 500  
+    - [ ] 400  
+    - [ ] 512
+    - [x] absolute or relative path in production notes git ignore config file section @sshakibbb  
 
 ### Production Prep  
 - [ ] Code Clean Up  
@@ -48,27 +53,27 @@ Please preview /paymentwebapp/README.md
     - [ ] Test migration process  
 - [ ] Database Backup  
     - [ ] cron job  
-
+  
 ## Done  
-- [x] Set Up Receipt Import 
-- [x] Campaign Ownership
-    - [x] Each Campaign Should Create a code and have a many-to-many relationship with users
+- [x] Set Up Receipt Import  
+- [x] Campaign Ownership  
+    - [x] Each Campaign Should Create a code and have a many-to-many relationship with users  
 - [x] Abstract Stamp  
 - [x] Payment Stamp  
-- [x] User alias
+- [x] User alias  
 - [x] Commission  
-
+  
 ### Migration Tests  
 1. create column  
 2. migrate  
 3. create other column  
 4. migrate  
-
-# Development Setup
-### Get the personal config file git ignored
+  
+# Development Setup  
+### Get the personal config file git ignored  
 - In class ```DevConfig```, update path for .env file  
 - Ensure Git ignores local changes to the config file using the following command:  
-    ```git update-index --assume-unchanged <path>``` where ```<path>``` represents the path to config.py
+    ```git update-index --assume-unchanged <path>``` where ```<path>``` represents the path to config.py  
   
 ## Side ToDos  
 - [ ] Set Up Flask Environment  

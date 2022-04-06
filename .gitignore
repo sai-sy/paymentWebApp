@@ -1,5 +1,6 @@
 # Directories
-assets/receipts
+uploads/receipts
+uploads/imports
 migrations/
 
 # Byte-compiled / optimized / DLL files

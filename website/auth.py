@@ -8,6 +8,7 @@ from . import db
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, EmailField
 from wtforms.validators import DataRequired
+from sqlalchemy import exc
 #Models
 from .models.people import People
 from .models.users import Users, LoginForm, SignUpForm
@@ -102,16 +103,39 @@ def signup():
         else:
             # Hash the password!!!
             hashed_pw = generate_password_hash(form.password1.data, "sha256")
-            user = Users(
-            first_name=form.first_name.data, 
-            last_name=form.last_name.data,
-            email=form.email.data, 
-            phone=form.phone.data, 
-            password_hash=hashed_pw,            
-            )
 
-            db.session.add(user)
-            db.session.commit()
+            # Create User with Unique Alias
+            count = 0
+            while (True):
+                if count == 0:
+                    alias_input = str(form.first_name.data).lower()
+                elif count == 1:
+                    alias_input = str(form.last_name.data).lower()
+                elif count == 2:
+                    alias_input = str(form.first_name.data).lower() + '_' + str(form.last_name.data).lower()
+                else:
+                    alias_input = alias_input + str(count-2)
+                try:
+                    user = Users(
+                    first_name=form.first_name.data,
+                    last_name=form.last_name.data,
+                    alias=alias_input,
+                    email=form.email.data, 
+                    phone=form.phone.data, 
+                    password_hash=hashed_pw,            
+                    )
+
+                    db.session.add(user)
+                    db.session.commit()
+
+                except exc.IntegrityError as e:
+                    string = 'Integrity Error Raised' + ' ' + str(count)
+                    current_app.logger.info(string)
+                    db.session.rollback()
+                    count += 1
+                    continue
+
+                break
 
             first_name = form.first_name.data
             form.first_name.data = ''

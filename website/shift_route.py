@@ -1,6 +1,10 @@
-from calendar import c
-from dataclasses import dataclass
-from secrets import choice
+# PYTHON DEFAULT
+import os
+
+# HELPER FUNCTIONS
+from .helper_functions.narrow_campaigns import all_campaigns_user_in, users_in_campaign_under_user
+
+# FLASK
 from flask import Blueprint, jsonify, redirect, render_template, current_app, request, flash, jsonify, Flask, url_for, abort
 from flask_login import login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -9,29 +13,24 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from werkzeug.utils import secure_filename
 
+# SQLALCHEMY MODELS
+from . import db
 from .models.abstracts import AbstractForm, AbstractStamps
 from .models.paystamps import PayStamps, PayStampForm
-from .models.campaigns import Campaigns
-from . import db
+from .models.campaigns import CampaignForm, Campaigns, admins, users_under_campaign, JoinCampaignForm
 from .models.users import Users
 from .models.people import People
 from .models.shiftstamps import ShiftStampForm, ShiftStamps, Activities
 from .models.receipts import ReceiptForm, Receipts
 from datetime import datetime
-import os
+
 shift_route = Blueprint('shift_route', __name__)
 
 @shift_route.route('/shift_add', methods=['GET', 'POST'])
 @login_required
 def shift_add():
     form = ShiftStampForm()
-    campaign_choices = []
-    for c in Campaigns.query.order_by(desc(Campaigns.alias)):
-        for u in c.users_under:
-            if u.id == current_user.id:
-                campaign_choices.append((str(c.id), str(c.alias)))
-
-    form.campaign.choices =campaign_choices
+    form.campaign.choices = all_campaigns_user_in(current_user)
     form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
     if current_user.system_level_id < 3:
         form.user.choices = [(str(current_user.id), str(current_user.first_name + ' ' + current_user.last_name)) for u in Users.query.filter_by(id=current_user.id).order_by('first_name')]
@@ -41,18 +40,8 @@ def shift_add():
         else:
             pass
     elif current_user.system_level_id < 8:
-        
-        userChoices = []
-
-        for c in current_user.campaigns_under:
-            for u in c.users_under:
-                tup = (str(u.id), str(u.first_name + ' ' + u.last_name))
-                if tup in userChoices:
-                    continue
-                else:
-                    userChoices.append(tup)
                 
-        form.user.choices = userChoices
+        form.user.choices = users_in_campaign_under_user(current_user)
 
         #form.user.choices = users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
         if form.validate_on_submit():
@@ -62,7 +51,7 @@ def shift_add():
             pass
     else:
         form.campaign.choices = [(str(c.id), str(c.alias))  for c in Campaigns.query.order_by(desc(Campaigns.alias))]
-        form.user.choices = users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
+        form.user.choices = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
         if form.validate_on_submit():
             shift_add_func(form)
             return redirect(url_for('shift_route.shift_add'))
@@ -168,12 +157,13 @@ def receipt_upload_func(form: ReceiptForm):
     user = Users.query.filter_by(id=form.users.data).first()
     campaign = Campaigns.query.filter_by(id=form.campaigns.data).first()
     db_filename = campaign.alias + '_' + user.first_name + '_' + user.last_name + '_' + '_'+ str(form.date.data)
-    while(True):
-        i = 1
+    i = 1
+    while(True):        
         searched_file = Receipts.query.filter_by(image_name=db_filename).first()
         if searched_file:
             db_filename = db_filename + '_' + str(i) 
             i = i + 1
+            continue
         else:
             receipt = Receipts(
                 user_id = form.users.data,

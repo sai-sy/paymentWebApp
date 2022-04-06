@@ -29,7 +29,7 @@ class Receipts(db.Model):
     campaign = db.relationship('Campaigns', back_populates='receipts')
     date = db.Column(db.DateTime, nullable=False)
     amount = db.Column(db.Float, nullable=False)
-    image_name = db.Column(db.String(500), nullable=False)
+    image_name = db.Column(db.String(1000), nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
     
     __mapper_args__ = {

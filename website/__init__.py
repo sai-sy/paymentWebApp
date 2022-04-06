@@ -42,6 +42,7 @@ def create_app(name):
         from .auth import auth
         from .campaign_route import campaign_route
         from .shift_route import shift_route
+        from .import_route import import_route
 
         # Models
         from .models.abstracts import AbstractStamps
@@ -52,11 +53,13 @@ def create_app(name):
         from .models.shiftstamps import ShiftStamps, Activities
         from .models.admincommands import AdminCommands
         from .models.receipts import Receipts
+        from .models.imports import Imports
 
         app.register_blueprint(views, url_prefix='/')
         app.register_blueprint(auth, url_prefix='/')
         app.register_blueprint(campaign_route, url_prefix='/')
         app.register_blueprint(shift_route, url_prefix='/')
+        app.register_blueprint(import_route, url_prefix='/')
 
         login_manager = LoginManager()
         login_manager.login_view = 'auth.login'

@@ -34,9 +34,16 @@ class SystemLevels(db.Model):
     level = db.Column(db.String(50), nullable=False)
     users = db.relationship('Users', back_populates='system_level')
 
+commissions = db.Table('commmissions', db.Model.metadata, 
+    db.Column('commission_parent', db.Integer, db.ForeignKey('users.id')), 
+    db.Column('commission_child', db.Integer, db.ForeignKey('users.id')), 
+    db.Column('campaign_id', db.Integer, db.ForeignKey('campaigns.id'))
+)
+
 class Users(People, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, ForeignKey('people.id'), primary_key=True)
+    alias =db.Column(db.String(100), nullable=False, unique=True)
     #password = db.Column(db.String(150), nullable=False)
     password_hash = db.Column(db.String(150), nullable=False)
     system_level_id = db.Column(db.Integer, ForeignKey('systemlevels.numeric_level'), nullable=False,  default='1')
@@ -44,6 +51,8 @@ class Users(People, UserMixin):
     #make sure to uncoment Campaigns along with this
     #candidacies = db.relationship('Campaigns', back_populates="candidate")
     admin_campaigns = db.relationship('Campaigns', secondary=admins, back_populates="admins")
+    commission_parent = db.relationship('Users', secondary=commissions, back_populates="commmission_child")
+    commission_child = db.relationship('Users', secondary=commissions, back_populates="commmission_parent")
     campaigns_under = db.relationship('Campaigns', secondary=admins, back_populates="users_under")
     campaigns_owned = db.relationship('Campaigns', back_populates='owner')
     shiftstamps = db.relationship('ShiftStamps', back_populates="user")

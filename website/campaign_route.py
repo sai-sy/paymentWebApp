@@ -121,7 +121,7 @@ def campaign_delete(id):
         return redirect(url_for('campaign_route.campaign_list'))
 
 
-@campaign_route.route('/campaign/join')
+@campaign_route.route('/campaign/join', methods=['GET', 'POST'])
 @login_required
 def campaign_join():
     form = JoinCampaignForm()

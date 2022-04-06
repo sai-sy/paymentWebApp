@@ -126,7 +126,7 @@ def campaign_delete(id):
 def campaign_join():
     form = JoinCampaignForm()
     if form.validate_on_submit():
-        campaign = Campaigns.query.filter_by(hex_code=form.hex_code)
+        campaign = Campaigns.query.filter_by(hex_code=form.hex_code.data).first()
         current_app.logger.info(campaign)
         if campaign:
             db.session.execute(users_under_campaign.insert().values(user_id=current_user.id, campaign_id=campaign.id))

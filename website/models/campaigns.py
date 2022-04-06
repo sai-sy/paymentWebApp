@@ -61,7 +61,7 @@ class Campaigns(db.Model):
     paystamps_on_campaign = db.relationship('PayStamps', back_populates='campaign')
     abstractstamps_on_campaign = db.relationship('AbstractStamps', back_populates='campaign')
     receipts = db.relationship('Receipts', back_populates='campaign')
-    hex_code = db.Column(db.String(30), nullable=False)
+    hex_code = db.Column(db.String(30), nullable=False, unique=True)
     hourly_rate = db.Column(db.Float, nullable=False, default=15.0)
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
 

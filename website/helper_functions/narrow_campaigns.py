@@ -11,7 +11,6 @@ def all_campaigns_user_in(current_user):
         for u in c.users_under:
             if u.id == current_user.id:
                 campaign_choices.append((str(c.id), str(c.alias)))
-
     return campaign_choices
 
 def all_campaigns_user_admins(current_user):
@@ -24,6 +23,17 @@ def all_campaigns_user_admins(current_user):
             if u.id == current_user.id:
                 campaign_choices.append((str(c.id), str(c.alias)))
 
+    return campaign_choices
+
+def all_campaigns_user_admins_list(current_user):
+    '''
+    Returns a list of all campaigns a user is a part of
+    '''
+    campaign_choices = []
+    for c in Campaigns.query.order_by(desc(Campaigns.alias)):
+        for u in c.users_under:
+            if u.id == current_user.id:
+                campaign_choices.append(c)
     return campaign_choices
 
 def users_in_campaign_under_user(current_user):

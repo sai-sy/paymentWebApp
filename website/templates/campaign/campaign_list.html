@@ -1,10 +1,25 @@
 {%extends 'base.html'%}
 {% block content %}
 <div class="shadow p-3 mb-5 bg-body rounded">
-    <h3 id='list_header' align="center">Campaign List</h3>
+    <h3 id='list_header' align="center">Campaigns Owned</h3>
 </div>
 <table class="table table-hover table-border table-striped">
-{% for campaign in campaigns%}
+    {% for campaign in current_user.campaigns_owned%}
+        <tr>
+        <td id="displayData">
+            <a href="">{{
+                campaign.alias}}</a> {{
+                campaign.hex_code}}
+        </td>
+        <td id="deleteTable"><a href="{{url_for('campaign_route.campaign_delete', id=campaign.id)}}" role="button" class="btn btn-outline-danger" >Delete</button></td>
+        </tr>
+    {%endfor%}
+    </table>
+<div class="shadow p-3 mb-5 bg-body rounded">
+    <h3 id='list_header' align="center">Campaigns Administrated</h3>
+</div>
+<table class="table table-hover table-border table-striped">
+{% for campaign in current_user.admin_campaigns%}
     <tr>
     <td id="displayData">
         {{campaign.id}}. <a href="{{
@@ -13,9 +28,9 @@
             campaign.alias}}</a> - {{
             campaign.riding}}
     </td>
-    <td id="deleteTable"><a href="{{url_for('campaign_route.campaign_delete', id=campaign.id)}}" role="button" class="btn btn-outline-danger" >Delete</button></td>
     </tr>
 {%endfor%}
 </table>
 {% endblock %}
+
 

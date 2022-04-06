@@ -2,7 +2,7 @@
 import os
 
 # HELPER FUNCTIONS
-from .helper_functions.narrow_campaigns import all_campaigns_user_in, users_in_campaign_under_user
+from .helper_functions.narrow_campaigns import all_campaigns_user_admins_list, users_in_campaign_under_user
 from .helper_functions.uniqueHex import uniqueCampaignHex
 
 # FLASK
@@ -123,7 +123,7 @@ def campaign_list():
     if current_user.system_level_id < 3:
         abort(403)
     elif current_user.system_level_id < 8:
-        campaigns_grabbed = all_campaigns_user_in(current_user)
+        campaigns_grabbed = all_campaigns_user_admins_list(current_user)
         return render_template('/campaign/campaign_list.html', campaigns=campaigns_grabbed)
     else:
         campaigns_grabbed = Campaigns.query.order_by(Campaigns.date_added)

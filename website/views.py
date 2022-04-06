@@ -1,7 +1,7 @@
 from re import L
 from sre_constants import SUCCESS
 from click import command
-from flask import Blueprint, jsonify, render_template, request, flash, jsonify, Flask, redirect, url_for, current_app
+from flask import Blueprint, jsonify, render_template, request, flash, jsonify, Flask, redirect, url_for, current_app, abort
 from flask_login import login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
@@ -80,7 +80,7 @@ def secret_admin_closed():
 def user(name):
     return render_template('user.html', user_name=name)
 
-@views.route('/user_list')
+@views.route('/user/list')
 @login_required
 def user_list():
     our_users_grabbed = Users.query.order_by(Users.date_added)
@@ -91,7 +91,7 @@ def user_list():
 def profile(id):
     if str(current_user.id) != id:
         current_app.logger.info(current_user.id==str(id))
-        return render_template('no_access.html')
+        return render_template("no_access.html")
     else:
         return render_template('/user/profile.html', id=id)
 

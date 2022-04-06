@@ -29,7 +29,7 @@ class CampaignForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class JoinCampaignForm(FlaskForm):
-    hex_code=StringField('Enter the proved code for your campaign')
+    hex_code=StringField('Enter the provided code for your campaign')
     submit = SubmitField('Submit')
 
 admins = db.Table('admins', db.Model.metadata, 

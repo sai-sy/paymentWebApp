@@ -14,7 +14,7 @@
           <a class="nav-link" href="{{ url_for('views.profile', id=current_user.id)}}">Profile</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('campaign_route.campaign_create')}}">Join/Create Campaign</a>
+          <a class="nav-link" href="{{ url_for('campaign_route.campaign_create')}}">Create Campaign</a>
         </li>
         {%if current_user.system_level_id > 3%}
         <li class="nav-item dropdown">
@@ -22,12 +22,12 @@
             Lists
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="/user_list">User List</a></li>
-            <li><a class="dropdown-item" href="/campaign_list">Campaign List</a></li>
-            <li><a class="dropdown-item" href="/abstract_list">Abstract List</a></li>
-            <li><a class="dropdown-item" href="/shift_list">Shift List</a></li>
-            <li><a class="dropdown-item" href="/paystamp_list">Payment List</a></li>
-            <li><a class="dropdown-item" href="/receipt_list">Receipt List</a></li>
+            <li><a class="dropdown-item" href="/user/list">User List</a></li>
+            <li><a class="dropdown-item" href="/campaign/list">Campaign List</a></li>
+            <li><a class="dropdown-item" href="/abstract/list">Abstract List</a></li>
+            <li><a class="dropdown-item" href="/shift/list">Shift List</a></li>
+            <li><a class="dropdown-item" href="/paystamp/list">Payment List</a></li>
+            <li><a class="dropdown-item" href="/receipt/list">Receipt List</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">

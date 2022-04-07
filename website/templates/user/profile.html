@@ -1,1 +1,21 @@
-{%extends 'campaign/campaign_list.html'%}
+{%extends 'base.html'%}
+{% block content %}
+<div class="shadow p-3 mb-5 bg-body rounded">
+    <h3 id='list_header' align="center">User Dashboard</h3>
+</div>
+
+<strong>ID: </strong>{{ user.id }}<br/>
+<strong>Name: </strong>{{ user.first_name }}  {{ user.last_name }}<br/>
+<strong>Email: </strong>{{ user.email }}<br/>
+<strong>Phone Number: </strong>{{ user.phone }}<br>
+<strong>Date Added: </strong>{{ user.date_added }}<br><br>
+
+<td id="deleteTable">
+    <a href="{{url_for('campaign_route.campaign_list')}}" 
+    role="button" class="btn btn-outline-danger" >View Campaigns</button></td>
+
+<td id="deleteTable">
+    <a href="{{url_for('shift_route.shift_list')}}" 
+    role="button" class="btn btn-outline-danger" >View Shifts</button></td>
+
+{% endblock %}

@@ -93,7 +93,7 @@ def profile(id):
         current_app.logger.info(current_user.id==str(id))
         return render_template("no_access.html")
     else:
-        return render_template('/user/profile.html', id=id)
+        return render_template('/user/profile.html', id=id, user=current_user)
 
 @views.app_errorhandler(404)
 def page_not_found(e):

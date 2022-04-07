@@ -7,7 +7,8 @@
     {% for campaign in current_user.campaigns_owned%}
         <tr>
         <td id="displayData">
-            <a href="">{{
+            <a href="{{
+                url_for('campaign_route.campaign_dashboard', id=campaign.id)}}">{{
                 campaign.alias}}</a> {{
                 campaign.hex_code}}
         </td>
@@ -23,8 +24,7 @@
     <tr>
     <td id="displayData">
         {{campaign.id}}. <a href="{{
-        url_for('campaign_route.campaign_update', id=campaign.id)}}">{{
-            campaign.candidate}} {{
+        url_for('campaign_route.campaign_dashboard', id=campaign.id)}}">{{
             campaign.alias}}</a> - {{
             campaign.riding}}
     </td>

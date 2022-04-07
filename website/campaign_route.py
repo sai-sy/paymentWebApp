@@ -160,3 +160,21 @@ def campaign_join():
             flash('No campaign with that code was found', category='error')
     
     return render_template('/campaign/campaign_join.html', form=form)
+
+@campaign_route.route('campaign/dashboard/<int:id>/shifts', methods=['GET', 'POST'])
+@login_required
+def campaign_shift_list(id):
+    if current_user.system_level_id < 3:
+        return render_template('no_access.html')
+    else:
+        campaigns = [id]
+        shifts = ShiftStamps.query.filter(ShiftStamps.campaign_id.in_(campaigns)).order_by(desc(ShiftStamps.start_time))
+        current_app.logger.info(shifts)
+        return render_template('/shift/shift_list.html', shifts=shifts)
+
+
+@campaign_route.route("/campaign/dashboard/<int:id>", methods=['GET', 'POST'])
+@login_required
+def campaign_dashboard(id):
+    campaign = Campaigns.query.get_or_404(id)
+    return render_template('/campaign/campaign_dashboard.html', campaign=campaign)

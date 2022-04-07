@@ -1,0 +1,21 @@
+{%extends 'base.html'%}
+{% block content %}
+<div class="shadow p-3 mb-5 bg-body rounded">
+    <h3 id='list_header' align="center">Campaign Dashboard</h3>
+</div>
+
+<strong>ID: </strong>{{ campaign.id }}<br/>
+<strong>Candidate: </strong>{{ campaign.candidate }}<br/>
+<strong>Alias: </strong>{{ campaign.alias }}<br/>
+<strong>Riding: </strong>{{ campaign.riding }}<br/>
+<strong>Government Level: </strong>{{ campaign.gov_level }}<br><br>
+
+<td id="deleteTable">
+    <a href="{{url_for('campaign_route.campaign_shift_list', id=campaign.id)}}" 
+    role="button" class="btn btn-outline-danger" >View Shifts</button></td>
+
+<td id="deleteTable">
+    <a href="{{url_for('campaign_route.campaign_update', id=campaign.id)}}" 
+    role="button" class="btn btn-outline-danger" >Update Campaign</button></td>
+
+{% endblock %}

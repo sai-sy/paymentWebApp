@@ -9,6 +9,8 @@ class Config:
     MAX_CONTENT_LENGTH = 16*1000*1000
     RECEIPT_FOLDER = '..\\uploads\\receipts'
     IMPORT_FOLDER = '..\\uploads\\imports'
+    UPLOAD_FOLDER = '..\\uploads'
+    EXPORT_FOLDER = '\\uploads\\exports'
     UPLOAD_EXTENSIONS = ['.jpg', '.png', '.pdf', '.csv', '.xls', '.xlsx']
     STATIC_FOLDER = 'static'
     TEMPLATES_FOLDER = 'templates'

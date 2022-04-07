@@ -87,7 +87,7 @@ def shift_add_func(form: ShiftStampForm):
         form.activity.data = ''
         flash("Shift Added Successfully!", category='success')
 
-@shift_route.route('/shift_list', methods=['GET', 'POST'])
+@shift_route.route('/shift/list', methods=['GET', 'POST'])
 @login_required
 def shift_list():
     if current_user.system_level_id < 3:
@@ -186,7 +186,7 @@ def receipt_upload_func(form: ReceiptForm):
         uploaded_file.save(os.path.join(assets_dir, db_filename+file_ext))
         flash("File Saved Successfully", category='success')
 
-@shift_route.route('/receipt_list', methods=['GET', 'POST'])
+@shift_route.route('/receipt/list', methods=['GET', 'POST'])
 @login_required
 def receipt_list():
     if current_user.system_level_id < 3:
@@ -273,7 +273,7 @@ def paystamp_upload_func(form: PayStampForm):
 
         flash("Payment Record Saved Successfully", category='success')
 
-@shift_route.route("/paystamp_list", methods=['GET', 'POST'])
+@shift_route.route("/paystamp/list", methods=['GET', 'POST'])
 @login_required
 def payment_list():
     if current_user.system_level_id < 3:
@@ -350,7 +350,7 @@ def abstract_add_func(form: AbstractForm):
         form.notes.data = ''
         flash("Abstract Added Successfully!", category='success')
 
-@shift_route.route('/abstract_list', methods=['GET', 'POST'])
+@shift_route.route('/abstract/list', methods=['GET', 'POST'])
 @login_required
 def abstract_list():
     if current_user.system_level_id < 3:

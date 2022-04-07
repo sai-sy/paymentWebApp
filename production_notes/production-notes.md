@@ -31,7 +31,7 @@ Please preview `/paymentwebapp/README.md`
     - [ ] Intuitive way to view all related shifts
 - [ ] Campaign List
     - [x] Filter campaigns by admin/ownership status
-    - [ ] Campaign links redirect to campaign dashboard  
+    - [x] Campaign links redirect to campaign dashboard  
         - [ ] Include campaign link functionality on user dash
 - [ ] Receipt Display  
 - [ ] User Dash  

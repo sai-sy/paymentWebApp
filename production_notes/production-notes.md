@@ -4,6 +4,7 @@ Please preview `/paymentwebapp/README.md`
 # TODO  
 ### Main Pages  
 - [ ] User choices update
+- [ ] Change the way admins are created
 - [ ] Try Catch in auth.signup  
     - This try-except is made to work for unique alias'  
         - Desc: If something else throws that error, it'll get stuck in an infinite loop. There needs to be a better solution for this  

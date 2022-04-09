@@ -39,7 +39,14 @@ admins = db.Table('admins', db.Model.metadata,
 
 users_under_campaign = db.Table('users_under_campaign', db.Model.metadata, 
     db.Column('user_id', db.Integer, db.ForeignKey('users.id')), 
-    db.Column('campaign_id', db.Integer, db.ForeignKey('campaigns.id'))
+    db.Column('campaign_id', db.Integer, db.ForeignKey('campaigns.id')),
+    db.Column('getting_paid', db.Boolean, default=False)
+)
+
+payment_exceptions = db.Table('payment_exceptions',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+    db.Column('campaign_id', db.Integer, db.ForeignKey('campaigns.id')),
+    db.Column('hourly_rate', db.Integer)
 )
 
 class Campaigns(db.Model):

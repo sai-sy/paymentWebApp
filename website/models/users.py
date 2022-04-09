@@ -37,7 +37,8 @@ class SystemLevels(db.Model):
 commissions = db.Table('commmissions', db.Model.metadata, 
     db.Column('commission_earner', db.Integer, db.ForeignKey('users.id')), 
     db.Column('commission_feeder', db.Integer, db.ForeignKey('users.id')), 
-    db.Column('campaign_id', db.Integer, db.ForeignKey('campaigns.id'))
+    db.Column('campaign_id', db.Integer, db.ForeignKey('campaigns.id')),
+    db.Column('amount', db.Integer, default=2, nullable=False)
 )
 
 class Users(People, UserMixin):

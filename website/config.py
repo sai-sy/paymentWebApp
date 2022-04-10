@@ -26,7 +26,7 @@ class ProdConfig(Config):
     SECRET_KEY = environ.get('SECRET_KEY')
     SERVER_NAME = environ.get('SERVER_NAME')
     SESSION_COOKIE_SECURE = True
-    WTF_CSRF_TIME_LIMIT = 30
+    WTF_CSRF_TIME_LIMIT = 600
 
 class DevConfig(Config):
     basedir = path.abspath(path.dirname(__file__))

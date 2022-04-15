@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html>
 <body>
 {%extends 'base.html'%}
 {% block content %}
@@ -7,17 +9,51 @@
 
 <strong>ID: </strong>{{ user.id }}<br/>
 <strong>Name: </strong>{{ user.first_name }}  {{ user.last_name }}<br/>
+<strong>Alias: </strong>{{ user.alias }}<br/>
 <strong>Email: </strong>{{ user.email }}<br/>
 <strong>Phone Number: </strong>{{ user.phone }}<br>
 <strong>Date Added: </strong>{{ user.date_added }}<br><br>
-
-<td id="deleteTable">
-    <a href="{{url_for('campaign_route.campaign_list')}}" 
-    role="button" class="btn btn-outline-danger" >View Campaigns</button></td>
-
-<td id="deleteTable">
-    <a href="{{url_for('shift_route.shift_list')}}" 
-    role="button" class="btn btn-outline-danger" >View Shifts</button></td>
-
+<button class="btn btn-danger" type="button" data-toggle="collapse" data-target="#campaignlistextend_profile" aria-expanded="false" aria-controls="campaignlistextend_profile">
+My Campaigns
+</button>
+<br>
+<div id="campaignlistextend_profile" class="collapse">
+{%include 'lists/campaign_list_content.html'%}
+</div>
+<br>
+<button class="btn btn-danger" type="button" data-toggle="collapse" data-target="#shiftlistextend_profile" aria-expanded="false" aria-controls="shiftlistextend_profile">
+My Shifts
+</button>
+<div id="shiftlistextend_profile" class="collapse">
+<table class="table table-hover table-border table-striped">
+    <tr>
+        <h5 id='list_header' align="center">Shifts</h3>
+    </tr>
+    {% for shift in current_user.shiftstamps%}
+    <tr>
+        <td id="displayData">
+            {{shift.user.first_name}} {{shift.user.last_name}}
+        </td>
+        <td id="displayData">
+            {{shift.start_time}}
+        </td>
+        <td id="displayData">
+            {{shift.end_time}}
+        </td>
+        <td id="displayData">
+            {{shift.minutes}}
+        </td>
+        <td id="displayData">
+            {{shift.campaign.alias}}
+        </td>
+        <td id="displayData">
+            {{shift.activity.activity}}
+        </td>
+        <td id="deleteTable"><a href="{{url_for('shift_route.shift_delete', id=shift.id)}}" role="button" class="btn btn-outline-danger" >Delete</button></td>
+        </tr>
+    {%endfor%}
+</table>
+</div>
 {% endblock %}
 </body>
+</html>

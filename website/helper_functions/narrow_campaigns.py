@@ -36,6 +36,9 @@ def all_campaigns_user_admins_list(current_user):
                 campaign_choices.append(c)
     return campaign_choices
 
+def all_campaigns():
+    return [(str(c.id), str(c.alias))  for c in Campaigns.query.order_by(desc(Campaigns.alias))]
+
 def users_in_campaign_under_user(current_user):
     '''
     Checks all the campaigns under the passed user, and finds all the users in the campaigns he has.

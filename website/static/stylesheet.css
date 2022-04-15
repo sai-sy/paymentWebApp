@@ -16,6 +16,10 @@ body {
     margin-top: 0.5rem;
 }
 
+#data_list {
+    margin-top: 5rem;
+}
+
 #shift_add_form {
     margin-top: 1rem;
 }

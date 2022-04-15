@@ -21,7 +21,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
     -->
     <!-- Personal Stylesheet-->
-    <link rel="stylesheet" href="../static/stylesheet.css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='stylesheet.css') }}">
     <!--TITLE-->
     <title>{% block title %}PMW{%endblock%}</title>
   </head>

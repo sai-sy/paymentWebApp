@@ -1,0 +1,63 @@
+<table class="table table-hover table-border table-striped">
+    <tr>
+        <h5 id='list_header' align="center">Campaigns Owned</h3>
+    </tr>
+    {% for campaign in current_user.campaigns_owned%}
+        <tr>
+            <td id="displayData">
+                {{campaign.id}}. <a href="{{
+                url_for('campaign_route.campaign_dashboard', id=campaign.id)}}">{{
+                    campaign.alias}}</a>
+            </td>
+            <td id="displayData">
+                {{campaign.riding}}
+            </td>
+            <td id="displayData">
+                {{campaign.hex_code}}
+            </td>
+            <td id="deleteTable"><a href="{{url_for('campaign_route.campaign_delete', id=campaign.id)}}" role="button" class="btn btn-outline-danger" >Delete</button></td>
+        </tr>
+    {%endfor%}
+</table>
+<br>
+<table class="table table-hover table-border table-striped">
+    <tr>
+        <h5 id='list_header' align="center" >Campaigns Administrating</h3>
+    </tr>
+    {% for campaign in current_user.admin_campaigns%}
+    <tr>
+        <td id="displayData">
+        {{campaign.id}}. <a href="{{
+        url_for('campaign_route.campaign_dashboard', id=campaign.id)}}">{{
+            campaign.alias}}</a>
+        </td>
+        <td id="displayData">
+            {{campaign.riding}}
+        </td>
+        <td id="displayData">
+            {{campaign.hex_code}}
+        </td>
+    </tr>
+    {%endfor%}
+</table>
+<br>
+<table class="table table-hover table-border table-striped">
+    <tr>
+        <h5 id='list_header' align="center">Campaigns Apart Of</h3>
+    </tr>
+    {% for campaign in current_user.campaigns_under%}
+    <tr>
+        <td id="displayData">
+        {{campaign.id}}. <a href="{{
+        url_for('campaign_route.campaign_dashboard', id=campaign.id)}}">{{
+            campaign.alias}}</a>
+        </td>
+        <td id="displayData">
+            {{campaign.riding}}
+        </td>
+        <td id="displayData">
+            {{campaign.hex_code}}
+        </td>
+    </tr>
+    {%endfor%}
+</table>

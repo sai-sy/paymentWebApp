@@ -2,7 +2,19 @@
 Please preview `/paymentwebapp/README.md`
 
 # TODO  
-### Main Pages  
+### Main Pages
+- [ ] Campaign Dash
+    - [ ] Intuitive way to edit campaign properties
+    - [ ] Intuitive way to add admins
+    - [ ] Intuitive way to view all related shifts
+    - [ ] Intuitive Way to See receipts
+- [ ] User Dash  
+    - [ ] Top is a box that displays all content
+        - [ ] way to edit personal content
+    - [ ] if admin  
+        - [ ] have edit buttons  
+        - [ ] have add commission feed button  
+        - [ ] have add commisson receieve button    
 - [ ] User choices update
 - [ ] Change the way admins are created
 - [ ] Try Catch in auth.signup  
@@ -26,21 +38,15 @@ Please preview `/paymentwebapp/README.md`
     - [ ] Back End  
     - [ ] Bulk Export
         - [ ] Naming scheme: Date Added_Version
-- [ ] Campaign Dash
-    - [ ] Intuitive way to edit campaign properties
-    - [ ] Intuitive way to add admins
-    - [ ] Intuitive way to view all related shifts
+
 - [ ] Campaign List
     - [x] Filter campaigns by admin/ownership status
     - [x] Campaign links redirect to campaign dashboard  
         - [ ] Include campaign link functionality on user dash
 - [ ] Receipt Display  
-- [ ] User Dash  
-    - [ ] Top is a box that displays all content  
-    - [ ] if admin  
-        - [ ] have edit buttons  
-        - [ ] have add commission feed button  
-        - [ ] have add commisson receieve button  
+
+    - [ ] display shifts
+        - [ ] if they are being paid for that campaign, let them see some numbers
 - [ ] Set Up Campaign owners and auto admin  
 - [ ] Error pages   
     - [x] 403  

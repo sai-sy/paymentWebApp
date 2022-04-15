@@ -25,4 +25,5 @@ class Imports(db.Model):
     __tablename__ = 'imports'
     id = db.Column(db.Integer, nullable=False, primary_key=True)
     file_name = db.Column(db.String(1000), nullable=False)
+    person_imported = db.Column(db.Integer, ForeignKey('users.id'))
     date_added = db.Column(db.DateTime, default=datetime.utcnow())

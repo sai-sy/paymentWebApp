@@ -175,7 +175,7 @@ def receipt_upload_func(form: ReceiptForm):
             db.session.add(receipt)
             db.session.commit()
             break
-    assets_dir = os.path.join(os.path.dirname(current_app.instance_path), 'assets', 'receipts')
+    assets_dir = os.path.join(os.path.dirname(current_app.instance_path), 'uploads', 'receipts')
     current_app.logger.info('validated')
     uploaded_file = form.image.data
     filename = secure_filename(uploaded_file.filename)

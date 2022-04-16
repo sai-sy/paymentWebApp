@@ -27,6 +27,32 @@ body {
 #navbar-logo {
     margin-left: 1.25rem;
 }
+
+#button_line_container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+  
+#button_line_obj {
+    padding: 1rem;
+}
+
+#flex_parent_element {
+    display: flex;
+    justify-content: space-between;
+    padding-right: 20%;
+  }
+  
+  #flex_child_element {
+    
+  }
+  
+  #flex_child_element:first-child {
+    margin-right: 20px;
+  }
+  
+
 /*
 a {
     color: #007bff;

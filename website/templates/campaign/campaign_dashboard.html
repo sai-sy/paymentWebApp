@@ -4,30 +4,45 @@
     <h3 id='list_header' align="center">Campaign Dashboard</h3>
 </div>
 
-<strong>ID: </strong>{{ campaign.id }}<br/>
-<strong>Candidate: </strong>{{ campaign.candidate }}<br/>
-<strong>Alias: </strong>{{ campaign.alias }}<br/>
-<strong>Join Code: </strong>{{ campaign.hex_code }}<br/>
-<strong>Riding: </strong>{{ campaign.riding }}<br/>
-<strong>Government Level: </strong>{{ campaign.gov_level }}<br>
-<a href="{{url_for('campaign_route.campaign_update', id=campaign.id)}}" 
-role="button" class="btn btn-outline-danger" >Edit Campaign</a><br><br>
+<div id="flex_parent_element">
+    <div id="flex_child_element">
+        <strong>ID: </strong>{{ campaign.id }}<br/>
+        <strong>Candidate: </strong>{{ campaign.candidate }}<br/>
+        <strong>Alias: </strong>{{ campaign.alias }}<br/>
+        <strong>Join Code: </strong>{{ campaign.hex_code }}<br/>
+        <strong>Riding: </strong>{{ campaign.riding }}<br/>
+        <strong>Government Level: </strong>{{ campaign.gov_level }}<br>
+        <a href="{{url_for('campaign_route.campaign_update', id=campaign.id)}}" 
+        role="button" class="btn btn-outline-danger" >Edit Campaign</a><br><br>
+    </div>
 
-{%if (status == 'admin') or  (status == 'owner')%}
-<strong>Owner: </strong>{{ campaign.owner.first_name }} {{ campaign.owner.last_name }} - {{ campaign.owner.alias }}<br/>
-<strong>Commute Pay: </strong>{{ campaign.commute_pay }}<br/>
-<strong>Canvass Rate: </strong>{{ campaign.default_canvass_rate }}<br/>
-<strong>Calling Rate: </strong>{{ campaign.default_calling_rate }}<br/>
-<strong>General Rate: </strong>{{ campaign.default_general_rate }}<br>
-<strong>Litdrop Rate: </strong>{{ campaign.default_general_rate }}<br><br>
+    <div id="flex_child_element">
+        {%if (status == 'admin') or  (status == 'owner')%}
+        <strong>Owner: </strong>{{ campaign.owner.first_name }} {{ campaign.owner.last_name }} - {{ campaign.owner.alias }}<br/>
+        <strong>Commute Pay: </strong>{{ campaign.commute_pay }}<br/>
+        <strong>Canvass Rate: </strong>{{ campaign.default_canvass_rate }}<br/>
+        <strong>Calling Rate: </strong>{{ campaign.default_calling_rate }}<br/>
+        <strong>General Rate: </strong>{{ campaign.default_general_rate }}<br>
+        <strong>Litdrop Rate: </strong>{{ campaign.default_general_rate }}<br><br>
+    </div>
+</div>
 
-<div>
+<div id="button_line_container">
+
+<a href="{{url_for('campaign_route.campaign_shift_list', id=campaign.id)}}" 
+role="button" class="btn btn-outline-danger" >View Users</a>
 
 <a href="{{url_for('campaign_route.campaign_shift_list', id=campaign.id)}}" 
 role="button" class="btn btn-outline-danger" >View Shifts</a>
 
 <a href="{{url_for('campaign_route.campaign_update', id=campaign.id)}}" 
 role="button" class="btn btn-outline-danger" >View Admins</a>
+
+<a href="{{url_for('campaign_route.campaign_shift_list', id=campaign.id)}}" 
+role="button" class="btn btn-outline-danger" >View Payments</a>
+
+<a href="{{url_for('campaign_route.campaign_shift_list', id=campaign.id)}}" 
+role="button" class="btn btn-outline-danger" >View Abstracts</a>
 
 </div>
 

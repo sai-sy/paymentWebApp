@@ -54,7 +54,7 @@ def import_data():
 def import_data_func(form, wl_campaigns):
     if form.validate_on_submit():
         db_filename = 'import_' + current_user.alias + '_' + str(form.import_type.data).lower() + '_' + str(dt.date.today())
-        i = 1
+        i = 2
         while(True):        
             searched_file = Imports.query.filter_by(file_name=db_filename).first()
             if searched_file:

@@ -3,22 +3,37 @@ Please preview `/paymentwebapp/README.md`
 
 # TODO  
 ### Main Pages
+- UPDATE DELETE BUTTONS
 - [ ] Campaign Dash
     - [ ] Intuitive way to edit campaign properties
+        - [x] Campaign Heading Info
+        - [ ] Campaign Pay Info
+            - [ ] Update every contract to be minimum changed rates
+    - [ ] show personal contract on right
+    - [ ] Way to change the contract to get people paid
+                - [ ] MASS CHANGES TO PEOPLE GETTING PAID
+                    - [ ] Change users getting paid button (seperate from edit user contract button) (maybe make it in the edit pay for campaign page)
+                    - [ ] after submit button make a list of all the users
+                    - [ ] checkbox checked or not based on if they get paid or not
+                - [ ] (Future might need ajax) Toggle switch for getting paid that live updates the database
     - [ ] Intuitive way to add admins
-    - [ ] Intuitive way to view all related shifts
-    - [ ] Intuitive Way to See receipts
-- [ ] User Dash  
-    - [ ] Top is a box that displays all content
-        - [ ] way to edit personal content
-    - [ ] if admin  
-        - [ ] have edit buttons  
-        - [ ] have add commission feed button  
-        - [ ] have add commisson receieve button    
-- [ ] Pay Infrustructure
-    - [ ] Make owner a part of campaign they created with a contract 
+    - [ ] View
+        - [x] Shifts
+            - [ ] Edit
+        - [ ] Payments
+            - [ ] Edit
+        - [ ] Receipts
+            -[ ] Click thru on receipt to open image of receipt
+            -[ ] Edit
+                - do not edit the image name!
+        - [ ] User List
+            - [ ] Click Name
+                - [ ] Opens Profile Info
+                - [ ] Contract Info On Right
+                - [ ] Change Contract btn IF ADMIN, View Shifts, View Paystampts, View Receipts, View Abstracts
+            - [ ] edit user contract
+            - [ ] Display all contract values
 - [ ] User choices update
-- [ ] Change the way admins are created
 - [ ] Try Catch in auth.signup  
     - This try-except is made to work for unique alias'  
         - Desc: If something else throws that error, it'll get stuck in an infinite loop. There needs to be a better solution for this  
@@ -32,9 +47,9 @@ Please preview `/paymentwebapp/README.md`
     - [x] Attatch a rate to each shift  
     - [ ] Make the shift rate based on the campaign rate  
     - [ ] retroactive pay change on output report  
-- [ ] Imports  
+- [X] Imports  
     - [x] Front End  
-    - [ ] Back End  
+    - [X] Back End  
 - [ ] Exports  
     - [ ] Front End  
     - [ ] Back End  
@@ -75,7 +90,10 @@ Please preview `/paymentwebapp/README.md`
 - [x] Payment Stamp  
 - [x] User alias  
 - [x] Commission  
-- [x] Git ignore contents of upload folder, not file structure  
+- [x] Git ignore contents of upload folder, not file structure
+- [x] Make owner a part of campaign they created with a contract 
+- [x] Change the way admins are created
+
 
 ### Migration Tests  
 1. create column  

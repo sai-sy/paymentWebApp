@@ -7,6 +7,7 @@
 <strong>ID: </strong>{{ campaign.id }}<br/>
 <strong>Candidate: </strong>{{ campaign.candidate }}<br/>
 <strong>Alias: </strong>{{ campaign.alias }}<br/>
+<strong>Join Code: </strong>{{ campaign.hex_code }}<br/>
 <strong>Riding: </strong>{{ campaign.riding }}<br/>
 <strong>Government Level: </strong>{{ campaign.gov_level }}<br>
 <a href="{{url_for('campaign_route.campaign_update', id=campaign.id)}}" 

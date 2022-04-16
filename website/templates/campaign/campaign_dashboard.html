@@ -10,7 +10,7 @@
 <strong>Riding: </strong>{{ campaign.riding }}<br/>
 <strong>Government Level: </strong>{{ campaign.gov_level }}<br><br>
 
-{%if status == admin or status == owner%}
+{%if (status == 'admin') or  (status == 'owner')%}
 <strong>Owner: </strong>{{ campaign.owner.first_name }} {{ campaign.owner.last_name }} - {{ campaign.owner.alias }}<br/>
 <strong>Commute Pay: </strong>{{ campaign.commute_pay }}<br/>
 <strong>Canvass Rate: </strong>{{ campaign.default_canvass_rate }}<br/>

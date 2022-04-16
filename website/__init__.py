@@ -55,6 +55,7 @@ def create_app(name):
         from .models.admincommands import AdminCommands
         from .models.receipts import Receipts
         from .models.imports import Imports
+        from .models.exports import Exports
 
         app.register_blueprint(views, url_prefix='/')
         app.register_blueprint(auth, url_prefix='/')

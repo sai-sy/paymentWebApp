@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    {% extends 'base.html' %}
+    {% block content %}
+    <div class="shadow p-3 mb-5 bg-body rounded">
+    <h3 align="center">Export Data</h3>
+    <form method="POST" enctype="multipart/form-data">
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.campaign.label(class='form-label')}}
+        {{ form.campaign(class='form-control')}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.export_type.label(class='form-label')}}
+        <div></div>
+        <div class="form-check form-check-inline" style="padding-left: .2rem">
+        {% for subfield in form.export_type %}
+            <tr>
+                <td class="form-check-input" type="checkbox" value="" id="flexCheckDefault">{{ subfield }}</td>
+                <td class="form-check-label" for="flexCheckDefault">{{ subfield.label }}</td>
+                <span style="padding-right: .5rem"></span>
+            </tr>
+        {% endfor %}
+        </div>
+        <br>
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.submit(class='btn btn-danger')}}
+    </form>
+</div>
+    {% endblock %}
+</body>
+</html>

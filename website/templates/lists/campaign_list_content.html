@@ -1,8 +1,9 @@
-<table class="table table-hover table-border table-striped">
-    <tr>
-        <h5 id='list_header' align="center">Campaigns Owned</h3>
-    </tr>
-    {% for campaign in current_user.campaigns_owned%}
+<div class="shadow p-3 mb-5 bg-body rounded">
+    <h3 id='list_header' align="center">Campaigns Owned</h3>
+</div>
+
+    <table class="table table-hover table-border table-striped">
+        {% for campaign in current_user.campaigns_owned%}
         <tr>
             <td id="displayData">
                 {{campaign.id}}. <a href="{{
@@ -20,10 +21,12 @@
     {%endfor%}
 </table>
 <br>
+
+<div class="shadow p-3 mb-5 bg-body rounded">
+    <h3 id='list_header' align="center">Campaigns Administrating</h3>
+</div>
+
 <table class="table table-hover table-border table-striped">
-    <tr>
-        <h5 id='list_header' align="center" >Campaigns Administrating</h3>
-    </tr>
     {% for campaign in current_user.admin_campaigns%}
     <tr>
         <td id="displayData">
@@ -41,10 +44,12 @@
     {%endfor%}
 </table>
 <br>
+
+<div class="shadow p-3 mb-5 bg-body rounded">
+    <h3 id='list_header' align="center">Campaigns Part Of</h3>
+</div>
+
 <table class="table table-hover table-border table-striped">
-    <tr>
-        <h5 id='list_header' align="center">Campaigns Apart Of</h3>
-    </tr>
     {% for campaign in current_user.campaigns_under%}
     <tr>
         <td id="displayData">

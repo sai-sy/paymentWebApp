@@ -8,7 +8,9 @@
 <strong>Candidate: </strong>{{ campaign.candidate }}<br/>
 <strong>Alias: </strong>{{ campaign.alias }}<br/>
 <strong>Riding: </strong>{{ campaign.riding }}<br/>
-<strong>Government Level: </strong>{{ campaign.gov_level }}<br><br>
+<strong>Government Level: </strong>{{ campaign.gov_level }}<br>
+<a href="{{url_for('campaign_route.campaign_update', id=campaign.id)}}" 
+role="button" class="btn btn-outline-danger" >Edit Campaign</a><br><br>
 
 {%if (status == 'admin') or  (status == 'owner')%}
 <strong>Owner: </strong>{{ campaign.owner.first_name }} {{ campaign.owner.last_name }} - {{ campaign.owner.alias }}<br/>
@@ -16,21 +18,17 @@
 <strong>Canvass Rate: </strong>{{ campaign.default_canvass_rate }}<br/>
 <strong>Calling Rate: </strong>{{ campaign.default_calling_rate }}<br/>
 <strong>General Rate: </strong>{{ campaign.default_general_rate }}<br>
-<strong>Litdrop Rate: </strong>{{ campaign.default_general_rate }}<br>
+<strong>Litdrop Rate: </strong>{{ campaign.default_general_rate }}<br><br>
 
+<div>
 
+<a href="{{url_for('campaign_route.campaign_shift_list', id=campaign.id)}}" 
+role="button" class="btn btn-outline-danger" >View Shifts</a>
 
-<td id="deleteTable">
-    <a href="{{url_for('campaign_route.campaign_shift_list', id=campaign.id)}}" 
-    role="button" class="btn btn-outline-danger" >View Shifts</button></td>
+<a href="{{url_for('campaign_route.campaign_update', id=campaign.id)}}" 
+role="button" class="btn btn-outline-danger" >View Admins</a>
 
-<td id="deleteTable">
-    <a href="{{url_for('campaign_route.campaign_update', id=campaign.id)}}" 
-    role="button" class="btn btn-outline-danger" >View Admins</button></td>
-
-<td id="deleteTable">
-    <a href="{{url_for('campaign_route.campaign_update', id=campaign.id)}}" 
-    role="button" class="btn btn-outline-danger" >Edit Campaign</button></td>
+</div>
 
 {%endif%}
 {% endblock %}

@@ -1,4 +1,4 @@
-from ..models.campaigns  import Campaigns
+from ..models.campaigns  import Campaign_Contracts, Campaigns
 from sqlalchemy import desc
 
 def all_campaigns_user_in(current_user):
@@ -28,10 +28,11 @@ def all_campaigns_user_admins_list(current_user):
     Returns a list of all campaigns a user is a part of
     '''
     campaign_choices = []
-    for c in Campaigns.query.order_by(desc(Campaigns.alias)):
-        for u in c.users_under:
-            if u.id == current_user.id:
-                campaign_choices.append(c)
+    for contract in Campaign_Contracts.query.order_by(desc(Campaign_Contracts.user_id)):
+        if contract.user_id == current_user.id:
+            for campaign in Campaigns.query.order_by(desc(Campaigns.alias)):
+                if campaign.id == contract.campaign_id:
+                    campaign_choices.append(campaign)
     return campaign_choices
 
 def all_campaigns():

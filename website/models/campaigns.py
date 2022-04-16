@@ -23,9 +23,11 @@ class CreateCampaignForm(FlaskForm):
     alias = StringField('Internal Reference Name (firstName_year):', validators=[DataRequired()])
     riding = StringField('Riding:', validators=[DataRequired()])
     year = IntegerField('Election Year:', validators=[DataRequired()])
-    gov_level = SelectField('Gov Level:', validators=[DataRequired()], choices=gov_levels)
+    gov_level = SelectField('Gov Level:', validators=[DataRequired()])
     hourly_rate = FloatField('Hourly Value:')
     submit = SubmitField('Submit')
+
+
 
 class JoinCampaignForm(FlaskForm):
     hex_code=StringField('Enter the provided code for your campaign')

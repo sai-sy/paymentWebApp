@@ -18,7 +18,7 @@ from werkzeug.utils import secure_filename
 from . import db
 from .models.abstracts import AbstractForm, AbstractStamps
 from .models.paystamps import PayStamps, PayStampForm
-from .models.campaigns import Campaign_Contracts, CreateCampaignForm, Campaigns, admins, JoinCampaignForm
+from .models.campaigns import Campaign_Contracts, CreateCampaignForm, Campaigns, admins, JoinCampaignForm, GovLevels
 from .models.users import Users
 from .models.people import People
 from .models.shiftstamps import ShiftStampForm, ShiftStamps, Activities
@@ -32,7 +32,9 @@ campaign_route = Blueprint('campaign_route', __name__)
 @login_required
 def campaign_create():
     form = CreateCampaignForm()
-    form.candidate.choices = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
+    form.gov_level.choices=[]
+    for level in GovLevels.query.filter_by():
+        form.gov_level.choices.append(level.level)
     if form.validate_on_submit():
         current_app.logger.info('1')
         alias_check = form.alias.data

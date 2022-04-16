@@ -42,12 +42,17 @@ def load_preset_data(app, db):
 
     # ADD GOVERNMENT LEVELS
     federal = GovLevels(level="Federal")
+    federal_nomination = GovLevels(level="Federal Nomination")
     provincial = GovLevels(level="Provincial")
+    provincial_nomination = GovLevels(level="Provincial Nomination")
     munical = GovLevels(level="Municipal")
     with app.app_context():
         adder(app, db, federal)
+        adder(app, db, federal_nomination)
         adder(app, db, provincial)
+        adder(app, db, provincial_nomination)
         adder(app, db, munical)
+
 
     # ADD SQL ACCESS PASSWORD
     admin_password = AdminPassword(password=generate_password_hash('alexSpears'))

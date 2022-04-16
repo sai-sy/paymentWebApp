@@ -15,6 +15,8 @@ Please preview `/paymentwebapp/README.md`
         - [ ] have edit buttons  
         - [ ] have add commission feed button  
         - [ ] have add commisson receieve button    
+- [ ] Pay Infrustructure
+    - [ ] Make owner a part of campaign they created with a contract 
 - [ ] User choices update
 - [ ] Change the way admins are created
 - [ ] Try Catch in auth.signup  

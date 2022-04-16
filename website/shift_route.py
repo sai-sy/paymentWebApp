@@ -2,7 +2,7 @@
 import os
 
 # HELPER FUNCTIONS
-from .helper_functions.narrow_campaigns import all_campaigns_user_in, users_in_campaign_under_user
+from .helper_functions.narrow_campaigns import all_campaigns_user_in, users_in_campaign_user_adminning
 
 # FLASK
 from flask import Blueprint, jsonify, redirect, render_template, current_app, request, flash, jsonify, Flask, url_for, abort
@@ -17,7 +17,7 @@ from werkzeug.utils import secure_filename
 from . import db
 from .models.abstracts import AbstractForm, AbstractStamps
 from .models.paystamps import PayStamps, PayStampForm
-from .models.campaigns import CampaignForm, Campaigns, admins, users_under_campaign, JoinCampaignForm
+from .models.campaigns import CreateCampaignForm, Campaigns, admins, Campaign_Contracts, JoinCampaignForm
 from .models.users import Users
 from .models.people import People
 from .models.shiftstamps import ShiftStampForm, ShiftStamps, Activities
@@ -41,7 +41,7 @@ def shift_add():
             pass
     elif current_user.system_level_id < 8:
                 
-        form.user.choices = users_in_campaign_under_user(current_user)
+        form.user.choices = users_in_campaign_user_adminning(current_user)
 
         #form.user.choices = users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
         if form.validate_on_submit():

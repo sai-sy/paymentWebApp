@@ -3,7 +3,7 @@ import imp
 import os
 
 # HELPER FUNCTIONS
-from .helper_functions.narrow_campaigns import all_campaigns_user_in, all_campaigns_user_admins, users_in_campaign_under_user, all_campaigns
+from .helper_functions.narrow_campaigns import all_campaigns_user_in, all_campaigns_user_admins, users_in_campaign_user_adminning, all_campaigns
 
 # FLASK
 from flask import Blueprint, jsonify, redirect, render_template, current_app, request, flash, jsonify, Flask, url_for, abort

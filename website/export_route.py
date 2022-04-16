@@ -3,7 +3,7 @@ import os, csv
 from io import StringIO
 
 # HELPER FUNCTIONS
-from .helper_functions.narrow_campaigns import all_campaigns_user_admins_list, all_campaigns_user_in, all_campaigns_user_admins, users_in_campaign_under_user
+from .helper_functions.narrow_campaigns import all_campaigns_user_admins_list, all_campaigns_user_in, all_campaigns_user_admins, users_in_campaign_user_adminning
 
 # FLASK
 from flask import Blueprint, send_file, jsonify, redirect, render_template, current_app, request, flash, jsonify, Flask, url_for, abort, make_response

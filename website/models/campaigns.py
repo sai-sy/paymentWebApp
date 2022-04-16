@@ -18,14 +18,13 @@ def get_value_label_gov():
 class GovLevels(db.Model):
     level = db.Column(db.String(50), nullable=False, primary_key=true)
 
-class CampaignForm(FlaskForm):
+class CreateCampaignForm(FlaskForm):
     candidate = StringField('Candidate', validators=[DataRequired()])
     alias = StringField('Internal Reference Name (firstName_year):', validators=[DataRequired()])
     riding = StringField('Riding:', validators=[DataRequired()])
     year = IntegerField('Election Year:', validators=[DataRequired()])
     gov_level = SelectField('Gov Level:', validators=[DataRequired()], choices=gov_levels)
     hourly_rate = FloatField('Hourly Value:')
-    admins = SelectMultipleField('Admins (Ctl + Click to select multiple):')
     submit = SubmitField('Submit')
 
 class JoinCampaignForm(FlaskForm):
@@ -37,17 +36,25 @@ admins = db.Table('admins', db.Model.metadata,
     db.Column('campaign_id', db.Integer, db.ForeignKey('campaigns.id'))
 )
 
-users_under_campaign = db.Table('users_under_campaign', db.Model.metadata, 
-    db.Column('user_id', db.Integer, db.ForeignKey('users.id')), 
-    db.Column('campaign_id', db.Integer, db.ForeignKey('campaigns.id')),
-    db.Column('getting_paid', db.Boolean, default=False)
-)
-
 payment_exceptions = db.Table('payment_exceptions',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
     db.Column('campaign_id', db.Integer, db.ForeignKey('campaigns.id')),
     db.Column('hourly_rate', db.Integer)
 )
+
+class Campaign_Contracts(db.Model):
+    __tablename__ = 'campaign_contracts'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.ForeignKey('users.id')) 
+    campaign_id = db.Column(db.ForeignKey('campaigns.id'))
+    campaign = db.relationship('Campaigns', back_populates='user_contracts')
+    user = db.relationship("Users", back_populates='campaign_contracts')
+    getting_paid = db.Column(db.Boolean, default=False)
+    canvass_rate = db.Column(db.Float)
+    calling_rate = db.Column(db.Float)
+    general_rate = db.Column(db.Float)
+    litdrop_rate = db.Column(db.Float)
+
 
 class Campaigns(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -63,13 +70,17 @@ class Campaigns(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     owner = db.relationship('Users', back_populates='campaigns_owned')
     admins = db.relationship('Users', secondary=admins, back_populates="admin_campaigns")
-    users_under = db.relationship('Users', secondary=users_under_campaign, back_populates="campaigns_under")
+    user_contracts = db.relationship('Campaign_Contracts', back_populates="campaign")
     shiftstamps_on_campaign = db.relationship('ShiftStamps', back_populates='campaign')
     paystamps_on_campaign = db.relationship('PayStamps', back_populates='campaign')
     abstractstamps_on_campaign = db.relationship('AbstractStamps', back_populates='campaign')
     receipts = db.relationship('Receipts', back_populates='campaign')
     hex_code = db.Column(db.String(30), nullable=False, unique=True)
-    hourly_rate = db.Column(db.Float, nullable=False, default=15.0)
+    commute_pay = db.Column(db.Float, nullable=False, default=0)
+    default_canvass_rate = db.Column(db.Float, nullable=False, default=15.0)
+    default_calling_rate = db.Column(db.Float, nullable=False, default=15.0)
+    default_general_rate = db.Column(db.Float, nullable=False, default=15.0)
+    default_litdrop_rate = db.Column(db.Float, nullable=False, default=15.0)
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __init__(self, **kwargs):
@@ -84,5 +95,3 @@ class Campaigns(db.Model):
             user.system_level_id = 4
 
         db.session.commit()
-    
-    import random

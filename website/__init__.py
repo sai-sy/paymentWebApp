@@ -48,7 +48,7 @@ def create_app(name):
         # Models
         from .models.abstracts import AbstractStamps
         from .models.paystamps import PayStamps
-        from .models.campaigns import Campaigns, admins
+        from .models.campaigns import Campaigns, admins, Campaign_Contracts
         from .models.users import Users, SystemLevels
         from .models.people import People
         from .models.shiftstamps import ShiftStamps, Activities

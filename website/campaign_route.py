@@ -2,7 +2,7 @@
 import os
 
 # HELPER FUNCTIONS
-from .helper_functions.narrow_campaigns import all_campaigns_user_admins_list, users_in_campaign_under_user
+from .helper_functions.narrow_campaigns import all_campaigns_user_admins_list, users_in_campaign_user_adminning
 from .helper_functions.uniqueHex import uniqueCampaignHex
 
 # FLASK
@@ -18,7 +18,7 @@ from werkzeug.utils import secure_filename
 from . import db
 from .models.abstracts import AbstractForm, AbstractStamps
 from .models.paystamps import PayStamps, PayStampForm
-from .models.campaigns import CampaignForm, Campaigns, admins, users_under_campaign, JoinCampaignForm
+from .models.campaigns import Campaign_Contracts, CreateCampaignForm, Campaigns, admins, JoinCampaignForm
 from .models.users import Users
 from .models.people import People
 from .models.shiftstamps import ShiftStampForm, ShiftStamps, Activities
@@ -31,8 +31,7 @@ campaign_route = Blueprint('campaign_route', __name__)
 @campaign_route.route('/campaign/add', methods=['GET', 'POST'])
 @login_required
 def campaign_create():
-    form = CampaignForm()
-    form.admins.choices = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
+    form = CreateCampaignForm()
     form.candidate.choices = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
     if form.validate_on_submit():
         current_app.logger.info('1')
@@ -51,13 +50,12 @@ def campaign_create():
                 year = form.year.data,
                 gov_level = form.gov_level.data,
                 owner_id = current_user.id,
-                hex_code = uniqueCampaignHex(Campaigns),
-                hourly_rate = form.hourly_rate.data
+                hex_code = uniqueCampaignHex(Campaigns)
             )
             db.session.add(campaign)
             db.session.commit()
 
-            # Update Owner to Admin
+            # Update Owner to Admin System Level
             current_user_id = current_user.id
             owner = Users.query.get_or_404(current_user_id)
             owner.system_level_id = 4
@@ -65,16 +63,25 @@ def campaign_create():
             # Add to Admin Table and User Under Campaign Table
             campaign = Campaigns.query.filter_by(alias=alias_check).first()
 
+            '''
             for dataItem in form.admins.data:
                 admin = Users.query.get_or_404(dataItem)
                 admin.system_level_id = 4
                 db.session.commit()
                 db.session.execute(admins.insert().values(user_id=dataItem, campaign_id=campaign.id))
-                db.session.execute(users_under_campaign.insert().values(user_id=dataItem, campaign_id=campaign.id))
+            '''
 
             db.session.execute(admins.insert().values(user_id=current_user.id, campaign_id = campaign.id))
-            db.session.execute(users_under_campaign.insert().values(user_id=current_user.id, campaign_id = campaign.id))
-
+            #Make Admin Part of Campaign here
+            owner_contract = Campaign_Contracts(
+                user_id =current_user.id,
+                campaign_id=campaign.id,
+                canvass_rate=campaign.default_canvass_rate,
+                calling_rate=campaign.default_calling_rate,
+                general_rate=campaign.default_general_rate,
+                litdrop_rate = campaign.default_litdrop_rate
+            )
+            db.session.add(owner_contract)
             db.session.commit()
 
             #Empty Form
@@ -83,7 +90,6 @@ def campaign_create():
             form.alias.data = ''
             form.year.data = ''
             form.gov_level.data = ''
-            form.admins.data = ''
             flash("Campaign Added Successfully!", category='success')
             return redirect(url_for('views.home'))
 
@@ -92,7 +98,7 @@ def campaign_create():
 @campaign_route.route("/campaign/update/<int:id>", methods=['GET', 'POST'])
 @login_required
 def campaign_update(id):
-    form = CampaignForm()
+    form = CreateCampaignForm()
     campaign_to_update = Campaigns.query.get_or_404(id)
     choiceMath = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
     form.admins.choices = choiceMath
@@ -152,7 +158,16 @@ def campaign_join():
         campaign = Campaigns.query.filter_by(hex_code=form.hex_code.data).first()
         current_app.logger.info(campaign)
         if campaign:
-            db.session.execute(users_under_campaign.insert().values(user_id=current_user.id, campaign_id=campaign.id))
+            #Create Contract Here
+            new_contract = Campaign_Contracts(
+                user_id =current_user.id,
+                campaign_id=campaign.id,
+                canvass_rate=campaign.default_canvass_rate,
+                calling_rate=campaign.default_calling_rate,
+                general_rate=campaign.default_general_rate,
+                litdrop_rate = campaign.default_litdrop_rate
+            )
+            db.session.add(new_contract)
             db.session.commit()
             flash('You have successfuly joined this campaign!', category='success')
             return redirect(url_for('views.home'))
@@ -176,5 +191,16 @@ def campaign_shift_list(id):
 @campaign_route.route("/campaign/dashboard/<int:id>", methods=['GET', 'POST'])
 @login_required
 def campaign_dashboard(id):
-    campaign = Campaigns.query.get_or_404(id)
-    return render_template('/campaign/campaign_dashboard.html', campaign=campaign)
+    for campaign in current_user.campaigns_owned:
+        if campaign.id == id:
+            return render_template('/campaign/campaign_dashboard.html', campaign=campaign, id=id, status='owner')
+    for campaign in current_user.admin_campaigns:
+        if campaign.id == id:
+            return render_template('/campaign/campaign_dashboard.html', campaign=campaign, id=id, status="admin")
+        
+    for campaign_contract in current_user.campaign_contracts:
+        if campaign_contract.campaign_id == id:
+            return render_template('/campaign/campaign_dashboard.html', campaign=campaign, id=id, status="base")
+        else:
+            abort(403)
+

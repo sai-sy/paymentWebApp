@@ -11,7 +11,7 @@ from . import db
 from .models.users import SystemLevels, Users
 from .models.shiftstamps import ShiftStamps, Activities, ShiftStampForm
 from .models.admincommands import AdminCommands, AdminForm, AdminPassword, AdminPasswordForm
-from .models.campaigns import CampaignForm, Campaigns
+from .models.campaigns import Campaigns
 views = Blueprint('views', __name__)
 import datetime
 from sqlalchemy import text

@@ -29,7 +29,7 @@ def load_preset_data(app, db):
 
     # ADD ACTIVITES
     calling = Activities(activity="calling")
-    canvas = Activities(activity="canvas")
+    canvas = Activities(activity="canvass")
     litdrop = Activities(activity="litdrop")
     admin = Activities(activity="admin")
     general = Activities(activity="general")

@@ -121,6 +121,7 @@ def signup():
                     last_name=form.last_name.data,
                     alias=alias_input,
                     email=form.email.data, 
+                    e_transfer=form.email.data,
                     phone=form.phone.data, 
                     password_hash=hashed_pw,            
                     )

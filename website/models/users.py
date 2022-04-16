@@ -38,6 +38,7 @@ commissions = db.Table('commmissions', db.Model.metadata,
     db.Column('commission_earner', db.Integer, db.ForeignKey('users.id')), 
     db.Column('commission_feeder', db.Integer, db.ForeignKey('users.id')), 
     db.Column('campaign_id', db.Integer, db.ForeignKey('campaigns.id')),
+    db.Column('activity', db.String(500), db.ForeignKey('activities.activity')),
     db.Column('amount', db.Integer, default=2, nullable=False)
 )
 
@@ -45,15 +46,24 @@ class Users(People, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, ForeignKey('people.id'), primary_key=True)
     alias =db.Column(db.String(100), nullable=False, unique=True)
+    e_transfer = db.Column(db.String(500), nullable=False)
+    
+    # Password Stuff
     #password = db.Column(db.String(150), nullable=False)
     password_hash = db.Column(db.String(150), nullable=False)
     system_level_id = db.Column(db.Integer, ForeignKey('systemlevels.numeric_level'), nullable=False,  default='1')
     system_level = db.relationship('SystemLevels', back_populates='users')
     #make sure to uncoment Campaigns along with this
     #candidacies = db.relationship('Campaigns', back_populates="candidate")
+    
+    # Campaigns Associated
     admin_campaigns = db.relationship('Campaigns', secondary=admins, back_populates="admins")
     campaign_contracts = db.relationship('Campaign_Contracts', back_populates="user")
     campaigns_owned = db.relationship('Campaigns', back_populates='owner')
+
+    commissions_earned = db.Relationship('Commissions', secondary=admins)
+
+    # All Stamps
     shiftstamps = db.relationship('ShiftStamps', back_populates="user")
     paystamps = db.relationship('PayStamps', back_populates="user")
     abstractstamps = db.relationship('AbstractStamps', back_populates="user")

@@ -66,7 +66,6 @@ class Campaigns(db.Model):
     riding = db.Column(db.String(200), nullable=False)
     year = db.Column(db.Integer, nullable=False)
     gov_level = db.Column(db.String(50), nullable=False)
-    pay = db.Column(db.Float, nullable=False, default=15.0)
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     owner = db.relationship('Users', back_populates='campaigns_owned')
     admins = db.relationship('Users', secondary=admins, back_populates="admin_campaigns")

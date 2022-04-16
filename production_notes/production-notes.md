@@ -3,11 +3,25 @@ Please preview `/paymentwebapp/README.md`
 
 # TODO  
 ### Main Pages
+- UPDATE DELETE BUTTONS
 - [ ] Campaign Dash
     - [ ] Intuitive way to edit campaign properties
+        - [x] Campaign Heading Info
+        - [ ] Campaign Pay Info
+            - [ ] Update every contract to be minimum changed rates
     - [ ] Intuitive way to add admins
-    - [ ] Intuitive way to view all related shifts
-    - [ ] Intuitive Way to See receipts
+    - [ ] View
+        - [x] Shifts
+            - [ ] Edit
+        - [ ] Payments
+            - [ ] Edit
+        - [ ] Receipts
+            -[ ] Click thru on receipt to open image of receipt
+            -[ ] Edit
+                - do not edit the image name!
+        - [ ] User List
+            - [ ] Toggle switch for getting paid that live updates the database 
+            - [ ] Display all contract values
 - [ ] User Dash  
     - [ ] Top is a box that displays all content
         - [ ] way to edit personal content
@@ -32,9 +46,9 @@ Please preview `/paymentwebapp/README.md`
     - [x] Attatch a rate to each shift  
     - [ ] Make the shift rate based on the campaign rate  
     - [ ] retroactive pay change on output report  
-- [ ] Imports  
+- [X] Imports  
     - [x] Front End  
-    - [ ] Back End  
+    - [X] Back End  
 - [ ] Exports  
     - [ ] Front End  
     - [ ] Back End  

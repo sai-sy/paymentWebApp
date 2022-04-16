@@ -61,7 +61,7 @@ class Users(People, UserMixin):
     campaign_contracts = db.relationship('Campaign_Contracts', back_populates="user")
     campaigns_owned = db.relationship('Campaigns', back_populates='owner')
 
-    commissions_earned = db.Relationship('Commissions', secondary=admins)
+    #commissions_earned = db.relationship('Commissions')
 
     # All Stamps
     shiftstamps = db.relationship('ShiftStamps', back_populates="user")

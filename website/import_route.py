@@ -4,6 +4,7 @@ import os
 
 # HELPER FUNCTIONS
 from .helper_functions.narrow_campaigns import all_campaigns_user_in, all_campaigns_user_admins, users_in_campaign_user_adminning, all_campaigns
+from .helper_functions import load_sheet
 
 # FLASK
 from flask import Blueprint, jsonify, redirect, render_template, current_app, request, flash, jsonify, Flask, url_for, abort
@@ -32,6 +33,8 @@ import datetime as dt
 
 import_route = Blueprint('import_route', __name__)
 
+
+
 @import_route.route("/import_data", methods=['GET', 'POST'])
 @login_required
 def import_data():
@@ -50,7 +53,7 @@ def import_data():
 
 def import_data_func(form, wl_campaigns):
     if form.validate_on_submit():
-        db_filename = 'import_' + current_user.alias + '_' + str(dt.date.today())
+        db_filename = 'import_' + current_user.alias + '_' + str(form.import_type.data).lower() + '_' + str(dt.date.today())
         i = 1
         while(True):        
             searched_file = Imports.query.filter_by(file_name=db_filename).first()
@@ -67,7 +70,8 @@ def import_data_func(form, wl_campaigns):
                 db.session.commit()
                 break
 
-        if form.import_type.data == "Payments":
+        if form.import_type.data == "Shifts":
+            #Save File
             file = form.file.data
             filename = secure_filename(file.filename)
             assets_dir = os.path.join(os.path.dirname(current_app.instance_path), current_app.config['IMPORT_FOLDER'])
@@ -76,6 +80,10 @@ def import_data_func(form, wl_campaigns):
                 if file_ext not in current_app.config['UPLOAD_EXTENSIONS']:
                     abort(400)
                 file.save(os.path.join(assets_dir, db_filename+file_ext))
+            
+            #Process File
+            load_sheet.prod_start(db_filename+file_ext, form.import_type.data)
 
         else:
             flash('This import function hasnt been created yet.', category='error')
+

@@ -101,7 +101,6 @@ def campaign_update(id):
     form = CreateCampaignForm()
     campaign_to_update = Campaigns.query.get_or_404(id)
     choiceMath = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
-    form.admins.choices = choiceMath
     if form.validate_on_submit():
         campaign_to_update.candidate = request.form['candidate']
         campaign_to_update.alias = request.form['alias']

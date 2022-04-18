@@ -39,7 +39,7 @@ def shift_add():
             return redirect(url_for('shift_route.shift_add'))
         else:
             pass
-    elif current_user.system_level_id < 8:
+    elif current_user.system_level_id < 5:
                 
         form.user.choices = users_in_campaign_user_adminning(current_user)
 
@@ -124,12 +124,20 @@ def receipt_upload():
     if current_user.system_level_id < 3:
         return render_template('no_access.html')
     elif current_user.system_level_id < 5:
-        uploaded_file = form.image.data
         current_app.logger.info('enter ten')
         campaigns = [(c.id, str(c.alias)) for c in current_user.admin_campaigns]
         form.campaigns.choices = campaigns
-        choiceMath = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
-        form.users.choices = choiceMath
+
+        # Find users that this admin manages
+        allusers = Users.query.order_by('first_name')
+        users = []
+        for user in allusers:
+            for contract in user.campaign_contracts:
+                if (contract.campaign_id, str(contract.campaign.alias)) in campaigns:
+                    users.append((str(user.id), str(user.first_name + ' ' + user.last_name)))
+        
+        #choiceMath = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
+        form.users.choices = users
         if form.validate_on_submit():
             receipt_upload_func(form)
             return redirect(url_for('shift_route.receipt_upload'))
@@ -138,7 +146,6 @@ def receipt_upload():
             current_app.logger.info(form.errors)
         return render_template('/shift/receipt_upload.html', form=form)
     else:
-        uploaded_file = form.image.data
         current_app.logger.info('enter ten')
         campaigns = [(c.id, str(c.alias)) for c in Campaigns.query.filter_by()]
         form.campaigns.choices = campaigns
@@ -218,13 +225,12 @@ def receipt_delete(id):
 def paystamp_upload():
     form = PayStampForm()
     form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
-    users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
     if current_user.system_level_id < 3:
         return render_template('no_access.html')
     elif current_user.system_level_id < 5:
         campaigns = [(c.id, str(c.alias)) for c in current_user.admin_campaigns]
         form.campaign.choices = campaigns   
-        form.user.choices = users
+        form.user.choices = users_in_campaign_user_adminning(current_user)
         if form.validate_on_submit():
             paystamp_upload_func(form)
             return redirect(url_for('shift_route.paystamp_upload'))
@@ -233,6 +239,7 @@ def paystamp_upload():
             current_app.logger.info(form.errors)
         return render_template('/shift/payment_upload.html', form=form)
     else:
+        users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
         campaigns = [(c.id, str(c.alias)) for c in Campaigns.query.filter_by()]
         form.campaign.choices = campaigns
         form.user.choices = users
@@ -280,7 +287,7 @@ def payment_list():
     elif current_user.system_level_id < 5:
         campaigns = [c.id for c in current_user.admin_campaigns]
         current_app.logger.info(campaigns)
-        paystamps = PayStamps.query.filter(PayStamps.cam.in_(campaigns)).order_by(desc(PayStamps.payment_date))
+        paystamps = PayStamps.query.filter(PayStamps.campaign_id.in_(campaigns)).order_by(desc(PayStamps.payment_date))
         return render_template('/shift/payment_list.html', paystamps=paystamps)
     else:
         paystamps = PayStamps.query.filter_by().order_by(desc(PayStamps.payment_date))
@@ -305,11 +312,10 @@ def paystamp_delete(id):
 @login_required
 def abstract_add():
     form = AbstractForm()
-    users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
-    form.user.choices = users
     if current_user.system_level_id < 3:
         return render_template('no_access.html')
     elif current_user.system_level_id < 5:
+        form.user.choices = users_in_campaign_user_adminning(current_user) 
         campaigns = [(c.id, str(c.alias)) for c in current_user.admin_campaigns]
         form.campaign.choices = campaigns
         if form.validate_on_submit():
@@ -319,7 +325,9 @@ def abstract_add():
             current_app.logger.info('notvalidated')
             current_app.logger.info(form.errors)
     else:
+        users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
         campaigns = [(c.id, str(c.alias)) for c in Campaigns.query.filter_by()]
+        form.user.choices = users
         form.campaign.choices = campaigns
         if form.validate_on_submit():
             abstract_add_func(form)

@@ -1,4 +1,4 @@
-This is a web app made for internal use by various political campaigns around the Greater Toronto Area to manage volunteer shifts, hours, and honourarium. This project is led by Saihaan Syed and maintained by him and Shakib Ahmed. We used Flask to develop the the apps backend, Flask-SQLAlchemy as the ORM, and Jina2 for the HTML. The app is deployed onto a private linode linux nginx server with gunicorn as the WSGI, and the MySQL database is on private linode MYSQL server.
+This is a web app made for internal use by various political campaigns around the Greater Toronto Area to manage volunteer shifts, hours, and honourarium. This project is led by Saihaan Syed and maintained by him and Shakib Ahmed. We used Flask to develop the the apps backend, Flask-SQLAlchemy as the ORM tool, and Jinja2 for the HTML. The app is deployed onto a private linode linux nginx server with gunicorn as the WSGI, and the MySQL database is on private linode MYSQL server.
 
 ## Contributors
 - Saihaan Syed @Sai-Sy  

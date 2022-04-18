@@ -8,6 +8,7 @@
     {% block content %}
     <div class="shadow p-3 mb-5 bg-body rounded">   
     <h3 align="center">Update Campaign</h3>
+
     <form method="POST">
         {{ form.hidden_tag() }}
         {{ form.candidate.label(class='form-label')}}
@@ -29,7 +30,7 @@
         {{ form.gov_level.label(class='form-label')}}
         {{ form.gov_level(class='form-control', value=campaign_to_update.gov_level)}}
         <br/>   
-        {{ form.submit(class='btn btn-danger')}}
+        {{ form.submit(class='btn btn-danger') }}
     </form>
 </div>
     {% endblock %}

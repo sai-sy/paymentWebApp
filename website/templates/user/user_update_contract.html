@@ -9,43 +9,50 @@
     <div class="shadow p-3 mb-5 bg-body rounded">
     <h3 align="center">Update User Contract</h3>
 
-    <div id="flex_child_element">
-        <strong>ID: </strong>{{ campaign.id }}<br/>
-        <strong>Candidate: </strong>{{ campaign.candidate }}<br/>
-        <strong>Alias: </strong>{{ campaign.alias }}<br/>
-        <strong>Join Code: </strong>{{ campaign.hex_code }}<br/>
-        <strong>Riding: </strong>{{ campaign.riding }}<br/>
-        <strong>Government Level: </strong>{{ campaign.gov_level }}<br>
-        <br>
-    </div>
-
     <form method="POST">
         {{ form.hidden_tag() }}
-
-        {{ form.first_name.label(class='form-label')}}
-        {{ form.first_name(class='form-control', value=name_to_update.first_name)}}
+        {{ form.user.label(class='form-label')}}
+        {{ form.user(class='form-control', value=contract.user, readonly=readonly)}}
         <br/>
         {{ form.hidden_tag() }}
-        {{ form.last_name.label(class='form-label')}}
-        {{ form.last_name(class='form-control', value=name_to_update.last_name)}}
+        {{ form.campaign.label(class='form-label')}}
+        {{ form.campaign(class='form-control', value=contract.campaign, readonly=readonly)}}
+        <br/>
+        <div class="form-check form-switch">
+        {{ form.hidden_tag() }}
+        {{ form.getting_paid.label(class='form-check-label', for="flexSwitchCheckDefault")}}
+        {{ form.getting_paid(class='form-check-input', type="checkbox", role="switch", id="flexSwitchCheckDefault", value=contract.getting_paid)}}
         <br/>
         {{ form.hidden_tag() }}
-        {{ form.email.label(class='form-label')}}
-        {{ form.email(class='form-control', value=name_to_update.email)}}
+        {{ form.getting_commute_pay.label(class='form-check-label', for="flexSwitchCheckDefault")}}
+        {{ form.getting_commute_pay(class='form-check-input', type="checkbox", role="switch", id="flexSwitchCheckDefault", value=contract.getting_commute_pay)}}
+        </div>
         <br/>
         {{ form.hidden_tag() }}
-        {{ form.phone.label(class='form-label')}}
-        {{ form.phone(class='form-control', value=name_to_update.phone)}}
+        {{ form.admin_rate.label(class='form-label')}}
+        {{ form.admin_rate(class='form-control', value=contract.pay_rates['admin_rate'])}}
         <br/>
         {{ form.hidden_tag() }}
-        {{ form.password1.label(class='form-label')}}
-        {{ form.password1(class='form-control', value=name_to_update.password)}}
+        {{ form.canvass_rate.label(class='form-label')}}
+        {{ form.canvass_rate(class='form-control', value=contract.pay_rates['canvass_rate'])}}
         <br/>
         {{ form.hidden_tag() }}
-        {{ form.password2.label(class='form-label')}}
-        {{ form.password2(class='form-control')}}
+        {{ form.calling_rate.label(class='form-label')}}
+        {{ form.calling_rate(class='form-control', value=contract.pay_rates['calling_rate'])}}
         <br/>
-        {{ form.submit(class='btn btn-danger')}}
+        {{ form.hidden_tag() }}
+        {{ form.general_rate.label(class='form-label')}}
+        {{ form.general_rate(class='form-control', value=contract.pay_rates['general_rate'])}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.litdrop_rate.label(class='form-label')}}
+        {{ form.litdrop_rate(class='form-control', value=contract.pay_rates['litdrop_rate'])}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.commute_rate.label(class='form-label')}}
+        {{ form.commute_rate(class='form-control', value=contract.pay_rates['commute_rate'])}}
+        <br/>
+        {{ form.submit(class='btn btn-danger') }}
     </form>
 </div>
     {% endblock %}

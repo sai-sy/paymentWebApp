@@ -4,17 +4,36 @@
     <h3 id='list_header' align="center">User List</h3>
 </div>
 <table class="table table-hover table-border table-striped">
-{% for user in users%}
+{% for contract in contracts%}
     <tr>
     <td id="displayData">
-        {{user.id}}. <a href="{{
-        url_for('auth.user_update', id=user.id)}}">{{
-            user.first_name}} {{
-            user.last_name}}</a> - {{
-            user.email}} - {{
-            user.phone}}
+        {{contract.user_id}}. <a href="{{
+        url_for('views.profile', id=contract.user.id)}}">{{
+            contract.user.first_name}} {{
+            contract.user.last_name}}</a> - {{
+            contract.user.email}} - {{
+            contract.user.phone}} 
+            <div class="form-check form-switch">
+
+            {% if contract.getting_paid %}
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckCheckedDisabled" checked disabled>
+                <label class="form-check-label" for="flexSwitchCheckCheckedDisabled"></label>Getting Paid
+            {% else %}
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDisabled" disabled>
+                <label class="form-check-label" for="flexSwitchCheckDisabled"></label>Getting Paid
+            {% endif %}
+            <br> 
+            {% if contract.getting_commute_pay %}
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckCheckedDisabled" checked disabled>
+                <label class="form-check-label" for="flexSwitchCheckCheckedDisabled"></label>Getting Commute Pay
+            {% else %}
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDisabled" disabled>
+                <label class="form-check-label" for="flexSwitchCheckDisabled"></label>Getting Commute Pay
+            {% endif %}
+
+        </div>
     </td>
-    <td id="deleteTable"> <a href="{{url_for('campaign_route.campaign_edit_user_contract', campaign_id=campaign_id, user_id=user.id)}}" role="button" class="btn btn-outline-primary" >Edit</button></td>
+    <td id="deleteTable"> <a href="{{url_for('campaign_route.campaign_edit_user_contract', campaign_id=campaign_id, user_id=contract.user.id)}}" role="button" class="btn btn-outline-primary" >Edit</button></td>
     </tr>
 {%endfor%}
 </table>

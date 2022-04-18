@@ -18,7 +18,7 @@ from werkzeug.utils import secure_filename
 from . import db
 from .models.abstracts import AbstractForm, AbstractStamps
 from .models.paystamps import PayStamps, PayStampForm
-from .models.campaigns import Campaign_Contracts, CreateCampaignForm, Campaigns, admins, JoinCampaignForm, GovLevels
+from .models.campaigns import Campaign_Contracts, CreateCampaignForm, CampaignContractForm, Campaigns, admins, JoinCampaignForm, GovLevels
 from .models.users import Users
 from .models.people import People
 from .models.shiftstamps import ShiftStampForm, ShiftStamps, Activities
@@ -78,7 +78,8 @@ def campaign_create():
                 'canvass_rate': campaign.pay_rates['canvass_rate'],
                 'calling_rate': campaign.pay_rates['calling_rate'],
                 'general_rate': campaign.pay_rates['general_rate'],
-                'litdrop_rate': campaign.pay_rates['litdrop_rate']
+                'litdrop_rate': campaign.pay_rates['litdrop_rate'],
+                'commute_rate': campaign.pay_rates['commute_rate']
             }
             owner_contract = Campaign_Contracts(
                 user_id =current_user.id,
@@ -102,27 +103,31 @@ def campaign_create():
 @campaign_route.route("/campaign/update/<int:id>", methods=['GET', 'POST'])
 @login_required
 def campaign_update(id):
-    form = CreateCampaignForm()
-    form.gov_level.choices=[level.level for level in GovLevels.query.filter_by()]
-    campaign_to_update = Campaigns.query.get_or_404(id)
-    if form.validate_on_submit():
-        campaign_to_update.candidate = request.form['candidate']
-        campaign_to_update.alias = request.form['alias']
-        campaign_to_update.riding = request.form['riding']
-        campaign_to_update.year = request.form['year']
-        campaign_to_update.gov_level_id = request.form['gov_level']
-        try:
-            db.session.commit()
-            flash('Campaign Updated Successfully', category='success')
-            return render_template('/campaign/campaign_update.html', form=form, name_to_update=campaign_to_update)
-        except:
-            flash('Error: Looks like there was a problem. Try Again Later', category='error')
-            form.candidate.data = ''
-            form.alias.data = ''
-            form.alias.data = ''
-            form.year.data = ''
-            form.gov_level.data = ''
-            return render_template('/campaign/campaign_update.html', form=form, campaign_to_update=campaign_to_update)
+    # Remember to update so that admin(or owner?) of campaign can only access
+    if current_user.system_level_id < 3:
+        abort(403)
+    else:
+        form = CreateCampaignForm()
+        form.gov_level.choices=[level.level for level in GovLevels.query.filter_by()]
+        campaign_to_update = Campaigns.query.get_or_404(id)
+        if form.validate_on_submit():
+            campaign_to_update.candidate = request.form['candidate']
+            campaign_to_update.alias = request.form['alias']
+            campaign_to_update.riding = request.form['riding']
+            campaign_to_update.year = request.form['year']
+            campaign_to_update.gov_level_id = request.form['gov_level']
+            try:
+                db.session.commit()
+                flash('Campaign Updated Successfully', category='success')
+                return render_template('/campaign/campaign_update.html', form=form, name_to_update=campaign_to_update)
+            except:
+                flash('Error: Looks like there was a problem. Try Again Later', category='error')
+                form.candidate.data = ''
+                form.alias.data = ''
+                form.alias.data = ''
+                form.year.data = ''
+                form.gov_level.data = ''
+                return render_template('/campaign/campaign_update.html', form=form, campaign_to_update=campaign_to_update)
     return render_template('/campaign/campaign_update.html', form=form, campaign_to_update=campaign_to_update)
 
 @campaign_route.route('/campaign/list')
@@ -140,6 +145,8 @@ def campaign_list():
 @campaign_route.route('/campaign/delete/<int:id>')
 @login_required
 def campaign_delete(id):
+    #update so that only owner can access this route
+
     campaign_to_delete = Campaigns.query.get_or_404(id)
     try:
         db.session.delete(campaign_to_delete)
@@ -160,13 +167,9 @@ def campaign_join():
         if campaign:
             #Create Contract Here
             new_contract = Campaign_Contracts(
-                user_id =current_user.id,
+                user_id=current_user.id,
                 campaign_id=campaign.id,
-                admin_rate=campaign.pay_rates['admin_rate'],
-                canvass_rate=campaign.pay_rates['canvass_rate'],
-                calling_rate=campaign.pay_rates['calling_rate'],
-                general_rate=campaign.pay_rates['general_rate'],
-                litdrop_rate = campaign.pay_rates['litdrop_rate']
+                pay_rates=campaign.pay_rates
             )
             db.session.add(new_contract)
             db.session.commit()
@@ -177,6 +180,7 @@ def campaign_join():
     
     return render_template('/campaign/campaign_join.html', form=form)
 
+# update so only campaign admin can access all the lists
 @campaign_route.route('campaign/dashboard/<int:id>/shifts', methods=['GET', 'POST'])
 @login_required
 def campaign_shift_list(id):
@@ -201,28 +205,76 @@ def campaign_user_list(id):
     if current_user.system_level_id < 3:
         return render_template('no_access.html')
     else:
-        users = users_in_campaign(id)
-        return render_template('/campaign/campaign_user_list.html', users=users, campaign_id=id)
+        contracts = Campaign_Contracts.query.filter(Campaign_Contracts.campaign_id==id)
+        return render_template('/campaign/campaign_user_list.html', contracts=contracts, campaign_id=id)
 
-@campaign_route.route('campaign/dashboard/<int:campaign_id>/edit_contract/<int:user_id>')
+@campaign_route.route('campaign/dashboard/<int:campaign_id>/edit_contract/<int:user_id>', methods=['GET', 'POST'])
 def campaign_edit_user_contract(campaign_id, user_id):
     if current_user.system_level_id < 3:
         return render_template('no_access.html')
     else:
-        contract = Campaign_Contracts.query.filter(db.and_(Campaign_Contracts.campaign_id==campaign_id, Campaign_Contracts.user_id==user_id)).first()
-        return render_template('user/user_update_contract.html', contract=contract)
-         
+        form = CampaignContractForm()
+        form.user.choices = [(u.first_name + ' ' + u.last_name) for u in Users.query.filter(Users.id==user_id)]
+        form.campaign.choices = [c.alias for c in Campaigns.query.filter(Campaigns.id==campaign_id)]
+        contract_to_update = Campaign_Contracts.query.filter(db.and_(Campaign_Contracts.campaign_id==campaign_id, Campaign_Contracts.user_id==user_id)).first()
 
+        if form.validate_on_submit():
+            new_pay_rates = {
+                'admin_rate': form.admin_rate.data,
+                'canvass_rate': form.canvass_rate.data,
+                'calling_rate': form.calling_rate.data,
+                'general_rate': form.general_rate.data,
+                'litdrop_rate': form.litdrop_rate.data,
+                'commute_rate': form.commute_rate.data
+            }
+            pay_rates = {**contract_to_update.pay_rates, **new_pay_rates}
+
+            #contract_to_update.user = form.user.data
+            #contract_to_update.campaign = form.campaign.data
+            contract_to_update.getting_paid = form.getting_paid.data
+            contract_to_update.getting_commute_pay = form.getting_commute_pay.data
+            contract_to_update.getting_paid = form.getting_paid.data
+            contract_to_update.getting_commute_pay = form.getting_commute_pay.data
+            contract_to_update.pay_rates = pay_rates
+
+            try:
+                db.session.commit()
+                flash('User Contract Updated Successfully', category='success')
+                return redirect(url_for('campaign_route.campaign_user_list', id=campaign_id))
+            
+            except:
+                flash('Error: Looks like there was a problem. Try Again Later', category='error')
+                return render_template('user/user_update_contract.html', form=form, contract=contract_to_update)
+        
+        return render_template('user/user_update_contract.html', form=form, contract=contract_to_update)
+         
 @campaign_route.route('campaign/dashboard/<int:campaign_id>/remove_admin/<int:admin_id>')
 def admin_remove(campaign_id, admin_id):
     abort(403)
 
-@campaign_route.route('campaign/dashboard/<int:id>/payment_list', methods=['GET, POST'])
+@campaign_route.route('campaign/dashboard/<int:id>/payment_list', methods=['GET', 'POST'])
 def campaign_payment_list(id):
     if current_user.system_level_id < 3:
         return render_template('no_access.html')
     else:
-        pass
+        paystamps = PayStamps.query.filter(PayStamps.campaign_id==id).order_by(desc(PayStamps.payment_date))
+        return render_template('/shift/payment_list.html', paystamps=paystamps)
+
+@campaign_route.route('campaign/dashboard/<int:id>/abstract_list', methods=['GET', 'POST'])
+def campaign_abstract_list(id):
+    if current_user.system_level_id < 3:
+        return render_template('no_access.html')
+    else:
+        abstracts = AbstractStamps.query.filter(AbstractStamps.campaign_id==id).order_by(desc(AbstractStamps.date_added))
+        return render_template('/shift/abstract_list.html', abstracts=abstracts)
+
+@campaign_route.route('campaign/dashboard/<int:id>/receipt_list', methods=['GET', 'POST'])
+def campaign_receipt_list(id):
+    if current_user.system_level_id < 3:
+        return render_template('no_access.html')
+    else:
+        receipts = Receipts.query.filter(Receipts.campaign_id==id).order_by(desc(Receipts.date))
+        return render_template('/shift/receipt_list.html', receipts=receipts)
 
 @campaign_route.route("/campaign/dashboard/<int:id>", methods=['GET', 'POST'])
 @login_required
@@ -230,13 +282,14 @@ def campaign_dashboard(id):
     for campaign in current_user.campaigns_owned:
         if campaign.id == id:
             return render_template('/campaign/campaign_dashboard.html', campaign=campaign, id=id, status='owner')
+    
     for campaign in current_user.admin_campaigns:
         if campaign.id == id:
             return render_template('/campaign/campaign_dashboard.html', campaign=campaign, id=id, status="admin")
-        
+    
     for campaign_contract in current_user.campaign_contracts:
         if campaign_contract.campaign_id == id:
-            return render_template('/campaign/campaign_dashboard.html', campaign=campaign, id=id, status="base")
-        else:
-            abort(403)
+            return render_template('/campaign/campaign_dashboard.html', campaign=campaign_contract.campaign, id=id, status="base")
+    
+    abort(403)
 

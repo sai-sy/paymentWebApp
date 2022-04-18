@@ -4,8 +4,11 @@
         <h3 id='list_header' align="center">Campaign Dashboard</h3>
     </div>
 
+    {%if (status == 'admin') or  (status == 'owner')%}
     <a href="{{url_for('campaign_route.campaign_update', id=campaign.id)}}" 
     role="button" class="btn btn-outline-dark btn-sm"  style="margin-bottom: 1rem">Edit Campaign</a>
+    {%endif%}
+
     <div id="flex_parent_element">
         <div id="flex_child_element">
             <strong>ID: </strong>{{ campaign.id }}<br/>
@@ -52,6 +55,9 @@
         
         <a href="{{url_for('shift_route.abstract_add', id=campaign.id)}}" 
         role="button" class="btn btn-danger" >Add Abstracts</a>
+
+        <a href="{{url_for('shift_route.receipt_upload', id=campaign.id)}}"
+        role="button" class="btn btn-danger">Add Receipts</a>
     
     </div>
 
@@ -68,8 +74,11 @@
         <a href="{{url_for('campaign_route.campaign_payment_list', id=campaign.id)}}" 
         role="button" class="btn btn-danger" >View Payments</a>
 
-        <a href="{{url_for('campaign_route.campaign_shift_list', id=campaign.id)}}" 
+        <a href="{{url_for('campaign_route.campaign_abstract_list', id=campaign.id)}}" 
         role="button" class="btn btn-danger" >View Abstracts</a>
+
+        <a href="{{url_for('campaign_route.campaign_receipt_list', id=campaign.id)}}" 
+        role="button" class="btn btn-danger" >View Receipts</a>
 
     </div>
 

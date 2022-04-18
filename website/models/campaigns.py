@@ -4,7 +4,7 @@ from .. import db
 from datetime import datetime
 #Flask WTF
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, EmailField, SelectField, IntegerField, SelectMultipleField, FloatField
+from wtforms import StringField, SubmitField, PasswordField, EmailField, SelectField, IntegerField, SelectMultipleField, FloatField, BooleanField
 from wtforms.validators import DataRequired, EqualTo
 from sqlalchemy.orm import declarative_base
 from datetime import datetime
@@ -25,6 +25,19 @@ class CreateCampaignForm(FlaskForm):
 
 class JoinCampaignForm(FlaskForm):
     hex_code=StringField('Enter the provided code for your campaign')
+    submit = SubmitField('Submit')
+
+class CampaignContractForm(FlaskForm):
+    user = SelectField('User:')
+    campaign = SelectField('Campaign:')
+    getting_paid = BooleanField('Getting Paid?')
+    getting_commute_pay = BooleanField('Getting Commute Pay?')
+    admin_rate = FloatField('Admin Hourly Rate:', validators=[DataRequired()])
+    canvass_rate = FloatField('Canvass Hourly Rate:', validators=[DataRequired()])
+    calling_rate = FloatField('Calling Hourly Rate:', validators=[DataRequired()])
+    general_rate = FloatField('General Hourly Rate:', validators=[DataRequired()])
+    litdrop_rate = FloatField('Litdrop Hourly Rate:', validators=[DataRequired()])
+    commute_rate = FloatField('Commute Hourly Rate:', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 admins = db.Table('admins', db.Model.metadata, 
@@ -56,7 +69,7 @@ class Campaign_Contracts(db.Model):
     user = db.relationship("Users", back_populates='campaign_contracts')
     getting_paid = db.Column(db.Boolean, default=False)
     getting_commute_pay = db.Column(db.Boolean, default=False)
-    pay_rates = {}
+    pay_rates = db.Column(db.JSON, nullable=False, default=default_pay_rates)
 
 
 class Campaigns(db.Model):

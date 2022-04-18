@@ -2,8 +2,9 @@
 import os
 
 # HELPER FUNCTIONS
-from .helper_functions.db_filters import users_in_campaign, admins_in_campaign, all_campaigns_user_admins_list, users_in_campaign_user_adminning
+from .helper_functions.db_filters import all_campaigns_user_in, users_in_campaign, admins_in_campaign, all_campaigns_user_admins_list, users_in_campaign_user_adminning
 from .helper_functions.uniqueHex import uniqueCampaignHex
+from .shift_route import shift_add_func
 
 # FLASK
 from flask import Blueprint, jsonify, redirect, render_template, current_app, request, flash, jsonify, Flask, url_for, abort
@@ -110,6 +111,8 @@ def campaign_update(id):
         form = CreateCampaignForm()
         form.gov_level.choices=[level.level for level in GovLevels.query.filter_by()]
         campaign_to_update = Campaigns.query.get_or_404(id)
+        form.gov_level.default = campaign_to_update.gov_level_id
+        form.process()
         if form.validate_on_submit():
             campaign_to_update.candidate = request.form['candidate']
             campaign_to_update.alias = request.form['alias']
@@ -146,7 +149,7 @@ def campaign_list():
 @login_required
 def campaign_delete(id):
     #update so that only owner can access this route
-
+    abort(404)
     campaign_to_delete = Campaigns.query.get_or_404(id)
     try:
         db.session.delete(campaign_to_delete)
@@ -180,7 +183,31 @@ def campaign_join():
     
     return render_template('/campaign/campaign_join.html', form=form)
 
-# update so only campaign admin can access all the lists
+@campaign_route.route('campaign/dashboard/<int:id>/shift_add', methods=['GET', 'POST'])
+@login_required
+def campaign_shift_add(id):
+    form = ShiftStampForm()
+    admin = []
+    for c in current_user.admin_campaigns:
+        admin.append(c.id)
+    if current_user.system_level_id < 3 or id not in admin:
+        return render_template('no_access.html')
+    elif current_user.system_level_id < 5:
+        form.user.choices = users_in_campaign(id)
+        form.campaign.choices = [(str(c.id), str(c.alias)) for c in Campaigns.query.filter(Campaigns.id==id).order_by(desc(Campaigns.alias))]
+        form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
+        if form.validate_on_submit():
+            shift_add_func(form)
+            return redirect(url_for('campaign_route.campaign_shift_add', id=id))
+    elif current_user.system_level_id < 8:
+        form.campaign.choices = [(str(c.id), str(c.alias))  for c in Campaigns.query.order_by(desc(Campaigns.alias))]
+        form.user.choices = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
+        if form.validate_on_submit():
+            shift_add_func(form)
+            return redirect(url_for('shift_route.shift_add', id=id))
+
+    return render_template('/shift/shift_add.html', form=form)
+
 @campaign_route.route('campaign/dashboard/<int:id>/shifts', methods=['GET', 'POST'])
 @login_required
 def campaign_shift_list(id):
@@ -226,7 +253,9 @@ def campaign_edit_user_contract(campaign_id, user_id):
         form.user.choices = [(u.first_name + ' ' + u.last_name) for u in Users.query.filter(Users.id==user_id)]
         form.campaign.choices = [c.alias for c in Campaigns.query.filter(Campaigns.id==campaign_id)]
         contract_to_update = Campaign_Contracts.query.filter(db.and_(Campaign_Contracts.campaign_id==campaign_id, Campaign_Contracts.user_id==user_id)).first()
-
+        form.getting_paid.default = contract_to_update.getting_paid
+        form.getting_commute_pay.default = contract_to_update.getting_commute_pay
+        form.process()
         if form.validate_on_submit():
             new_pay_rates = {
                 'admin_rate': form.admin_rate.data,
@@ -259,7 +288,7 @@ def campaign_edit_user_contract(campaign_id, user_id):
          
 @campaign_route.route('campaign/dashboard/<int:campaign_id>/remove_admin/<int:admin_id>')
 def admin_remove(campaign_id, admin_id):
-    abort(403)
+    abort(404)
 
 @campaign_route.route('campaign/dashboard/<int:id>/payment_list', methods=['GET', 'POST'])
 def campaign_payment_list(id):

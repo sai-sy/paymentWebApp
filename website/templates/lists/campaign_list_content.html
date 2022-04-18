@@ -50,18 +50,18 @@
 </div>
 
 <table class="table table-hover table-border table-striped">
-    {% for campaign in current_user.campaigns_under%}
+    {% for contract in current_user.campaign_contracts%}
     <tr>
         <td id="displayData">
-        {{campaign.id}}. <a href="{{
-        url_for('campaign_route.campaign_dashboard', id=campaign.id)}}">{{
-            campaign.alias}}</a>
+        {{contract.campaign.id}}. <a href="{{
+        url_for('campaign_route.campaign_dashboard', id=contract.campaign.id)}}">{{
+            contract.campaign.alias}}</a>
         </td>
         <td id="displayData">
-            {{campaign.riding}}
+            {{contract.campaign.riding}}
         </td>
         <td id="displayData">
-            {{campaign.hex_code}}
+            {{contract.campaign.hex_code}}
         </td>
     </tr>
     {%endfor%}

@@ -8,7 +8,18 @@
     {% block content %}
     <div class="shadow p-3 mb-5 bg-body rounded">
     <h3 align="center">Update User Contract</h3>
-    <form method="POST" action="/update/{{name_to_update.id}}">
+
+    <div id="flex_child_element">
+        <strong>ID: </strong>{{ campaign.id }}<br/>
+        <strong>Candidate: </strong>{{ campaign.candidate }}<br/>
+        <strong>Alias: </strong>{{ campaign.alias }}<br/>
+        <strong>Join Code: </strong>{{ campaign.hex_code }}<br/>
+        <strong>Riding: </strong>{{ campaign.riding }}<br/>
+        <strong>Government Level: </strong>{{ campaign.gov_level }}<br>
+        <br>
+    </div>
+
+    <form method="POST">
         {{ form.hidden_tag() }}
 
         {{ form.first_name.label(class='form-label')}}

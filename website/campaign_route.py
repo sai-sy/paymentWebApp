@@ -2,7 +2,7 @@
 import os
 
 # HELPER FUNCTIONS
-from .helper_functions.narrow_campaigns import users_in_campaign, admins_in_campaign, all_campaigns_user_admins_list, users_in_campaign_user_adminning
+from .helper_functions.db_filters import users_in_campaign, admins_in_campaign, all_campaigns_user_admins_list, users_in_campaign_user_adminning
 from .helper_functions.uniqueHex import uniqueCampaignHex
 
 # FLASK
@@ -32,9 +32,7 @@ campaign_route = Blueprint('campaign_route', __name__)
 @login_required
 def campaign_create():
     form = CreateCampaignForm()
-    form.gov_level.choices=[]
-    for level in GovLevels.query.filter_by():
-        form.gov_level.choices.append(level.level)
+    form.gov_level.choices=[level.level for level in GovLevels.query.filter_by()]
     if form.validate_on_submit():
         current_app.logger.info('1')
         alias_check = form.alias.data
@@ -50,7 +48,7 @@ def campaign_create():
                 alias = form.alias.data,
                 riding = form.riding.data,
                 year = form.year.data,
-                gov_level = form.gov_level.data,
+                gov_level_id = form.gov_level.data,
                 owner_id = current_user.id,
                 hex_code = uniqueCampaignHex(Campaigns)
             )
@@ -78,10 +76,11 @@ def campaign_create():
             owner_contract = Campaign_Contracts(
                 user_id =current_user.id,
                 campaign_id=campaign.id,
-                canvass_rate=campaign.default_canvass_rate,
-                calling_rate=campaign.default_calling_rate,
-                general_rate=campaign.default_general_rate,
-                litdrop_rate = campaign.default_litdrop_rate
+                admin_rate=campaign.admin_rate,
+                canvass_rate=campaign.canvass_rate,
+                calling_rate=campaign.calling_rate,
+                general_rate=campaign.general_rate,
+                litdrop_rate=campaign.litdrop_rate
             )
             db.session.add(owner_contract)
             db.session.commit()
@@ -101,18 +100,18 @@ def campaign_create():
 @login_required
 def campaign_update(id):
     form = CreateCampaignForm()
+    form.gov_level.choices=[level.level for level in GovLevels.query.filter_by()]
     campaign_to_update = Campaigns.query.get_or_404(id)
-    choiceMath = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
     if form.validate_on_submit():
         campaign_to_update.candidate = request.form['candidate']
         campaign_to_update.alias = request.form['alias']
         campaign_to_update.riding = request.form['riding']
         campaign_to_update.year = request.form['year']
-        campaign_to_update.gov_level = request.form['gov_level']
+        campaign_to_update.gov_level_id = request.form['gov_level']
         try:
             db.session.commit()
             flash('Campaign Updated Successfully', category='success')
-            return render_template('home.html', form=form, name_to_update=campaign_to_update)
+            return render_template('/campaign/campaign_update.html', form=form, name_to_update=campaign_to_update)
         except:
             flash('Error: Looks like there was a problem. Try Again Later', category='error')
             form.candidate.data = ''
@@ -120,7 +119,6 @@ def campaign_update(id):
             form.alias.data = ''
             form.year.data = ''
             form.gov_level.data = ''
-            form.admins.data = ''
             return render_template('/campaign/campaign_update.html', form=form, campaign_to_update=campaign_to_update)
     return render_template('/campaign/campaign_update.html', form=form, campaign_to_update=campaign_to_update)
 
@@ -163,10 +161,11 @@ def campaign_join():
             new_contract = Campaign_Contracts(
                 user_id =current_user.id,
                 campaign_id=campaign.id,
-                canvass_rate=campaign.default_canvass_rate,
-                calling_rate=campaign.default_calling_rate,
-                general_rate=campaign.default_general_rate,
-                litdrop_rate = campaign.default_litdrop_rate
+                admin_rate=campaign.admin_rate,
+                canvass_rate=campaign.canvass_rate,
+                calling_rate=campaign.calling_rate,
+                general_rate=campaign.general_rate,
+                litdrop_rate = campaign.litdrop_rate
             )
             db.session.add(new_contract)
             db.session.commit()
@@ -209,7 +208,7 @@ def campaign_edit_user_contract(campaign_id, user_id):
     if current_user.system_level_id < 3:
         return render_template('no_access.html')
     else:
-        contract = Campaign_Contracts.query.filter_by(Campaign_Contracts.campaign_id==campaign_id, Campaign_Contracts.user.id==user_id)
+        contract = Campaign_Contracts.query.filter(db.and_(Campaign_Contracts.campaign_id==campaign_id, Campaign_Contracts.user_id==user_id)).first()
         return render_template('user/user_update_contract.html', contract=contract)
          
 

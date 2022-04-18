@@ -2,7 +2,7 @@
 import os
 
 # HELPER FUNCTIONS
-from .helper_functions.narrow_campaigns import all_campaigns_user_in, users_in_campaign_user_adminning
+from .helper_functions.db_filters import all_campaigns_user_in, users_in_campaign_user_adminning
 
 # FLASK
 from flask import Blueprint, jsonify, redirect, render_template, current_app, request, flash, jsonify, Flask, url_for, abort

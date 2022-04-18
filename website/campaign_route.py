@@ -104,9 +104,9 @@ def campaign_create():
 @campaign_route.route("/campaign/update/<int:id>", methods=['GET', 'POST'])
 @login_required
 def campaign_update(id):
-    # Remember to update so that admin(or owner?) of campaign can only access
-    if current_user.system_level_id < 3:
-        abort(403)
+    campaign = Campaigns.query.filter(Campaigns.id==id).first()
+    if current_user.system_level_id < 3 or current_user.id != campaign.owner_id:
+        return render_template('no_access.html')
     else:
         form = CreateCampaignForm()
         form.gov_level.choices=[level.level for level in GovLevels.query.filter_by()]
@@ -222,17 +222,6 @@ def campaign_shift_list(id):
         current_app.logger.info(shifts)
         return render_template('/shift/shift_list.html', shifts=shifts)
 
-@campaign_route.route('campaign/dashboard/<int:id>/admin_list', methods=['GET', 'POST'])
-def campaign_admin_list(id):
-    admin = []
-    for c in current_user.admin_campaigns:
-        admin.append(c.id)
-    if current_user.system_level_id < 3 or id not in admin:
-        return render_template('no_access.html')
-    else:
-        admins = admins_in_campaign(id)
-        return render_template('/campaign/campaign_admin_list.html', admins=admins, campaign_id=id)
-
 @campaign_route.route('campaign/dashboard/<int:id>/user_list', methods=['GET', 'POST'])
 def campaign_user_list(id):
     admin = []
@@ -241,8 +230,14 @@ def campaign_user_list(id):
     if current_user.system_level_id < 3 or id not in admin:
         return render_template('no_access.html')
     else:
+        campaign = Campaigns.query.filter(Campaigns.id==id).first()
+        if current_user.id == campaign.owner_id:
+            status = 'owner'
+        else:
+            status = 'admin'
+        admins = admins_in_campaign(id)
         contracts = Campaign_Contracts.query.filter(Campaign_Contracts.campaign_id==id)
-        return render_template('/campaign/campaign_user_list.html', contracts=contracts, campaign_id=id)
+        return render_template('/campaign/campaign_user_list.html', contracts=contracts, admins=admins, status=status, campaign_id=id)
 
 @campaign_route.route('campaign/dashboard/<int:campaign_id>/edit_contract/<int:user_id>', methods=['GET', 'POST'])
 def campaign_edit_user_contract(campaign_id, user_id):
@@ -285,9 +280,33 @@ def campaign_edit_user_contract(campaign_id, user_id):
                 return render_template('user/user_update_contract.html', form=form, contract=contract_to_update)
         
         return render_template('user/user_update_contract.html', form=form, contract=contract_to_update)
-         
+
+@campaign_route.route('campaign/dashboard/<int:campaign_id>/add_admin/<int:user_id>')
+def campaign_admin_add(campaign_id, user_id):
+    admin = []
+    for c in current_user.admin_campaigns:
+        admin.append(c.id)
+    if current_user.system_level_id < 3 or campaign_id not in admin:
+        return render_template('no_access.html')
+    else:
+        campaign = Campaigns.query.filter(Campaigns.id==campaign_id).first()
+        if user_id == campaign.owner_id:
+            flash("Cannot remove owner as administrator!", category='error')
+            return redirect(url_for('campaign_route.campaign_user_list', id=campaign_id))
+        elif user_id in admin:
+            flash("User is already an administrator.", category='error')
+            return redirect(url_for('campaign_route.campaign_user_list', id=campaign_id))
+        elif user_id not in admin:
+            try:
+                db.session.execute(admins.insert().values(user_id=user_id, campaign_id = campaign_id))
+                db.session.commit()
+                flash("User promoted to administrator.", category='success')
+            except:
+                flash("Failed to promote user to administrator.", category='error')
+    return redirect(url_for('campaign_route.campaign_user_list', id=campaign_id))
+
 @campaign_route.route('campaign/dashboard/<int:campaign_id>/remove_admin/<int:admin_id>')
-def admin_remove(campaign_id, admin_id):
+def campaign_admin_remove(campaign_id, admin_id):
     abort(404)
 
 @campaign_route.route('campaign/dashboard/<int:id>/payment_list', methods=['GET', 'POST'])

@@ -15,6 +15,16 @@
             contract.user.phone}} 
             <div class="form-check form-switch">
 
+            {% if contract.user.id in admins or contract.user.id == contract.campaign.owner_id %}
+            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckCheckedDisabled" checked disabled>
+            <label class="form-check-label" for="flexSwitchCheckCheckedDisabled"></label>Administrator
+            {% else %}
+            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDisabled" disabled>
+            <label class="form-check-label" for="flexSwitchCheckDisabled"></label>Administrator
+            {% endif %}
+
+            <br>
+
             {% if contract.getting_paid %}
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckCheckedDisabled" checked disabled>
                 <label class="form-check-label" for="flexSwitchCheckCheckedDisabled"></label>Getting Paid
@@ -22,7 +32,9 @@
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDisabled" disabled>
                 <label class="form-check-label" for="flexSwitchCheckDisabled"></label>Getting Paid
             {% endif %}
+
             <br> 
+
             {% if contract.getting_commute_pay %}
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckCheckedDisabled" checked disabled>
                 <label class="form-check-label" for="flexSwitchCheckCheckedDisabled"></label>Getting Commute Pay
@@ -33,7 +45,17 @@
 
         </div>
     </td>
+    
+    {% if contract.user.id in admins or contract.user.id == contract.campaign.owner_id %}
+    <td id="deleteTable"> <a href="{{url_for('campaign_route.campaign_admin_remove', campaign_id=campaign_id, admin_id=contract.user.id)}}" role="button" class="btn btn-outline-primary" >Remove Administrator</button></td>
+
+    {% else %}
+    <td id="deleteTable"> <a href="{{url_for('campaign_route.campaign_admin_add', campaign_id=campaign_id, user_id=contract.user.id)}}" role="button" class="btn btn-outline-primary" >Add Administrator</button></td>
+    
+    {% endif %}
+    
     <td id="deleteTable"> <a href="{{url_for('campaign_route.campaign_edit_user_contract', campaign_id=campaign_id, user_id=contract.user.id)}}" role="button" class="btn btn-outline-primary" >Edit</button></td>
+
     </tr>
 {%endfor%}
 </table>

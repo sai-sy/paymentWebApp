@@ -2,7 +2,7 @@
 import os
 
 # HELPER FUNCTIONS
-from .helper_functions.narrow_campaigns import all_campaigns_user_admins_list, users_in_campaign_user_adminning
+from .helper_functions.narrow_campaigns import admins_in_campaign, all_campaigns_user_admins_list, users_in_campaign_user_adminning
 from .helper_functions.uniqueHex import uniqueCampaignHex
 
 # FLASK
@@ -188,6 +188,39 @@ def campaign_shift_list(id):
         current_app.logger.info(shifts)
         return render_template('/shift/shift_list.html', shifts=shifts)
 
+@campaign_route.route('campaign/dashboard/<int:id>/admin_list', methods=['GET', 'POST'])
+def campaign_admin_list(id):
+    if current_user.system_level_id < 3:
+        return render_template('no_access.html')
+    else:
+        admins = admins_in_campaign(id)
+        return render_template('/campaign/campaign_admin_list.html', admins=admins, campaign_id=id)
+
+@campaign_route.route('campaign/dashboard/<int:id>/user_list', methods=['GET', 'POST'])
+def campaign_user_list(id):
+    if current_user.system_level_id < 3:
+        return render_template('no_access.html')
+    else:
+        users = None
+        return render_template('/campaign/campaign_user_list.html')
+
+@campaign_route.route('campaign/dashboard/<int:campaign_id>/edit_contract/<int:user_id>')
+def campaign_edit_user_contract(campaign_id, user_id):
+    if current_user.system_level_id < 3:
+        return render_template('no_access.html')
+    else:
+        abort(403)
+
+@campaign_route.route('campaign/dashboard/<int:campaign_id>/remove_admin/<int:admin_id>')
+def admin_remove(campaign_id, admin_id):
+    abort(403)
+
+@campaign_route.route('campaign/dashboard/<int:id>/payment_list', methods=['GET, POST'])
+def campaign_payment_list(id):
+    if current_user.system_level_id < 3:
+        return render_template('no_access.html')
+    else:
+        pass
 
 @campaign_route.route("/campaign/dashboard/<int:id>", methods=['GET', 'POST'])
 @login_required

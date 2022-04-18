@@ -1,0 +1,21 @@
+{%extends 'base.html'%}
+{% block content %}
+<div class="shadow p-3 mb-5 bg-body rounded">
+    <h3 id='list_header' align="center">Admin List</h3>
+</div>
+<table class="table table-hover table-border table-striped">
+{% for admin in admins%}
+    <tr>
+    <td id="displayData">
+        {{admin.id}}. <a href="{{
+        url_for('auth.user_update', id=admin.id)}}">{{
+            admin.first_name}} {{
+            admin.last_name}}</a> - {{
+            admin.email}} - {{
+            admin.phone}}
+    </td>
+    <td id="deleteTable"><a href="{{url_for('campaign_route.admin_remove', campaign_id=campaign_id, admin_id=admin.id)}}" role="button" class="btn btn-outline-danger" >Remove</button></td>
+    </tr>
+{%endfor%}
+</table>
+{% endblock %}

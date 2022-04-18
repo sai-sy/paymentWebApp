@@ -13,7 +13,7 @@
         <strong>Riding: </strong>{{ campaign.riding }}<br/>
         <strong>Government Level: </strong>{{ campaign.gov_level }}<br>
         <a href="{{url_for('campaign_route.campaign_update', id=campaign.id)}}" 
-        role="button" class="btn btn-outline-danger" >Edit Campaign</a><br><br>
+        role="button" class="btn btn-danger" >Edit Campaign</a><br><br>
     </div>
 
     <div id="flex_child_element">
@@ -29,20 +29,20 @@
 
 <div id="button_line_container">
 
-<a href="{{url_for('campaign_route.campaign_shift_list', id=campaign.id)}}" 
-role="button" class="btn btn-outline-danger" >View Users</a>
+<a href="{{url_for('campaign_route.campaign_user_list', id=campaign.id)}}" 
+role="button" class="btn btn-danger" >View Users</a>
 
 <a href="{{url_for('campaign_route.campaign_shift_list', id=campaign.id)}}" 
-role="button" class="btn btn-outline-danger" >View Shifts</a>
+role="button" class="btn btn-danger" >View Shifts</a>
 
-<a href="{{url_for('campaign_route.campaign_update', id=campaign.id)}}" 
-role="button" class="btn btn-outline-danger" >View Admins</a>
+<a href="{{url_for('campaign_route.campaign_admin_list', id=campaign.id)}}" 
+role="button" class="btn btn-danger" >View Admins</a>
+
+<a href="{{url_for('campaign_route.campaign_payment_list', id=campaign.id)}}" 
+role="button" class="btn btn-danger" >View Payments</a>
 
 <a href="{{url_for('campaign_route.campaign_shift_list', id=campaign.id)}}" 
-role="button" class="btn btn-outline-danger" >View Payments</a>
-
-<a href="{{url_for('campaign_route.campaign_shift_list', id=campaign.id)}}" 
-role="button" class="btn btn-outline-danger" >View Abstracts</a>
+role="button" class="btn btn-danger" >View Abstracts</a>
 
 </div>
 

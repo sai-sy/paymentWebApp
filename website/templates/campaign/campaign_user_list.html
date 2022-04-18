@@ -1,0 +1,21 @@
+{%extends 'base.html'%}
+{% block content %}
+<div class="shadow p-3 mb-5 bg-body rounded">
+    <h3 id='list_header' align="center">User List</h3>
+</div>
+<table class="table table-hover table-border table-striped">
+{% for user in users%}
+    <tr>
+    <td id="displayData">
+        {{user.id}}. <a href="{{
+        url_for('auth.user_update', id=admin.id)}}">{{
+            user.first_name}} {{
+            user.last_name}}</a> - {{
+            user.email}} - {{
+            user.phone}}
+    </td>
+    <td <a href="{{url_for('campaign_route.campaign_edit_user_contract', campaign_id=campaign_id, user_id=user.id)}}" role="button" class="btn btn-outline-primary" >Edit</button></td>
+    </tr>
+{%endfor%}
+</table>
+{% endblock %}

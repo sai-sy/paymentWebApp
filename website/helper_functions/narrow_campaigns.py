@@ -54,3 +54,11 @@ def users_in_campaign_user_adminning(current_user):
                 user_choices.append(tup)
 
     return user_choices
+
+def admins_in_campaign(campaign_id):
+    """
+    Returns all the admins in a campaign
+    """
+    campaign = Campaigns.query.filter(Campaigns.id==campaign_id).first()
+    admins = [user for user in campaign.admins]
+    return admins

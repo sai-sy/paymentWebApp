@@ -4,6 +4,8 @@
         <h3 id='list_header' align="center">Campaign Dashboard</h3>
     </div>
 
+    <a href="{{url_for('campaign_route.campaign_update', id=campaign.id)}}" 
+    role="button" class="btn btn-outline-dark btn-sm"  style="margin-bottom: 1rem">Edit Campaign</a>
     <div id="flex_parent_element">
         <div id="flex_child_element">
             <strong>ID: </strong>{{ campaign.id }}<br/>
@@ -13,11 +15,6 @@
             <strong>Riding: </strong>{{ campaign.riding }}<br/>
             <strong>Government Level: </strong>{{ campaign.gov_level }}<br>
             <br>
-            <a href="{{url_for('campaign_route.campaign_update', id=campaign.id)}}" 
-            role="button" class="btn btn-danger" >Edit Campaign</a>
-            <a href="{{url_for('campaign_route.campaign_user_list', id=campaign.id)}}" 
-            role="button" class="btn btn-danger" >View Users</a>
-            <br><br>
         </div>
 
         <div id="flex_child_element">
@@ -26,10 +23,15 @@
             <strong>Commute Pay: </strong>{{ campaign.commute_pay }}<br/>
             <strong>Canvass Rate: </strong>{{ campaign.default_canvass_rate }}<br/>
             <strong>Calling Rate: </strong>{{ campaign.default_calling_rate }}<br/>
-            <strong>General Rate: </strong>{{ campaign.default_general_rate }}<br>
-            <strong>Litdrop Rate: </strong>{{ campaign.default_general_rate }}<br><br>
+            <strong>General Rate: </strong>{{ campaign.default_general_rate }}<br/>
+            <strong>Litdrop Rate: </strong>{{ campaign.default_general_rate }}<br/>
         </div>
     </div>
+    <div class="d-grid gap-2 mx-auto">
+        <a href="{{url_for('campaign_route.campaign_user_list', id=campaign.id)}}" role="button" class="btn btn-outline-danger" >View Users</a>
+    </div>
+
+<br>
 
     <div id="button_line_container">
     

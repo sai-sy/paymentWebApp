@@ -43,10 +43,7 @@ body {
     justify-content: space-between;
     padding-right: 20%;
   }
-  
-  #flex_child_element {
-    
-  }
+
   
   #flex_child_element:first-child {
     margin-right: 20px;

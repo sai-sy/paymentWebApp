@@ -9,33 +9,40 @@ Please preview `/paymentwebapp/README.md`
         - [x] Campaign Heading Info
         - [ ] Campaign Pay Info
             - [ ] Update every contract to be minimum changed rates
-    - [ ] show personal contract on right
+    - [ ] show personal contract on right (wait)
     - [ ] Way to change the contract to get people paid
                 - [ ] MASS CHANGES TO PEOPLE GETTING PAID
                     - [ ] Change users getting paid button (seperate from edit user contract button) (maybe make it in the edit pay for campaign page)
                     - [ ] after submit button make a list of all the users
                     - [ ] checkbox checked or not based on if they get paid or not
                 - [ ] (Future might need ajax) Toggle switch for getting paid that live updates the database
-    - [ ] Intuitive way to add admins
+    - [ ] Admins
+        - [x] lists
+        - [ ] remove
+        - [ ] add
     - [ ] View
         - [ ] Shifts
-            - [ ] List
+            - [x] List
             - [ ] Edit
         - [ ] Payments
+            - [ ] List
             - [ ] Edit
         - [ ] Receipts
+            -[x] List
             -[ ] Click thru on receipt to open image of receipt
             -[ ] Edit
                 - do not edit the image name!
         - [ ] User List
-            - [ ] List
+            - [x] List
             - [ ] Click Name
                 - [ ] Opens Profile Info
                 - [ ] Contract Info On Right
                 - [ ] Change Contract btn IF ADMIN, View Shifts, View Paystampts, View Receipts, View Abstracts
             - [ ] edit user contract
             - [ ] Display all contract values
-- [ ] User choices update
+            - [ ] edit contract
+            - [ ] remove user
+
 - [ ] Try Catch in auth.signup  
     - This try-except is made to work for unique alias'  
         - Desc: If something else throws that error, it'll get stuck in an infinite loop. There needs to be a better solution for this  

@@ -2,7 +2,7 @@
 import os
 
 # HELPER FUNCTIONS
-from .helper_functions.db_filters import all_campaigns_user_in, users_in_campaign_user_adminning
+from .helper_functions.db_filters import all_campaigns_user_in, users_in_campaign_user_adminning, rate_for_activity
 
 # FLASK
 from flask import Blueprint, jsonify, redirect, render_template, current_app, request, flash, jsonify, Flask, url_for, abort
@@ -73,8 +73,7 @@ def shift_add_func(form: ShiftStampForm):
             end_time=datetime.combine(form.date.data, datetime.strptime(form.end_time.data, '%H:%M:%S').time()),
             campaign_id=form.campaign.data,
             activity_id=form.activity.data,
-            activity=foundactivity,
-            hourly_rate=Campaigns.query.get_or_404(form.campaign.data).hourly_rate
+            hourly_rate=rate_for_activity(foundactivity, form.campaign.data)
         )
         shiftstamp.minutes = (shiftstamp.end_time - shiftstamp.start_time).total_seconds() / 60
         db.session.add(shiftstamp)

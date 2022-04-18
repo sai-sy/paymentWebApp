@@ -14,19 +14,25 @@
             <strong>Join Code: </strong>{{ campaign.hex_code }}<br/>
             <strong>Riding: </strong>{{ campaign.riding }}<br/>
             <strong>Government Level: </strong>{{ campaign.gov_level_id }}<br>
-            <br>
+
         </div>
 
+        {%if (status == 'admin') or  (status == 'owner')%}
+
         <div id="flex_child_element">
-            {%if (status == 'admin') or  (status == 'owner')%}
+
             <strong>Owner: </strong>{{ campaign.owner.first_name }} {{ campaign.owner.last_name }} - {{ campaign.owner.alias }}<br/>
-            <strong>Commute Pay: </strong>{{ campaign.commute_pay }}<br/>
-            <strong>Canvass Rate: </strong>{{ campaign.default_canvass_rate }}<br/>
-            <strong>Calling Rate: </strong>{{ campaign.default_calling_rate }}<br/>
-            <strong>General Rate: </strong>{{ campaign.default_general_rate }}<br/>
-            <strong>Litdrop Rate: </strong>{{ campaign.default_general_rate }}<br/>
+            <strong>Commute Pay: </strong>{{ campaign.pay_rates['commute_rate'] }}<br/>
+            <strong>Canvass Rate: </strong>{{ campaign.pay_rates['canvass_rate']}}<br/>
+            <strong>Calling Rate: </strong>{{ campaign.pay_rates['calling_rate'] }}<br/>
+            <strong>General Rate: </strong>{{ campaign.pay_rates['general_rate'] }}<br/>
+            <strong>General Rate: </strong>{{ campaign.pay_rates['admin_rate'] }}<br/>
+            <strong>Litdrop Rate: </strong>{{ campaign.pay_rates['litdrop_rate'] }}<br/>
         </div>
     </div>
+
+    <br>
+
     <div class="d-grid gap-2 mx-auto">
         <a href="{{url_for('campaign_route.campaign_user_list', id=campaign.id)}}" role="button" class="btn btn-outline-danger" >View Users</a>
     </div>

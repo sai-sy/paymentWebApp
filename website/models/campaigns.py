@@ -1,3 +1,4 @@
+from email.policy import default
 from sqlalchemy import Column, ForeignKey, true
 from .. import db
 from datetime import datetime
@@ -37,6 +38,15 @@ payment_exceptions = db.Table('payment_exceptions',
     db.Column('hourly_rate', db.Integer)
 )
 
+default_pay_rates = {
+    'admin_rate' : '15.0',
+    'canvass_rate' : '15.0',
+    'calling_rate' : '15.0',
+    'general_rate' : '15.0',
+    'litdrop_rate' : '15.0',
+    'commute_rate' : '6.50'
+}
+
 class Campaign_Contracts(db.Model):
     __tablename__ = 'campaign_contracts'
     id = db.Column(db.Integer, primary_key=True)
@@ -45,10 +55,8 @@ class Campaign_Contracts(db.Model):
     campaign = db.relationship('Campaigns', back_populates='user_contracts')
     user = db.relationship("Users", back_populates='campaign_contracts')
     getting_paid = db.Column(db.Boolean, default=False)
-    canvass_rate = db.Column(db.Float)
-    calling_rate = db.Column(db.Float)
-    general_rate = db.Column(db.Float)
-    litdrop_rate = db.Column(db.Float)
+    getting_commute_pay = db.Column(db.Boolean, default=False)
+    pay_rates = {}
 
 
 class Campaigns(db.Model):
@@ -72,6 +80,7 @@ class Campaigns(db.Model):
     receipts = db.relationship('Receipts', back_populates='campaign')
     hex_code = db.Column(db.String(30), nullable=False, unique=True)
     commute_pay = db.Column(db.Float, nullable=False, default=0)
+    pay_rates = db.Column(db.JSON, nullable=False, default=default_pay_rates)
     admin_rate = db.Column(db.Float, nullable=False, default=15.0)
     canvass_rate = db.Column(db.Float, nullable=False, default=15.0)
     calling_rate = db.Column(db.Float, nullable=False, default=15.0)

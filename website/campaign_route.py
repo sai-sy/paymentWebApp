@@ -61,7 +61,7 @@ def campaign_create():
             owner.system_level_id = 4
 
             # Add to Admin Table and User Under Campaign Table
-            campaign = Campaigns.query.filter_by(alias=alias_check).first()
+            campaign:Campaigns = Campaigns.query.filter_by(alias=alias_check).first()
 
             '''
             for dataItem in form.admins.data:
@@ -73,14 +73,17 @@ def campaign_create():
 
             db.session.execute(admins.insert().values(user_id=current_user.id, campaign_id = campaign.id))
             #Make Admin Part of Campaign here
+            pay_rates = { 
+                'admin_rate': campaign.pay_rates['admin_rate'],
+                'canvass_rate': campaign.pay_rates['canvass_rate'],
+                'calling_rate': campaign.pay_rates['calling_rate'],
+                'general_rate': campaign.pay_rates['general_rate'],
+                'litdrop_rate': campaign.pay_rates['litdrop_rate']
+            }
             owner_contract = Campaign_Contracts(
                 user_id =current_user.id,
                 campaign_id=campaign.id,
-                admin_rate=campaign.admin_rate,
-                canvass_rate=campaign.canvass_rate,
-                calling_rate=campaign.calling_rate,
-                general_rate=campaign.general_rate,
-                litdrop_rate=campaign.litdrop_rate
+                pay_rates=pay_rates,
             )
             db.session.add(owner_contract)
             db.session.commit()
@@ -132,8 +135,7 @@ def campaign_list():
         return render_template('/campaign/campaign_list.html', campaigns=campaigns_grabbed)
     else:
         campaigns_grabbed = Campaigns.query.order_by(Campaigns.date_added)
-        return render_template('/campaign/campaign_list.html', campaigns=campaigns_grabbed)
-    
+        return render_template('/campaign/campaign_list.html', campaigns=campaigns_grabbed)    
 
 @campaign_route.route('/campaign/delete/<int:id>')
 @login_required
@@ -148,7 +150,6 @@ def campaign_delete(id):
         flash("Campaign Was Not Deleted Successfully", category='error')
         return redirect(url_for('campaign_route.campaign_list'))
 
-
 @campaign_route.route('/campaign/join', methods=['GET', 'POST'])
 @login_required
 def campaign_join():
@@ -161,11 +162,11 @@ def campaign_join():
             new_contract = Campaign_Contracts(
                 user_id =current_user.id,
                 campaign_id=campaign.id,
-                admin_rate=campaign.admin_rate,
-                canvass_rate=campaign.canvass_rate,
-                calling_rate=campaign.calling_rate,
-                general_rate=campaign.general_rate,
-                litdrop_rate = campaign.litdrop_rate
+                admin_rate=campaign.pay_rates['admin_rate'],
+                canvass_rate=campaign.pay_rates['canvass_rate'],
+                calling_rate=campaign.pay_rates['calling_rate'],
+                general_rate=campaign.pay_rates['general_rate'],
+                litdrop_rate = campaign.pay_rates['litdrop_rate']
             )
             db.session.add(new_contract)
             db.session.commit()

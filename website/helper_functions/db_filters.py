@@ -75,11 +75,9 @@ def users_in_campaign(campaign_id):
         users.append(contract.user)
     return users
 
-def rate_for_activity(activity:str, campaign_id:str):
+def rate_for_activity(activity, campaign_id:str):
     """
     Checks campaign for activity rates and assigns a rate based on activity
     """
-    campaign = Campaigns.query.filter_by(Campaigns.id==campaign_id).first()
-    if activity=='admin':
-        rate = 1
-    return
+    campaign: Campaigns = Campaigns.query.filter_by(id = campaign_id).first()
+    return campaign.pay_rates[activity.activity+'_rate']

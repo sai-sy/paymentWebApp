@@ -184,7 +184,10 @@ def campaign_join():
 @campaign_route.route('campaign/dashboard/<int:id>/shifts', methods=['GET', 'POST'])
 @login_required
 def campaign_shift_list(id):
-    if current_user.system_level_id < 3:
+    admin = []
+    for c in current_user.admin_campaigns:
+        admin.append(c.id)
+    if current_user.system_level_id < 3 or id not in admin:
         return render_template('no_access.html')
     else:
         campaigns = [id]
@@ -194,7 +197,10 @@ def campaign_shift_list(id):
 
 @campaign_route.route('campaign/dashboard/<int:id>/admin_list', methods=['GET', 'POST'])
 def campaign_admin_list(id):
-    if current_user.system_level_id < 3:
+    admin = []
+    for c in current_user.admin_campaigns:
+        admin.append(c.id)
+    if current_user.system_level_id < 3 or id not in admin:
         return render_template('no_access.html')
     else:
         admins = admins_in_campaign(id)
@@ -202,7 +208,10 @@ def campaign_admin_list(id):
 
 @campaign_route.route('campaign/dashboard/<int:id>/user_list', methods=['GET', 'POST'])
 def campaign_user_list(id):
-    if current_user.system_level_id < 3:
+    admin = []
+    for c in current_user.admin_campaigns:
+        admin.append(c.id)
+    if current_user.system_level_id < 3 or id not in admin:
         return render_template('no_access.html')
     else:
         contracts = Campaign_Contracts.query.filter(Campaign_Contracts.campaign_id==id)
@@ -254,7 +263,10 @@ def admin_remove(campaign_id, admin_id):
 
 @campaign_route.route('campaign/dashboard/<int:id>/payment_list', methods=['GET', 'POST'])
 def campaign_payment_list(id):
-    if current_user.system_level_id < 3:
+    admin = []
+    for c in current_user.admin_campaigns:
+        admin.append(c.id)
+    if current_user.system_level_id < 3 or id not in admin:
         return render_template('no_access.html')
     else:
         paystamps = PayStamps.query.filter(PayStamps.campaign_id==id).order_by(desc(PayStamps.payment_date))
@@ -262,7 +274,10 @@ def campaign_payment_list(id):
 
 @campaign_route.route('campaign/dashboard/<int:id>/abstract_list', methods=['GET', 'POST'])
 def campaign_abstract_list(id):
-    if current_user.system_level_id < 3:
+    admin = []
+    for c in current_user.admin_campaigns:
+        admin.append(c.id)
+    if current_user.system_level_id < 3 or id not in admin:
         return render_template('no_access.html')
     else:
         abstracts = AbstractStamps.query.filter(AbstractStamps.campaign_id==id).order_by(desc(AbstractStamps.date_added))
@@ -270,7 +285,10 @@ def campaign_abstract_list(id):
 
 @campaign_route.route('campaign/dashboard/<int:id>/receipt_list', methods=['GET', 'POST'])
 def campaign_receipt_list(id):
-    if current_user.system_level_id < 3:
+    admin = []
+    for c in current_user.admin_campaigns:
+        admin.append(c.id)
+    if current_user.system_level_id < 3 or id not in admin:
         return render_template('no_access.html')
     else:
         receipts = Receipts.query.filter(Receipts.campaign_id==id).order_by(desc(Receipts.date))

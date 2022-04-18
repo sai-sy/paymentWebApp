@@ -2,7 +2,7 @@
 import os
 
 # HELPER FUNCTIONS
-from .helper_functions.narrow_campaigns import admins_in_campaign, all_campaigns_user_admins_list, users_in_campaign_user_adminning
+from .helper_functions.narrow_campaigns import users_in_campaign, admins_in_campaign, all_campaigns_user_admins_list, users_in_campaign_user_adminning
 from .helper_functions.uniqueHex import uniqueCampaignHex
 
 # FLASK
@@ -201,15 +201,17 @@ def campaign_user_list(id):
     if current_user.system_level_id < 3:
         return render_template('no_access.html')
     else:
-        users = None
-        return render_template('/campaign/campaign_user_list.html')
+        users = users_in_campaign(id)
+        return render_template('/campaign/campaign_user_list.html', users=users, campaign_id=id)
 
 @campaign_route.route('campaign/dashboard/<int:campaign_id>/edit_contract/<int:user_id>')
 def campaign_edit_user_contract(campaign_id, user_id):
     if current_user.system_level_id < 3:
         return render_template('no_access.html')
     else:
-        abort(403)
+        contract = Campaign_Contracts.query.filter_by(Campaign_Contracts.campaign_id==campaign_id, Campaign_Contracts.user.id==user_id)
+        return render_template('user/user_update_contract.html', contract=contract)
+         
 
 @campaign_route.route('campaign/dashboard/<int:campaign_id>/remove_admin/<int:admin_id>')
 def admin_remove(campaign_id, admin_id):

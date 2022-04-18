@@ -18,7 +18,8 @@ Please preview `/paymentwebapp/README.md`
                 - [ ] (Future might need ajax) Toggle switch for getting paid that live updates the database
     - [ ] Intuitive way to add admins
     - [ ] View
-        - [x] Shifts
+        - [ ] Shifts
+            - [ ] List
             - [ ] Edit
         - [ ] Payments
             - [ ] Edit
@@ -27,6 +28,7 @@ Please preview `/paymentwebapp/README.md`
             -[ ] Edit
                 - do not edit the image name!
         - [ ] User List
+            - [ ] List
             - [ ] Click Name
                 - [ ] Opens Profile Info
                 - [ ] Contract Info On Right

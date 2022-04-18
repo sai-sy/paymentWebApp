@@ -4,7 +4,7 @@ class SpreadSheetParseError(Exception):
     def __init__(self, error_note):
         self.error_note = error_note
 
-def page_not_found(e):
+def page_not_found_error(e):
     '''Invalid URL'''
     return render_template("404.html"), 404
 

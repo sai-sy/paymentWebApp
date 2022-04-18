@@ -1,4 +1,3 @@
-from types import NoneType
 from ..models.campaigns  import Campaign_Contracts, Campaigns
 from sqlalchemy import desc
 

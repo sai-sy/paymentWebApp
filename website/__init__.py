@@ -64,6 +64,11 @@ def create_app(name):
         app.register_blueprint(import_route, url_prefix='/')
         app.register_blueprint(export_route, url_prefix='/')
 
+        from .helper_functions import exc
+        app.register_error_handler(404, exc.page_not_found_error())
+        app.register_error_handler(403, exc.access_denied_error())
+        app.register_error_handler(500, exc.internal_server_error())
+
         login_manager = LoginManager()
         login_manager.login_view = 'auth.login'
         login_manager.init_app(app)

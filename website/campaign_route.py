@@ -2,7 +2,7 @@
 import os
 
 # HELPER FUNCTIONS
-from .helper_functions.db_filters import all_campaigns_user_in, users_in_campaign, admins_in_campaign, all_campaigns_user_admins_list, users_in_campaign_user_adminning
+from .helper_functions.db_filters import all_campaigns_user_in, users_in_campaign, admins_id_in_campaign, admins_in_campaign, all_campaigns_user_admins_list, users_in_campaign_user_adminning
 from .helper_functions.uniqueHex import uniqueCampaignHex
 from .shift_route import shift_add_func
 
@@ -235,7 +235,7 @@ def campaign_user_list(id):
             status = 'owner'
         else:
             status = 'admin'
-        admins = admins_in_campaign(id)
+        admins = admins_id_in_campaign(id)
         contracts = Campaign_Contracts.query.filter(Campaign_Contracts.campaign_id==id)
         return render_template('/campaign/campaign_user_list.html', contracts=contracts, admins=admins, status=status, campaign_id=id)
 
@@ -298,7 +298,13 @@ def campaign_admin_add(campaign_id, user_id):
             return redirect(url_for('campaign_route.campaign_user_list', id=campaign_id))
         elif user_id not in admin:
             try:
+                # Add to Admins Table
                 db.session.execute(admins.insert().values(user_id=user_id, campaign_id = campaign_id))
+                db.session.commit()
+
+                #Increase System Levels
+                admin = Users.query.get_or_404(user_id)
+                admin.system_level_id = 4
                 db.session.commit()
                 flash("User promoted to administrator.", category='success')
             except:

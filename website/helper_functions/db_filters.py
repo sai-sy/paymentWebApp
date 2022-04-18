@@ -64,6 +64,14 @@ def admins_in_campaign(campaign_id):
     admins = [user for user in campaign.admins]
     return admins
 
+def admins_id_in_campaign(campaign_id):
+    """
+    Returns a list of all the admins in a campaign
+    """
+    campaign = Campaigns.query.filter(Campaigns.id==campaign_id).first()
+    admins = [user.id for user in campaign.admins]
+    return admins
+
 def users_in_campaign(campaign_id):
     """
     Returns a list of all the users contracted under a campaign

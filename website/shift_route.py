@@ -32,24 +32,15 @@ def shift_add():
     form = ShiftStampForm()
     form.campaign.choices = all_campaigns_user_in(current_user)
     form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
-    if current_user.system_level_id < 3:
+    if current_user.system_level_id < 5:
         form.user.choices = [(str(current_user.id), str(current_user.first_name + ' ' + current_user.last_name)) for u in Users.query.filter_by(id=current_user.id).order_by('first_name')]
         if form.validate_on_submit():
             shift_add_func(form)
             return redirect(url_for('shift_route.shift_add'))
         else:
             pass
-    elif current_user.system_level_id < 5:
-                
-        form.user.choices = users_in_campaign_user_adminning(current_user)
 
-        #form.user.choices = users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
-        if form.validate_on_submit():
-            shift_add_func(form)
-            return redirect(url_for('shift_route.shift_add'))
-        else:
-            pass
-    else:
+    if current_user.system_level_id > 5:
         form.campaign.choices = [(str(c.id), str(c.alias))  for c in Campaigns.query.order_by(desc(Campaigns.alias))]
         form.user.choices = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
         if form.validate_on_submit():

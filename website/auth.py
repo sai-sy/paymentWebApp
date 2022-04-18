@@ -180,6 +180,7 @@ def user_update(id):
 @auth.route('/user_list/delete/<int:id>')
 @login_required
 def user_delete(id):
+    abort(404)
     user_to_delete = Users.query.get_or_404(id)
     try:
         db.session.delete(user_to_delete)

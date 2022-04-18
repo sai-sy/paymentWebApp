@@ -44,11 +44,8 @@
 
     <div id="button_line_container">
     
-        <a href="{{url_for('shift_route.shift_add', id=campaign.id)}}" 
+        <a href="{{url_for('campaign_route.campaign_shift_add', id=campaign.id)}}" 
         role="button" class="btn btn-danger" >Add Shifts</a>
-        
-        <a href="{{url_for('campaign_route.campaign_admin_list', id=campaign.id)}}" 
-        role="button" class="btn btn-danger" >Add Admins</a>
         
         <a href="{{url_for('shift_route.paystamp_upload', id=campaign.id)}}" 
         role="button" class="btn btn-danger" >Add Payments</a>
@@ -67,9 +64,6 @@
 
         <a href="{{url_for('campaign_route.campaign_shift_list', id=campaign.id)}}" 
         role="button" class="btn btn-danger" >View Shifts</a>
-
-        <a href="{{url_for('campaign_route.campaign_admin_list', id=campaign.id)}}" 
-        role="button" class="btn btn-danger" >View Admins</a>
 
         <a href="{{url_for('campaign_route.campaign_payment_list', id=campaign.id)}}" 
         role="button" class="btn btn-danger" >View Payments</a>

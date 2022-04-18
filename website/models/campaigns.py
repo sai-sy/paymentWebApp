@@ -8,15 +8,10 @@ from wtforms.validators import DataRequired, EqualTo
 from sqlalchemy.orm import declarative_base
 from datetime import datetime
 
-gov_levels = [("1", 'Municipal'), ('2', 'Provincial'), ('3', 'Federal')]
-
-def get_value_label_gov():
-    arr = []
-    for value, label in enumerate(GovLevels):
-        arr.append((value, str(label).strip('GovLevels.')))
-
 class GovLevels(db.Model):
+    __tablename__ = 'govlevels'
     level = db.Column(db.String(50), nullable=False, primary_key=true)
+    campaigns = db.relationship('Campaigns', back_populates='gov_level')
 
 class CreateCampaignForm(FlaskForm):
     candidate = StringField('Candidate', validators=[DataRequired()])
@@ -26,8 +21,6 @@ class CreateCampaignForm(FlaskForm):
     gov_level = SelectField('Gov Level:', validators=[DataRequired()])
     hourly_rate = FloatField('Hourly Value:')
     submit = SubmitField('Submit')
-
-
 
 class JoinCampaignForm(FlaskForm):
     hex_code=StringField('Enter the provided code for your campaign')
@@ -67,7 +60,8 @@ class Campaigns(db.Model):
     alias = db.Column(db.String(50), nullable=False)
     riding = db.Column(db.String(200), nullable=False)
     year = db.Column(db.Integer, nullable=False)
-    gov_level = db.Column(db.String(50), nullable=False)
+    gov_level_id = db.Column(db.String(50), db.ForeignKey('govlevels.level'), nullable=False)
+    gov_level = db.relationship('GovLevels')
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     owner = db.relationship('Users', back_populates='campaigns_owned')
     admins = db.relationship('Users', secondary=admins, back_populates="admin_campaigns")
@@ -78,10 +72,11 @@ class Campaigns(db.Model):
     receipts = db.relationship('Receipts', back_populates='campaign')
     hex_code = db.Column(db.String(30), nullable=False, unique=True)
     commute_pay = db.Column(db.Float, nullable=False, default=0)
-    default_canvass_rate = db.Column(db.Float, nullable=False, default=15.0)
-    default_calling_rate = db.Column(db.Float, nullable=False, default=15.0)
-    default_general_rate = db.Column(db.Float, nullable=False, default=15.0)
-    default_litdrop_rate = db.Column(db.Float, nullable=False, default=15.0)
+    admin_rate = db.Column(db.Float, nullable=False, default=15.0)
+    canvass_rate = db.Column(db.Float, nullable=False, default=15.0)
+    calling_rate = db.Column(db.Float, nullable=False, default=15.0)
+    general_rate = db.Column(db.Float, nullable=False, default=15.0)
+    litdrop_rate = db.Column(db.Float, nullable=False, default=15.0)
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __init__(self, **kwargs):

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    {%extends 'base.html'%}
+    {% block content %}
+    <div class="shadow p-3 mb-5 bg-body rounded">
+    <h3 align="center">Update User Contract</h3>
+
+    <div id="flex_child_element">
+        <strong>ID: </strong>{{ campaign.id }}<br/>
+        <strong>Candidate: </strong>{{ campaign.candidate }}<br/>
+        <strong>Alias: </strong>{{ campaign.alias }}<br/>
+        <strong>Join Code: </strong>{{ campaign.hex_code }}<br/>
+        <strong>Riding: </strong>{{ campaign.riding }}<br/>
+        <strong>Government Level: </strong>{{ campaign.gov_level }}<br>
+        <br>
+    </div>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        {{ form.first_name.label(class='form-label')}}
+        {{ form.first_name(class='form-control', value=name_to_update.first_name)}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.last_name.label(class='form-label')}}
+        {{ form.last_name(class='form-control', value=name_to_update.last_name)}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.email.label(class='form-label')}}
+        {{ form.email(class='form-control', value=name_to_update.email)}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.phone.label(class='form-label')}}
+        {{ form.phone(class='form-control', value=name_to_update.phone)}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.password1.label(class='form-label')}}
+        {{ form.password1(class='form-control', value=name_to_update.password)}}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.password2.label(class='form-label')}}
+        {{ form.password2(class='form-control')}}
+        <br/>
+        {{ form.submit(class='btn btn-danger')}}
+    </form>
+</div>
+    {% endblock %}
+</body>
+</html>

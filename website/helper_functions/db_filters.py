@@ -57,8 +57,29 @@ def users_in_campaign_user_adminning(current_user):
 
 def admins_in_campaign(campaign_id):
     """
-    Returns all the admins in a campaign
+    Returns a list of all the admins in a campaign
     """
     campaign = Campaigns.query.filter(Campaigns.id==campaign_id).first()
     admins = [user for user in campaign.admins]
     return admins
+
+def users_in_campaign(campaign_id):
+    """
+    Returns a list of all the users contracted under a campaign
+    """
+    campaign = Campaigns.query.filter(Campaigns.id==campaign_id).first()
+    contracts = [contract for contract in campaign.user_contracts]
+
+    users = []
+    for contract in contracts:
+        users.append(contract.user)
+    return users
+
+def rate_for_activity(activity:str, campaign_id:str):
+    """
+    Checks campaign for activity rates and assigns a rate based on activity
+    """
+    campaign = Campaigns.query.filter_by(Campaigns.id==campaign_id).first()
+    if activity=='admin':
+        rate = 1
+    return

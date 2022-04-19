@@ -219,7 +219,6 @@ def campaign_shift_list(id):
     else:
         campaigns = [id]
         shifts = ShiftStamps.query.filter(ShiftStamps.campaign_id.in_(campaigns)).order_by(desc(ShiftStamps.start_time))
-        current_app.logger.info(shifts)
         return render_template('/shift/shift_list.html', shifts=shifts)
 
 @campaign_route.route('campaign/dashboard/<int:id>/user_list', methods=['GET', 'POST'])

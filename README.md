@@ -10,13 +10,13 @@ Yet to established
 ## Technologies  
 This is a flask app ran on a private server  
   
-# Opening Guide  
-  
-## Style Guide  
-- Naming Scheme  
+## Design and Style Patterns
+### Naming Scheme  
     - snake_case for spaces in EVERYTHIING not camelCase or kebab-case  
     - UNLESS it's a class name, then use PascalCase  
-  
+### Ingesting User Data
+    Always .strip() any inputted strings
+
 ## Setting up for production  
 Production Notes:  
 ```/paymentwebapp/production_notes```  

@@ -7,4 +7,4 @@ def uniqueCampaignHex(objectName):
         if campaign:
             continue
         else:
-            return hex
+            return hex.upper()

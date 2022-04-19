@@ -22,6 +22,7 @@ class LoginForm(FlaskForm):
 class SignUpForm(FlaskForm):
     first_name = StringField('First Name:', validators=[DataRequired()])
     last_name = StringField('Last Name:', validators=[DataRequired()])
+    alias = StringField('Alias:')
     email = EmailField('Email Address:', validators=[DataRequired()])
     phone = StringField('Phone Number', validators=[DataRequired()])
     password1 = PasswordField('Password', validators=[DataRequired(), EqualTo('password2', message='Passwords Must Match!')])

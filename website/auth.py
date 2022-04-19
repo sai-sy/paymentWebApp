@@ -102,27 +102,27 @@ def signup():
             flash("Email Already Exists", category='error')
         else:
             # Hash the password!!!
-            hashed_pw = generate_password_hash(form.password1.data, "sha256")
+            hashed_pw = generate_password_hash(str(form.password1.data).strip(), "sha256")
 
             # Create User with Unique Alias
             count = 0
             while (True):
                 if count == 0:
-                    alias_input = str(form.first_name.data).lower()
+                    alias_input = str(form.first_name.data).lower().strip()
                 elif count == 1:
-                    alias_input = str(form.last_name.data).lower()
+                    alias_input = str(form.last_name.data).lower().strip()
                 elif count == 2:
-                    alias_input = str(form.first_name.data).lower() + '_' + str(form.last_name.data).lower()
+                    alias_input = str(form.first_name.data).lower().strip() + '_' + str(form.last_name.data).lower().strip()
                 else:
-                    alias_input = alias_input + str(count-2)
+                    alias_input = alias_input + str(count-2).strip
                 try:
                     user = Users(
-                    first_name=form.first_name.data,
-                    last_name=form.last_name.data,
-                    alias=alias_input,
-                    email=form.email.data, 
-                    e_transfer=form.email.data,
-                    phone=form.phone.data, 
+                    first_name=str(form.first_name.data).strip(),
+                    last_name=str(form.last_name.data).strip(),
+                    alias=str(alias_input).strip(),
+                    email=str(form.email.data).strip(), 
+                    e_transfer=str(form.email.data).strip(),
+                    phone=str(form.phone.data).strip(), 
                     password_hash=hashed_pw,            
                     )
 
@@ -156,11 +156,13 @@ def user_update(id):
     theForm = SignUpForm()
     name_to_update = Users.query.get_or_404(id)
     if theForm.validate_on_submit():
-        name_to_update.first_name = request.form['first_name']
-        name_to_update.last_name = request.form['last_name']
-        name_to_update.email = request.form['email']
-        name_to_update.phone = request.form['phone']
-        name_to_update.password_hash = request.form['password1']
+        hashed_pw = generate_password_hash(str(request.form['password1']).strip(), "sha256")
+        name_to_update.first_name = str(request.form['first_name']).strip()
+        name_to_update.last_name = str(request.form['last_name']).strip()
+        name_to_update.alias = str(request.form['alias']).strip()
+        name_to_update.email = str(request.form['email']).strip()
+        name_to_update.phone = str(request.form['phone']).strip()
+        name_to_update.password_hash = hashed_pw
         try:
             db.session.commit()
             flash('User Updated Successfully', category='success')

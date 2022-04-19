@@ -89,3 +89,12 @@ def rate_for_activity(activity, campaign_id:str):
     """
     campaign: Campaigns = Campaigns.query.filter_by(id = campaign_id).first()
     return campaign.pay_rates[activity.activity+'_rate']
+
+def uniqueCampaignHex(objectName):
+    while(True):
+        hex = '%08x' % random.randrange(16**8)
+        campaign = objectName.query.filter_by(hex_code=hex).first()
+        if campaign:
+            continue
+        else:
+            return hex.upper()

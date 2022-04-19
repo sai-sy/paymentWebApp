@@ -10,6 +10,9 @@ import sys
 import os
 from . import config
 
+# Helper Functions
+from .helper_functions import migration_handling as mgh
+
 db = SQLAlchemy()
 migrate = Migrate()
 csrf = CSRFProtect()
@@ -64,7 +67,7 @@ def create_app(name):
         app.register_blueprint(import_route, url_prefix='/')
         app.register_blueprint(export_route, url_prefix='/')
 
-
+        app.before_first_request(mgh.run_back_check())
 
         login_manager = LoginManager()
         login_manager.login_view = 'auth.login'

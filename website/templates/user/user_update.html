@@ -19,6 +19,10 @@
         {{ form.last_name(class='form-control', value=name_to_update.last_name)}}
         <br/>
         {{ form.hidden_tag() }}
+        {{ form.alias.label(class='form-label')}}
+        {{ form.alias(class='form-control', value=name_to_update.alias)}}
+        <br/>
+        {{ form.hidden_tag() }}
         {{ form.email.label(class='form-label')}}
         {{ form.email(class='form-control', value=name_to_update.email)}}
         <br/>

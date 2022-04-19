@@ -10,10 +10,12 @@ Yet to established
 ## Technologies  
 This is a flask app ran on a private server  
   
-## Design and Style Patterns
-### Naming Scheme  
-    - snake_case for spaces in EVERYTHIING not camelCase or kebab-case  
-    - UNLESS it's a class name, then use PascalCase  
+# Design and Style Patterns
+### Naming Scheme
+### Declaring Variables and Objects
+    1. snake_case for spaces in EVERYTHIING not camelCase or kebab-case  
+    2. UNLESS it's a class name, then use PascalCase
+    3. Python type hinting is not very pythonic and adds more boiler plate code clutter, but it make working with heavily attributed objects much easier. USE THEM!
 ### Ingesting User Data
     Always .strip() any inputted strings
 

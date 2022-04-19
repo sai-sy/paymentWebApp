@@ -70,6 +70,8 @@ class Users(People, UserMixin):
     abstractstamps = db.relationship('AbstractStamps', back_populates="user")
     receipts = db.relationship('Receipts', back_populates="user")
 
+    pay_from_campaigns = db.relationship('Pay_Per_Users', back_populates='user')
+
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute!')

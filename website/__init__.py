@@ -10,10 +10,7 @@ import sys
 import os
 from . import config
 
-# Helper Functions
-
-
-db = SQLAlchemy()
+db:SQLAlchemy = SQLAlchemy()
 migrate = Migrate()
 csrf = CSRFProtect()
 DB_NAME = "main"

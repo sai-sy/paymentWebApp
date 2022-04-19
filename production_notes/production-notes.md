@@ -43,6 +43,10 @@ Please preview `/paymentwebapp/README.md`
             - [ ] edit contract
             - [ ] remove user
 
+- [ ] Output backend
+    - [ ] Make each paystamp include an activity drop down
+    - [ ] Make the backend math use that dropdown
+
 - [ ] Try Catch in auth.signup  
     - This try-except is made to work for unique alias'  
         - Desc: If something else throws that error, it'll get stuck in an infinite loop. There needs to be a better solution for this  

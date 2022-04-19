@@ -15,9 +15,9 @@ def all_hex_codes_to_upper():
 
 
 
-def run_back_check(response):
+def run_back_check():
     '''
     Run the checks and corrections declared in this
     '''
     all_hex_codes_to_upper()
-    return response
+    

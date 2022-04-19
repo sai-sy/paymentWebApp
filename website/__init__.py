@@ -68,7 +68,7 @@ def create_app(name):
         app.register_blueprint(export_route, url_prefix='/')
 
         from .helper_functions import migration_handling as mgh
-        app.before_first_request(mgh.run_back_check())
+        app.before_first_request(mgh.run_back_check)
 
         login_manager = LoginManager()
         login_manager.login_view = 'auth.login'

@@ -1,5 +1,6 @@
 from ..models.campaigns  import Campaign_Contracts, Campaigns
 from sqlalchemy import desc
+import random
 
 def all_campaigns_user_in(current_user):
     '''

@@ -19,7 +19,7 @@ Please preview `/paymentwebapp/README.md`
     - [ ] Admins
         - [x] lists
         - [ ] remove
-        - [ ] add
+        - [x] add
     - [ ] View
         - [ ] Shifts
             - [x] List

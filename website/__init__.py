@@ -11,7 +11,7 @@ import os
 from . import config
 
 # Helper Functions
-from .helper_functions import migration_handling as mgh
+
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -67,6 +67,7 @@ def create_app(name):
         app.register_blueprint(import_route, url_prefix='/')
         app.register_blueprint(export_route, url_prefix='/')
 
+        from .helper_functions import migration_handling as mgh
         app.before_first_request(mgh.run_back_check())
 
         login_manager = LoginManager()

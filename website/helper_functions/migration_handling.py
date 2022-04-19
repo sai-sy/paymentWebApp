@@ -1,3 +1,4 @@
+from flask import current_app
 from ..models.campaigns import Campaigns
 
 '''
@@ -8,6 +9,7 @@ def all_hex_codes_to_upper():
     '''
     Checks every campaign for a lower case in the hex code, corrects it to uppercase
     '''
+    current_app.logger.info('enter hex code func')
     campaign: Campaigns
     for campaign in Campaigns.query.filter_by():
         if [letter for letter in campaign.hex_code if letter is campaign.hex_code.lower()]:
@@ -19,5 +21,6 @@ def run_back_check():
     '''
     Run the checks and corrections declared in this
     '''
+    current_app.logger.info('enter run back check func')
     all_hex_codes_to_upper()
     

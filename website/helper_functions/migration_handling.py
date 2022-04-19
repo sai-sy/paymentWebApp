@@ -13,9 +13,8 @@ def all_hex_codes_to_upper():
     current_app.logger.info('enter hex code func')
     campaign: Campaigns
     for campaign in Campaigns.query.filter_by():
-        if [letter for letter in campaign.hex_code if letter is campaign.hex_code.lower()]:
+        if [letter for letter in campaign.hex_code if letter.islower()]:
             campaign.hex_code = str(campaign.hex_code).upper()
-
     db.session.commit()
 
 

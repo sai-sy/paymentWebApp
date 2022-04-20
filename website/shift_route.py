@@ -53,7 +53,7 @@ def shift_add():
 
 def shift_add_func(form: ShiftStampForm):
 
-    calcedStart = datetime.combine(form.date.data, datetime.strptime(form.start_time.data, '%H:%M:%S').time())
+    calcedStart = dt.combine(form.date.data, dt.strptime(form.start_time.data, '%H:%M:%S').time())
     comparedShift = ShiftStamps.query.filter_by(user_id=form.user.data, start_time=calcedStart).first()
     if comparedShift:
         flash("This Shift Already Exists.", category='error')
@@ -61,7 +61,7 @@ def shift_add_func(form: ShiftStampForm):
         founduser = Users.query.filter_by(id=form.user.data).first()
         foundactivity = Activities.query.filter_by(activity=form.activity.data).first()
         shiftstamp = ShiftStamps(user_id=founduser.id, user=founduser, start_time=calcedStart,
-            end_time=datetime.combine(form.date.data, datetime.strptime(form.end_time.data, '%H:%M:%S').time()),
+            end_time=dt.combine(form.date.data, dt.strptime(form.end_time.data, '%H:%M:%S').time()),
             campaign_id=form.campaign.data,
             activity_id=form.activity.data,)
 

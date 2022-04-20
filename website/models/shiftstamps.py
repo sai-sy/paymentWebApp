@@ -23,7 +23,6 @@ class Activities(db.Model):
     __tablename__ = 'activities'
     activity = db.Column(db.String(50), nullable=False, primary_key=True)
     shiftstamps = db.relationship("ShiftStamps", back_populates="activity")
-    paystamps = db.relationship("PayStamps", back_populates="activity")
 
 class ShiftStamps(db.Model):
     __tablename__ = 'shiftstamps'

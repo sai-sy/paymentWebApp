@@ -19,7 +19,7 @@ Please preview `/paymentwebapp/README.md`
     - [ ] Admins
         - [x] lists
         - [ ] remove
-        - [x] add
+        - [ ] add
     - [ ] View
         - [ ] Shifts
             - [x] List
@@ -30,6 +30,7 @@ Please preview `/paymentwebapp/README.md`
         - [ ] Receipts
             -[x] List
             -[ ] Click thru on receipt to open image of receipt
+            -[ ] Let choice of receipt payment or not and add a default bool for that
             -[ ] Edit
                 - do not edit the image name!
         - [ ] User List

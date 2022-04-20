@@ -165,14 +165,15 @@ def campaign_delete(id):
 def campaign_join():
     form = JoinCampaignForm()
     if form.validate_on_submit():
-        campaign = Campaigns.query.filter_by(hex_code=form.hex_code.data).first()
+        campaign: Campaigns = Campaigns.query.filter_by(hex_code=form.hex_code.data).first()
         current_app.logger.info(campaign)
         if campaign:
             #Create Contract Here
             new_contract = Campaign_Contracts(
                 user_id=current_user.id,
                 campaign_id=campaign.id,
-                pay_rates=campaign.pay_rates
+                pay_rates=campaign.pay_rates,
+                commute_pay=campaign.default_commute_pay
             )
             db.session.add(new_contract)
             db.session.commit()

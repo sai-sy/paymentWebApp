@@ -1,9 +1,7 @@
 from email.policy import default
+from flask import current_app
+from pytest import console_main
 from sqlalchemy import Column, ForeignKey, true
-from paymentWebApp.website.models.paystamps import PayStamps
-from paymentWebApp.website.models.receipts import Receipts
-
-from paymentWebApp.website.models.shiftstamps import ShiftStamps
 from .. import db
 from datetime import datetime
 #Flask WTF
@@ -16,6 +14,10 @@ from datetime import datetime
 from functools import reduce
 
 from ..models.abstracts import AbstractStamps
+from ..models.paystamps import PayStamps
+from ..models.receipts import Receipts
+from ..models.shiftstamps import ShiftStamps
+
 
 class GovLevels(db.Model):
     __tablename__ = 'govlevels'
@@ -69,13 +71,31 @@ default_pay_rates = {
 }
 
 class Pay_Per_Users(db.Model):
-    __tablename__ = 'pay_output'
-    user_id = db.Column(db.Intger, db.ForeignKey('users.id'))
+    __tablename__ = 'pay_per_users'
+    id = db.Column(db.Integer, primary_key=true)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user  = db.relationship('Users', back_populates='pay_from_campaigns')
-    campaign_id = db.Column(db.Intger, db.ForeignKey('campaigns.id'))
+    campaign_id = db.Column(db.Integer, db.ForeignKey('campaigns.id'))
     campaign = db.relationship('Campaigns', back_populates='pay_per_user')
     pay_sum = db.Column(db.JSON)
 
+default_pay_out = {
+    'shift_based': {
+        'total': 0
+    },
+    'receipts': 0,
+    'abstracts': 0,
+    'total_earned': 0,
+    'paystamps_sum': 0,
+    'paystamps_total': {
+        'each_activity': 0,
+        'no_category': 0,
+        'total': 0
+    },
+    'owed': {
+        'total': 0
+    }
+}
 
 class Campaign_Contracts(db.Model):
     __tablename__ = 'campaign_contracts'
@@ -86,7 +106,9 @@ class Campaign_Contracts(db.Model):
     user = db.relationship("Users", back_populates='campaign_contracts')
     getting_paid = db.Column(db.Boolean, default=False)
     getting_commute_pay = db.Column(db.Boolean, default=False)
+    commute_pay = db.Column(db.Float, default=0)
     pay_rates = db.Column(db.JSON, nullable=False, default=default_pay_rates)
+    pay_out = db.Column(db.JSON, nullable=False, default=default_pay_out)
 
 class Campaigns(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -117,7 +139,7 @@ class Campaigns(db.Model):
     hex_code = db.Column(db.String(30), nullable=False, unique=True)
     
     # Pay Amount
-    commute_pay = db.Column(db.Float, nullable=False, default=0)
+    default_commute_pay = db.Column(db.Float, nullable=False, default=0)
     pay_rates = db.Column(db.JSON, nullable=False, default=default_pay_rates)
     admin_rate = db.Column(db.Float, nullable=False, default=15.0)
     canvass_rate = db.Column(db.Float, nullable=False, default=15.0)
@@ -152,9 +174,10 @@ class Campaigns(db.Model):
                 each_activity: float
                 total: int
             },
-            receipts_total: float,
-            abstracts_total: float,
+            receipts: float,
+            abstracts: float,
             total_earned: float,
+            paystamps_sum: float,
             paystamps_total: {
                 each_activity: float,
                 no_category: float
@@ -167,31 +190,43 @@ class Campaigns(db.Model):
             }
         }
         '''
-        out = {}
-        shift_based = {}
-        receipts_abstracts = {}
-        paystamps = {}
-
         # Iterate every contract
         user_contract: Campaign_Contracts
         for user_contract in self.user_contracts:
+            cout = user_contract.user.alias + ' ' + user_contract.campaign.alias + ' contract'
+            current_app.logger.info(cout)
+            out = {}
+            shift_based = {}
+            receipts_abstracts = {}
+            paystamps = {}
+            owed = {}
+
             total = 0
+            total_earned = 0
             
             # Calculate every shift based earning
             for pay_rate, pay_rate_amount in user_contract.pay_rates.items():
-                shifts = ShiftStamps.query.filter_by(user_id=user_contract.user_id, activity=str(pay_rate).replace('_rate', ''))
+                search_term = str(pay_rate).replace('_rate', '')
+                shifts = ShiftStamps.query.filter_by(user_id=user_contract.user_id, activity_id=search_term, campaign_id=user_contract.campaign_id)
                 shift_total = 0
                 shift: ShiftStamps
-                for shift in shifts:
-                    shift_total = shift_total + (shift.minutes * (pay_rate_amount/60))
+                if user_contract.getting_paid == 0:
+                    for shift in shifts:
+                        if user_contract.getting_commute_pay == 1:    
+                            shift_total = shift_total + (float(shift.minutes) * (float(pay_rate_amount)/60)) + float(user_contract.commute_pay)
+                        else:
+                            shift_total = shift_total + (float(shift.minutes) * (float(pay_rate_amount)/60))
+                        if pay_rate == 'canvass_rate':
+                            couta = cout + ' ' + pay_rate + ' ' + str(shift_total) + ' ' + str(shift.start_time) + str(shift.minutes) + ' ' + str(pay_rate_amount)
+                            current_app.logger.info(couta)
 
-                shift_based[str(pay_rate).replace('_rate', '')] = shift_total
+                    shift_based[str(pay_rate).replace('_rate', '')] = shift_total
+                else:
+                    shift_based[str(pay_rate).replace('_rate', '')] = 0
 
-            total = 0
-            for total_values in shift_based.values():
-                total += total_values
-
-            shift_based['total'] = total
+            for v in shift_based.values():
+                total_earned += v
+            shift_based['total'] = total_earned
 
             total = 0
 
@@ -200,31 +235,51 @@ class Campaigns(db.Model):
             receipts = Receipts.query.filter_by(user_id=user_contract.user_id)
             r: Receipts
             for r in receipts:
-                receipts_abstracts['receipts'] += r.amount
+                receipts_abstracts['receipts'] += float(r.amount)
+                total_earned += float(r.amount)
 
             receipts_abstracts['abstracts'] = 0
             abstracts = AbstractStamps.query.filter_by(user_id=user_contract.user_id)
-            r: AbstractStamps
-            for r in abstracts:
-                receipts_abstracts['abstracts'] += r.amount
+            a: AbstractStamps
+            for a in abstracts:
+                receipts_abstracts['abstracts'] += float(a.amount)
+                total_earned += float(a.amount)
 
             # Paystamps
+            '''
             for pay_rate, pay_rate_amount in user_contract.pay_rates.items():
                 paystamp_arr = PayStamps.query.filter_by(user_id=user_contract.user_id, description=str(pay_rate).replace('_rate', ''))
                 total_paid = 0
                 paystamp_item: PayStamps
                 for paystamp_item in paystamp_arr:
                     total_paid =+ paystamp_item.amount
+            '''
+            total_paid = 0
+            paystamp_arr = PayStamps.query.filter_by(user_id=user_contract.user_id)
+            p: PayStamps
+            for p in paystamp_arr:
+                total_paid += p.amount
 
-                paystamps[str(pay_rate).replace('_rate', '')] = total_paid
+            paystamps['paystamps_sum'] = total_paid
 
             total = 0
             for total_values in shift_based.values():
                 total += total_values
 
-            
+            #Owed
+            owed['untrunced_sum'] = total_earned - total_paid
+            owed['total'] = owed['untrunced_sum']
+            if owed['total'] < 0:
+                owed['total'] = 0
 
             #Output
             out['shift_based'] = shift_based
             out.update(receipts_abstracts)
+            out['total_earned'] = total_earned
             out['paystamps'] = paystamps
+            out['owed'] = owed
+
+            current_app.logger.info(out)
+            user_contract.pay_out = out
+            db.session.commit()
+

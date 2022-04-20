@@ -4,7 +4,7 @@ from .models.users import Users, SystemLevels
 from .models.admincommands import AdminPassword
 from .models.campaigns import GovLevels
 
-from sqlalchemy import exc
+from sqlalchemy import exc, over
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash
 
@@ -33,12 +33,14 @@ def load_preset_data(app, db):
     litdrop = Activities(activity="litdrop")
     admin = Activities(activity="admin")
     general = Activities(activity="general")
+    overall = Activities(activity="overall")
     with app.app_context():
         adder(app, db, calling)
         adder(app, db, canvas)
         adder(app, db, litdrop)
         adder(app, db, admin)
         adder(app, db, general)
+        adder(app, db, overall)
 
     # ADD GOVERNMENT LEVELS
     federal = GovLevels(level="Federal")

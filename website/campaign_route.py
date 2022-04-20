@@ -10,7 +10,7 @@ from .shift_route import shift_add_func
 from flask import Blueprint, jsonify, redirect, render_template, current_app, request, flash, jsonify, Flask, url_for, abort
 from flask_login import login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from sqlalchemy import alias, insert, desc
+from sqlalchemy import alias, insert, desc, delete
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from werkzeug.utils import secure_filename
@@ -187,9 +187,7 @@ def campaign_join():
 @login_required
 def campaign_shift_add(id):
     form = ShiftStampForm()
-    admin = []
-    for c in current_user.admin_campaigns:
-        admin.append(c.id)
+    admin = dbf.campaigns_user_administrating(current_user.id)
     if current_user.system_level_id < 3 or id not in admin:
         return render_template('no_access.html')
     elif current_user.system_level_id < 5:
@@ -289,10 +287,10 @@ def campaign_admin_add(campaign_id, user_id):
     else:
         campaign = Campaigns.query.filter(Campaigns.id==campaign_id).first()
         if user_id == campaign.owner_id:
-            flash("Cannot remove owner as administrator!", category='error')
+            flash("User is already an owner", category='error')
             return redirect(url_for('campaign_route.campaign_user_list', id=campaign_id))
         elif campaign_id in campaigns: #if current campaign is in user's admin campaigns
-            flash("User is already an administrator.", category='error')
+            flash("User is already an administrator", category='error')
             return redirect(url_for('campaign_route.campaign_user_list', id=campaign_id))
         elif campaign_id not in campaigns:
             try:
@@ -304,14 +302,43 @@ def campaign_admin_add(campaign_id, user_id):
                 admin = Users.query.get_or_404(user_id)
                 admin.system_level_id = 4
                 db.session.commit()
-                flash("User promoted to administrator.", category='success')
+                flash("User promoted to administrator", category='success')
             except:
-                flash("Failed to promote user to administrator.", category='error')
+                flash("Failed to promote user to administrator", category='error')
     return redirect(url_for('campaign_route.campaign_user_list', id=campaign_id))
 
 @campaign_route.route('campaign/dashboard/<int:campaign_id>/remove_admin/<int:admin_id>')
 def campaign_admin_remove(campaign_id, admin_id):
-    abort(404)
+    current_admins = dbf.campaigns_user_administrating(current_user.id)
+    campaigns = dbf.campaigns_user_administrating(admin_id)
+    if current_user.system_level_id < 3 or campaign_id not in current_admins:
+        return render_template('no_access.html')
+    else:
+        campaign = Campaigns.query.filter(Campaigns.id==campaign_id).first()
+        if admin_id == campaign.owner_id:
+            flash("Cannot remove owner as administrator!", category='error')
+            return redirect(url_for('campaign_route.campaign_user_list', id=campaign_id))
+        elif campaign_id not in campaigns: #if current campaign is in user's admin campaigns
+            flash("User is currently not an administrator", category='error')
+            return redirect(url_for('campaign_route.campaign_user_list', id=campaign_id))
+        elif campaign_id in campaigns:
+            try:
+                # Remove from Admins Table
+                admin = Users.query.filter(Users.id==admin_id).first()
+                campaign.admins.remove(admin)
+
+                #Decrease System Levels if not Admin for any campaign
+                """
+                if len(current_admins) == 0:
+                    admin = Users.query.get_or_404(admin_id)
+                    admin.system_level_id = 3
+                    db.session.commit()
+                """
+                db.session.commit()
+                flash("User removed from administrators", category='success')
+            except:
+                flash("Failed to promote user to administrator", category='error')
+    return redirect(url_for('campaign_route.campaign_user_list', id=campaign_id))
 
 @campaign_route.route('campaign/dashboard/<int:id>/payment_list', methods=['GET', 'POST'])
 def campaign_payment_list(id):
@@ -360,6 +387,4 @@ def campaign_dashboard(id):
     for campaign_contract in current_user.campaign_contracts:
         if campaign_contract.campaign_id == id:
             return render_template('/campaign/campaign_dashboard.html', campaign=campaign_contract.campaign, id=id, status="base")
-    
-    abort(403)
 

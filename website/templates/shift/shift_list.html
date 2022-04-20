@@ -12,6 +12,7 @@
             shift.minutes}} | {{shift.campaign.alias}} | {{
             shift.activity.activity}}
     </td>
+    <td id="deleteTable"><a href="{{ url_for('shift_route.shift_update', id=shift.id)}}" role="button" class="btn btn-outline-primary">Edit</button></td>
     <td id="deleteTable"><a href="{{url_for('shift_route.shift_delete', id=shift.id)}}" role="button" class="btn btn-outline-danger" >Delete</button></td>
     </tr>
 {%endfor%}

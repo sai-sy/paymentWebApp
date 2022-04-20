@@ -14,7 +14,7 @@ from .models.admincommands import AdminCommands, AdminForm, AdminPassword, Admin
 from .models.campaigns import Campaigns
 
 import datetime
-from sqlalchemy import text
+from sqlalchemy import text, desc
 from werkzeug.security import generate_password_hash, check_password_hash
 from .shift_route import shift_add_func
 
@@ -95,6 +95,7 @@ def profile(id):
         current_app.logger.info(current_user.id==str(id))
         return render_template("no_access.html")
     else:
-        return render_template('/user/profile.html', id=id, user=current_user)
+        shifts = ShiftStamps.query.filter(ShiftStamps.user_id == id).order_by(desc(ShiftStamps.start_time))
+        return render_template('/user/profile.html', id=id, user=current_user, shifts=shifts)
 
 

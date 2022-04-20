@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    {% extends 'base.html' %}
+    {% block content %}
+    <div class="shadow p-3 mb-5 bg-body rounded" id="shift_add_form">
+    <h3 align="center">Update Shift</h3>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.user.label(class='form-label') }}
+        {{ form.user(class='form-control', value=shift.user, readonly=readonly) }}    
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.date.label(class='form-label') }}
+        {{ form.date(class='form-control') }}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.start_time.label(class='form-label') }}
+        {{ form.start_time(class='form-control', value=shift.start_time) }}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.end_time.label(class='form-label') }}
+        {{ form.end_time(class='form-control', value=shift.end_time) }}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.campaign.label(class='form-label') }}
+        {{ form.campaign(class='form-control', value=shift.campaign) }}
+        <br/>
+        {{ form.hidden_tag() }}
+        {{ form.activity.label(class='form-label') }}
+        {{ form.activity(class='form-control', value=shift.activity) }}
+        <br/>   
+        {{ form.submit(class='btn btn-danger')}}
+    </form>
+</div>
+    {% endblock %}
+</body>
+</html>

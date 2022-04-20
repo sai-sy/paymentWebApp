@@ -11,24 +11,24 @@
 
     <form method="POST">
         {{ form.hidden_tag() }}
-        {{ form.candidate.label(class='form-label')}}
-        {{ form.candidate(class='form-control', value=campaign_to_update.candidate)}}
+        {{ form.candidate.label(class='form-label') }}
+        {{ form.candidate(class='form-control', value=campaign_to_update.candidate) }}
         <br/>
         {{ form.hidden_tag() }}
-        {{ form.alias.label(class='form-label')}}
-        {{ form.alias(class='form-control', value=campaign_to_update.alias)}}
+        {{ form.alias.label(class='form-label') }}
+        {{ form.alias(class='form-control', value=campaign_to_update.alias) }}
         <br/>
         {{ form.hidden_tag() }}
         {{ form.riding.label(class='form-label')}}
-        {{ form.riding(class='form-control', value=campaign_to_update.riding)}}
+        {{ form.riding(class='form-control', value=campaign_to_update.riding) }}
         <br/>
         {{ form.hidden_tag() }}
         {{ form.year.label(class='form-label')}}
-        {{ form.year(class='form-control', value=campaign_to_update.year)}}
+        {{ form.year(class='form-control', value=campaign_to_update.year) }}
         <br/>
         {{ form.hidden_tag() }}
-        {{ form.gov_level.label(class='form-label')}}
-        {{ form.gov_level(class='form-control', value=campaign_to_update.gov_level_id)}}
+        {{ form.gov_level.label(class='form-label') }}
+        {{ form.gov_level(class='form-control', value=campaign_to_update.gov_level_id) }}
         <br/>   
         {{ form.submit(class='btn btn-danger') }}
     </form>

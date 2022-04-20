@@ -193,7 +193,6 @@ class Campaigns(db.Model):
         user_contract: Campaign_Contracts
         for user_contract in self.user_contracts:
             cout = user_contract.user.alias + ' ' + user_contract.campaign.alias + ' contract'
-            #current_app.logger.info(cout)
             out = {}
             shift_based = {}
             receipts_abstracts = {}
@@ -217,7 +216,6 @@ class Campaigns(db.Model):
                                 shift_total = shift_total + (float(shift.minutes) * (float(shift.hourly_rate)/60))
                             if pay_rate == 'canvass_rate':
                                 couta = cout + ' ' + pay_rate + ' ' + str(shift_total) + ' ' + str(shift.start_time) + str(shift.minutes) + ' ' + str(shift.hourly_rate)
-                                current_app.logger.info(couta)
 
                         shift_based[str(pay_rate).replace('_rate', '')] = shift_total
                 else:
@@ -278,7 +276,6 @@ class Campaigns(db.Model):
             out['paystamps'] = paystamps
             out['owed'] = owed
 
-            current_app.logger.info(out)
             user_contract.pay_out = out
             db.session.commit()
 

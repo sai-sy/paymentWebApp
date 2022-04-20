@@ -468,3 +468,6 @@ def campaign_dashboard(id):
         if campaign_contract.campaign_id == id:
             return render_template('/campaign/campaign_dashboard.html', campaign=campaign_contract.campaign, id=id, status="base")
 
+    else:
+        return render_template('no_access.html')
+

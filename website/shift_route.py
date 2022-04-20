@@ -84,35 +84,41 @@ def shift_update(id):
     user = Users.query.filter(Users.id==shift.user_id).first()
     campaign = Campaigns.query.filter(Campaigns.id==shift.campaign_id).first()
     admin = dbf.campaigns_user_administrating(current_user.id)
-
     form.user.choices = [(user.id, user.first_name + ' ' + user.last_name)]
+    form.user.choices = [(user.id, user.first_name + ' ' + user.last_name)]
+    form.campaign.choices = dbf.all_campaigns_user_in(user)
+    form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
+    form.date.default = shift.start_time.date()
     form.start_time.default = shift.start_time.strftime("%H:%M:%S")
     form.end_time.default = shift.end_time.strftime("%H:%M:%S")
-    form.campaign.choices = dbf.all_campaigns_user_in(user)
     form.campaign.default = shift.campaign.id
-    form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
     form.activity.default = shift.activity.activity
-    form.process()
 
-    if current_user.system_level_id < 3 or current_user.id != user.id:
-        if campaign.id not in admin:
-            return render_template('no_access.html')
+    if request.method == 'GET':
+        if current_user.system_level_id < 3 or current_user.id != user.id:
+            if campaign.id not in admin:
+                return render_template('no_access.html')
+        form.process()
     
-    if form.validate_on_submit():
-        shift.date.data = form.date.data
-        shift.start_time.data = form.start_time.data
-        shift.end_time.data = form.start_time.data
-        shift.activity.data = form.start_time.data
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            calcedStart = dt.datetime.combine(form.date.data, dt.datetime.strptime(form.start_time.data, '%H:%M:%S').time())
+            shift.start_time=calcedStart
+            shift.end_time=dt.datetime.combine(form.date.data, dt.datetime.strptime(form.end_time.data, '%H:%M:%S').time())
+            shift.campaign_id=form.campaign.data
+            shift.activity_id=form.activity.data
+            shift.minutes = (shift.end_time - shift.start_time).total_seconds() / 60
 
-        try:
-            db.session.commit()
-            flash('Shift Updated Successfully', category='success')
-            return redirect(url_for('views.home'))
+            try:
+                db.session.commit()
+                flash('Shift Updated Successfully', category='success')
+                return redirect(url_for('views.home'))
 
-        except:
-            flash('Shift Update Unsuccessful. Please contact your administrator', category='error')
-            return redirect(url_for('shift_route.shift_update', id=id))
-
+            except:
+                flash('Shift Update Unsuccessful. Please contact your administrator', category='error')
+                return redirect(url_for('shift_route.shift_update', id=id))
+    
+    current_app.logger.info(form.errors)
     return render_template('shift/shift_update.html', shift=shift, form=form)
 
 

@@ -1,7 +1,4 @@
-<div class="shadow p-3 mb-5 bg-body rounded">
-    <h3 id='list_header' align="center">Campaigns Owned</h3>
-</div>
-
+    <h5 id='list_header' align="center">Owner</h3>
     <table class="table table-hover table-border table-striped">
         {% for campaign in current_user.campaigns_owned%}
         <tr>
@@ -21,11 +18,7 @@
     {%endfor%}
 </table>
 <br>
-
-<div class="shadow p-3 mb-5 bg-body rounded">
-    <h3 id='list_header' align="center">Campaigns Administrating</h3>
-</div>
-
+    <h5 id='list_header' align="center">Administrator</h3>
 <table class="table table-hover table-border table-striped">
     {% for campaign in current_user.admin_campaigns%}
     <tr>
@@ -44,11 +37,7 @@
     {%endfor%}
 </table>
 <br>
-
-<div class="shadow p-3 mb-5 bg-body rounded">
-    <h3 id='list_header' align="center">Campaigns Part Of</h3>
-</div>
-
+    <h5 id='list_header' align="center">Member</h3>
 <table class="table table-hover table-border table-striped">
     {% for contract in current_user.campaign_contracts%}
     <tr>

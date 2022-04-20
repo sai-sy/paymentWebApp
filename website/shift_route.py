@@ -64,7 +64,7 @@ def shift_add_func(form: ShiftStampForm):
             end_time=datetime.combine(form.date.data, datetime.strptime(form.end_time.data, '%H:%M:%S').time()),
             campaign_id=form.campaign.data,
             activity_id=form.activity.data,
-            hourly_rate=rate_for_activity(foundactivity, form.campaign.data)
+            hourly_rate=rate_for_activity(foundactivity, form.campaign.data, founduser.id)
         )
         shiftstamp.minutes = (shiftstamp.end_time - shiftstamp.start_time).total_seconds() / 60
         db.session.add(shiftstamp)

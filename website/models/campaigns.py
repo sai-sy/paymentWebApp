@@ -210,16 +210,16 @@ class Campaigns(db.Model):
                 shift_total = 0
                 shift: ShiftStamps
                 if user_contract.getting_paid == 0:
-                    for shift in shifts:
-                        if user_contract.getting_commute_pay == 1:    
-                            shift_total = shift_total + (float(shift.minutes) * (float(pay_rate_amount)/60)) + float(user_contract.commute_pay)
-                        else:
-                            shift_total = shift_total + (float(shift.minutes) * (float(pay_rate_amount)/60))
-                        if pay_rate == 'canvass_rate':
-                            couta = cout + ' ' + pay_rate + ' ' + str(shift_total) + ' ' + str(shift.start_time) + str(shift.minutes) + ' ' + str(pay_rate_amount)
-                            current_app.logger.info(couta)
+                        for shift in shifts:
+                            if user_contract.getting_commute_pay == 1:    
+                                shift_total = shift_total + (float(shift.minutes) * (float(shift.hourly_rate)/60)) + float(user_contract.commute_pay)
+                            else:
+                                shift_total = shift_total + (float(shift.minutes) * (float(shift.hourly_rate)/60))
+                            if pay_rate == 'canvass_rate':
+                                couta = cout + ' ' + pay_rate + ' ' + str(shift_total) + ' ' + str(shift.start_time) + str(shift.minutes) + ' ' + str(shift.hourly_rate)
+                                current_app.logger.info(couta)
 
-                    shift_based[str(pay_rate).replace('_rate', '')] = shift_total
+                        shift_based[str(pay_rate).replace('_rate', '')] = shift_total
                 else:
                     shift_based[str(pay_rate).replace('_rate', '')] = 0
 

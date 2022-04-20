@@ -85,12 +85,13 @@ def users_in_campaign(campaign_id):
         users.append(contract.user)
     return users
 
-def rate_for_activity(activity, campaign_id:str):
+def rate_for_activity(activity, campaign_id, user_id):
     """
     Checks campaign for activity rates and assigns a rate based on activity
     """
-    campaign: Campaigns = Campaigns.query.filter_by(id = campaign_id).first()
-    return campaign.pay_rates[activity.activity+'_rate']
+    campaign_contract: Campaign_Contracts = Campaign_Contracts.query.filter_by(user_id=user_id, campaign_id=campaign_id)
+    out = float(campaign_contract.pay_rates[activity+'_rates'])
+    return out
 
 def uniqueCampaignHex(objectName):
     while(True):

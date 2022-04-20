@@ -31,7 +31,7 @@
                 <tr>
                     <h5 id='list_header' align="center">Shifts</h3>
                 </tr>
-                {% for shift in current_user.shiftstamps%}
+                {% for shift in shifts %}
                 <tr>
                     <td id="displayData">
                         {{shift.user.first_name}} {{shift.user.last_name}}
@@ -51,6 +51,7 @@
                     <td id="displayData">
                         {{shift.activity.activity}}
                     </td>
+                    <td id="deleteTable"><a href="{{ url_for('shift_route.shift_update', id=shift.id)}}" role="button" class="btn btn-outline-primary">Edit</button></td>
                     <td id="deleteTable"><a href="{{url_for('shift_route.shift_delete', id=shift.id)}}" role="button" class="btn btn-outline-danger" >Delete</button></td>
                     </tr>
                 {%endfor%}

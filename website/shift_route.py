@@ -2,7 +2,7 @@
 import os
 
 # HELPER FUNCTIONS
-from .helper_functions.db_filters import all_campaigns_user_in, users_in_campaign_user_adminning, rate_for_activity
+from .helper_functions import db_filters as dbf
 
 # FLASK
 from flask import Blueprint, jsonify, redirect, render_template, current_app, request, flash, jsonify, Flask, url_for, abort
@@ -22,7 +22,7 @@ from .models.users import Users
 from .models.people import People
 from .models.shiftstamps import ShiftStampForm, ShiftStamps, Activities
 from .models.receipts import ReceiptForm, Receipts
-from datetime import datetime
+from datetime import datetime as dt
 
 shift_route = Blueprint('shift_route', __name__)
 
@@ -30,7 +30,7 @@ shift_route = Blueprint('shift_route', __name__)
 @login_required
 def shift_add():
     form = ShiftStampForm()
-    form.campaign.choices = all_campaigns_user_in(current_user)
+    form.campaign.choices = dbf.all_campaigns_user_in(current_user)
     form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
     if current_user.system_level_id < 5:
         form.user.choices = [(str(current_user.id), str(current_user.first_name + ' ' + current_user.last_name)) for u in Users.query.filter_by(id=current_user.id).order_by('first_name')]
@@ -64,8 +64,8 @@ def shift_add_func(form: ShiftStampForm):
             end_time=datetime.combine(form.date.data, datetime.strptime(form.end_time.data, '%H:%M:%S').time()),
             campaign_id=form.campaign.data,
             activity_id=form.activity.data,
-            hourly_rate=rate_for_activity(foundactivity, form.campaign.data, founduser.id)
-        )
+            hourly_rate=dbf.rate_for_activity(foundactivity, form.campaign.data, founduser.id))
+
         shiftstamp.minutes = (shiftstamp.end_time - shiftstamp.start_time).total_seconds() / 60
         db.session.add(shiftstamp)
         db.session.commit()
@@ -76,6 +76,46 @@ def shift_add_func(form: ShiftStampForm):
         form.end_time.data = ''
         form.activity.data = ''
         flash("Shift Added Successfully!", category='success')
+
+@shift_route.route('/shift/update/<int:id>', methods=['GET', 'POST'])
+@login_required
+def shift_update(id):
+    form = ShiftStampForm()
+    shift = ShiftStamps.query.get_or_404(id)
+    user = Users.query.filter(Users.id==shift.user_id).first()
+    campaign = Campaigns.query.filter(Campaigns.id==shift.campaign_id).first()
+    admin = dbf.campaigns_user_administrating(current_user.id)
+
+    form.user.choices = [(user.id, user.first_name + ' ' + user.last_name)]
+    form.start_time.default = dt.datetime.strptime(shift.start_time, '')
+    form.end_time.default = dt.datetime.strptime(shift.end_time, '')
+    form.campaign.choices = dbf.all_campaigns_user_in(user)
+    form.campaign.default = shift.campaign.id
+    form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
+    form.activity.default = shift.activity.activity
+    form.process()
+
+    if current_user.system_level_id < 3 or current_user.id != user.id:
+        if campaign.id not in admin:
+            return render_template('no_access.html')
+    
+    if form.validate_on_submit():
+        shift.date.data = form.date.data
+        shift.start_time.data = form.start_time.data
+        shift.end_time.data = form.start_time.data
+        shift.activity.data = form.start_time.data
+
+        try:
+            db.session.commit()
+            flash('Shift Updated Successfully', category='success')
+            return redirect(url_for('views.home'))
+
+        except:
+            flash('Shift Update Unsuccessful. Please contact your administrator', category='error')
+            return redirect(url_for('shift_route.shift_update', id=id))
+
+    return render_template('shift/shift_update.html', shift=shift, form=form)
+
 
 @shift_route.route('/shift/list', methods=['GET', 'POST'])
 @login_required
@@ -89,7 +129,6 @@ def shift_list():
         current_app.logger.info(shifts)
         return render_template('/shift/shift_list.html', shifts=shifts)
     else:
-        current_app.logger
         shifts = ShiftStamps.query.filter_by().order_by(desc(ShiftStamps.start_time))
         return render_template('/shift/shift_list.html', shifts=shifts)
 
@@ -221,7 +260,7 @@ def paystamp_upload():
     elif current_user.system_level_id < 5:
         campaigns = [(c.id, str(c.alias)) for c in current_user.admin_campaigns]
         form.campaign.choices = campaigns   
-        form.user.choices = users_in_campaign_user_adminning(current_user)
+        form.user.choices = dbf.users_in_campaign_user_adminning(current_user)
         if form.validate_on_submit():
             paystamp_upload_func(form)
             return redirect(url_for('shift_route.paystamp_upload'))
@@ -306,7 +345,7 @@ def abstract_add():
     if current_user.system_level_id < 3:
         return render_template('no_access.html')
     elif current_user.system_level_id < 5:
-        form.user.choices = users_in_campaign_user_adminning(current_user) 
+        form.user.choices = dbf.users_in_campaign_user_adminning(current_user) 
         campaigns = [(c.id, str(c.alias)) for c in current_user.admin_campaigns]
         form.campaign.choices = campaigns
         if form.validate_on_submit():

@@ -3,7 +3,7 @@ from ..models.campaigns  import Campaign_Contracts, Campaigns
 from sqlalchemy import desc
 import random
 
-def all_campaigns_user_in(current_user):
+def all_campaigns_user_in(current_user: Users)->list:
     '''
     Returns all the campaigns that a user is a part of
     Returns (value, label) pairs in a list
@@ -14,7 +14,7 @@ def all_campaigns_user_in(current_user):
 
     return campaign_choices
 
-def all_campaigns_user_admins(current_user):
+def all_campaigns_user_admins(current_user: Users):
     '''
     Returns all the campaigns that a user is an admin of
     Returns (value, label) pairs in a list
@@ -25,7 +25,7 @@ def all_campaigns_user_admins(current_user):
 
     return campaign_choices
 
-def all_campaigns_user_admins_list(current_user):
+def all_campaigns_user_admins_list(current_user: Users):
     '''
     Returns a list of all campaigns a user is a part of
     '''
@@ -40,7 +40,7 @@ def all_campaigns_user_admins_list(current_user):
 def all_campaigns():
     return [(str(c.id), str(c.alias))  for c in Campaigns.query.order_by(desc(Campaigns.alias))]
 
-def users_in_campaign_user_adminning(current_user):
+def users_in_campaign_user_adminning(current_user: Users):
     '''
     Checks all the campaigns admined by the passed user, and finds all the users in the campaigns he has.
     Returns (value, label) pairs in a list
@@ -89,8 +89,8 @@ def rate_for_activity(activity, campaign_id, user_id):
     """
     Checks campaign for activity rates and assigns a rate based on activity
     """
-    campaign_contract: Campaign_Contracts = Campaign_Contracts.query.filter_by(user_id=user_id, campaign_id=campaign_id)
-    out = float(campaign_contract.pay_rates[activity+'_rates'])
+    campaign_contract: Campaign_Contracts = Campaign_Contracts.query.filter_by(user_id=user_id, campaign_id=campaign_id).first()
+    out = float(campaign_contract.pay_rates[activity+'_rate'])
     return out
 
 def uniqueCampaignHex(objectName):

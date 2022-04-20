@@ -114,11 +114,11 @@ def campaign_update(id):
         form.gov_level.default = campaign_to_update.gov_level_id
         form.process()
         if form.validate_on_submit():
-            campaign_to_update.candidate = request.form['candidate']
-            campaign_to_update.alias = request.form['alias']
-            campaign_to_update.riding = request.form['riding']
-            campaign_to_update.year = request.form['year']
-            campaign_to_update.gov_level_id = request.form['gov_level']
+            campaign_to_update.candidate = form.candidate.data
+            campaign_to_update.alias = form.alias.data
+            campaign_to_update.riding = form.riding.data
+            campaign_to_update.year = form.year.data
+            campaign_to_update.gov_level_id = form.gov_level
             try:
                 db.session.commit()
                 flash('Campaign Updated Successfully', category='success')
@@ -131,6 +131,8 @@ def campaign_update(id):
                 form.year.data = ''
                 form.gov_level.data = ''
                 return render_template('/campaign/campaign_update.html', form=form, campaign_to_update=campaign_to_update)
+        current_app.logger.info(form.errors)
+        current_app.logger.info(form.candidate.data)
     return render_template('/campaign/campaign_update.html', form=form, campaign_to_update=campaign_to_update)
 
 @campaign_route.route('/campaign/list')

@@ -1,3 +1,4 @@
+from ..models.users import Users
 from ..models.campaigns  import Campaign_Contracts, Campaigns
 from sqlalchemy import desc
 import random
@@ -99,3 +100,13 @@ def uniqueCampaignHex(objectName):
             continue
         else:
             return hex.upper()
+
+def campaigns_user_administrating(user_id):
+    """
+    In list format, return the campaigns that user had admin power of
+    """
+    user = Users.query.filter(Users.id==user_id).first()
+    admin = []
+    for c in user.admin_campaigns:
+        admin.append(c.id)
+    return admin

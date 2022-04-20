@@ -1,6 +1,5 @@
 from email.policy import default
 from flask import current_app
-from pytest import console_main
 from sqlalchemy import Column, ForeignKey, true
 from .. import db
 from datetime import datetime
@@ -194,7 +193,7 @@ class Campaigns(db.Model):
         user_contract: Campaign_Contracts
         for user_contract in self.user_contracts:
             cout = user_contract.user.alias + ' ' + user_contract.campaign.alias + ' contract'
-            current_app.logger.info(cout)
+            #current_app.logger.info(cout)
             out = {}
             shift_based = {}
             receipts_abstracts = {}

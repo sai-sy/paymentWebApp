@@ -283,20 +283,19 @@ def campaign_edit_user_contract(campaign_id, user_id):
 
 @campaign_route.route('campaign/dashboard/<int:campaign_id>/add_admin/<int:user_id>')
 def campaign_admin_add(campaign_id, user_id):
-    admin = [] # list of campaigns that user is admin of
-    for c in current_user.admin_campaigns:
-        admin.append(c.id)
-    if current_user.system_level_id < 3 or campaign_id not in admin:
+    current_admins = dbf.campaigns_user_administrating(current_user.id)
+    campaigns = dbf.campaigns_user_administrating(user_id)
+    if current_user.system_level_id < 3 or campaign_id not in current_admins:
         return render_template('no_access.html')
     else:
         campaign = Campaigns.query.filter(Campaigns.id==campaign_id).first()
         if user_id == campaign.owner_id:
             flash("Cannot remove owner as administrator!", category='error')
             return redirect(url_for('campaign_route.campaign_user_list', id=campaign_id))
-        elif campaign_id in admin: #if current campaign is in user's admin campaigns
+        elif campaign_id in campaigns: #if current campaign is in user's admin campaigns
             flash("User is already an administrator.", category='error')
             return redirect(url_for('campaign_route.campaign_user_list', id=campaign_id))
-        elif campaign_id not in admin:
+        elif campaign_id not in campaigns:
             try:
                 # Add to Admins Table
                 db.session.execute(admins.insert().values(user_id=user_id, campaign_id = campaign_id))

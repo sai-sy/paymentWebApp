@@ -104,35 +104,32 @@ def campaign_create():
 @campaign_route.route("/campaign/update/<int:id>", methods=['GET', 'POST'])
 @login_required
 def campaign_update(id):
-    campaign = Campaigns.query.filter(Campaigns.id==id).first()
-    if current_user.system_level_id < 3 or current_user.id != campaign.owner_id:
-        return render_template('no_access.html')
-    else:
-        form = CreateCampaignForm()
-        form.gov_level.choices=[level.level for level in GovLevels.query.filter_by()]
-        campaign_to_update = Campaigns.query.get_or_404(id)
+    form = CreateCampaignForm()
+    form.gov_level.choices=[level.level for level in GovLevels.query.filter_by()]
+    campaign_to_update = Campaigns.query.get_or_404(id)
+    
+    if request.method=='GET':
+        if current_user.system_level_id < 3 or current_user.id != campaign_to_update.owner_id:
+            return render_template('no_access.html')
         form.gov_level.default = campaign_to_update.gov_level_id
         form.process()
+
+    if request.method=='POST':
         if form.validate_on_submit():
             campaign_to_update.candidate = form.candidate.data
             campaign_to_update.alias = form.alias.data
             campaign_to_update.riding = form.riding.data
             campaign_to_update.year = form.year.data
-            campaign_to_update.gov_level_id = form.gov_level
+            campaign_to_update.gov_level_id = form.gov_level.data
             try:
                 db.session.commit()
                 flash('Campaign Updated Successfully', category='success')
-                return render_template('/campaign/campaign_update.html', form=form, name_to_update=campaign_to_update)
+                return render_template('/campaign/campaign_update.html', form=form, campaign_to_update=campaign_to_update)
             except:
                 flash('Error: Looks like there was a problem. Try Again Later', category='error')
-                form.candidate.data = ''
-                form.alias.data = ''
-                form.alias.data = ''
-                form.year.data = ''
-                form.gov_level.data = ''
                 return render_template('/campaign/campaign_update.html', form=form, campaign_to_update=campaign_to_update)
         current_app.logger.info(form.errors)
-        current_app.logger.info(form.candidate.data)
+
     return render_template('/campaign/campaign_update.html', form=form, campaign_to_update=campaign_to_update)
 
 @campaign_route.route('/campaign/list')

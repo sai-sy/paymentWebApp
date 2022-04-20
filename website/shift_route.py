@@ -22,7 +22,7 @@ from .models.users import Users
 from .models.people import People
 from .models.shiftstamps import ShiftStampForm, ShiftStamps, Activities
 from .models.receipts import ReceiptForm, Receipts
-from datetime import datetime as dt
+import datetime as dt
 
 shift_route = Blueprint('shift_route', __name__)
 
@@ -53,7 +53,7 @@ def shift_add():
 
 def shift_add_func(form: ShiftStampForm):
 
-    calcedStart = datetime.combine(form.date.data, datetime.strptime(form.start_time.data, '%H:%M:%S').time())
+    calcedStart = dt.datetime.combine(form.date.data, dt.datetime.strptime(form.start_time.data, '%H:%M:%S').time())
     comparedShift = ShiftStamps.query.filter_by(user_id=form.user.data, start_time=calcedStart).first()
     if comparedShift:
         flash("This Shift Already Exists.", category='error')
@@ -61,7 +61,7 @@ def shift_add_func(form: ShiftStampForm):
         founduser = Users.query.filter_by(id=form.user.data).first()
         foundactivity = Activities.query.filter_by(activity=form.activity.data).first()
         shiftstamp = ShiftStamps(user_id=founduser.id, user=founduser, start_time=calcedStart,
-            end_time=datetime.combine(form.date.data, datetime.strptime(form.end_time.data, '%H:%M:%S').time()),
+            end_time=dt.datetime.combine(form.date.data, dt.datetime.strptime(form.end_time.data, '%H:%M:%S').time()),
             campaign_id=form.campaign.data,
             activity_id=form.activity.data,)
 
@@ -86,8 +86,8 @@ def shift_update(id):
     admin = dbf.campaigns_user_administrating(current_user.id)
 
     form.user.choices = [(user.id, user.first_name + ' ' + user.last_name)]
-    form.start_time.default = dt.datetime.strptime(shift.start_time, '')
-    form.end_time.default = dt.datetime.strptime(shift.end_time, '')
+    form.start_time.default = shift.start_time.strftime("%H:%M:%S")
+    form.end_time.default = shift.end_time.strftime("%H:%M:%S")
     form.campaign.choices = dbf.all_campaigns_user_in(user)
     form.campaign.default = shift.campaign.id
     form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]

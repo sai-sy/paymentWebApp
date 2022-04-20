@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import datetime as dt
+import time as t
 
 from flask import current_app
 from .. import db
@@ -10,6 +11,11 @@ from .exc import SpreadSheetParseError
 from ..models.campaigns import Campaigns
 from ..models.users import Users
 from ..models.shiftstamps import Activities, ShiftStamps
+
+import_start = 0
+import_end = 0
+process_start = 0
+process_end = 0
 
 def main():
     filename = 'import_saihaan_payments_2022-04-16.xlsx'
@@ -21,6 +27,7 @@ if __name__ == '__main__':
     main()
 
 def load_sheet_as_df(filename, sheet) -> pd.DataFrame:
+
     filenameSplit, filename_extension = os.path.splitext(filename)
     if filename_extension == '.csv':
         df =  pd.read_csv(filename, sheet, engine='python', index=False)
@@ -33,13 +40,26 @@ def test_start(filename, import_type):
     process_spreadsheet(df, import_type)
 
 def prod_start(filename, import_type):
+    global import_start 
+    global import_end
+    global process_start
+    global process_end
+    import_start = t.perf_counter()
     path_value = os.path.join(os.path.dirname(current_app.instance_path), current_app.config['IMPORT_FOLDER'], filename)
     df = load_sheet_as_df(path_value, import_type)
+    process_start = t.perf_counter()
     process_spreadsheet(df, import_type)
+    process_end = t.perf_counter()
+    import_end = t.perf_counter()
+    import_time = import_end - import_start
+    process_time = process_end = process_start
+    current_app.logger.info('Import Took: ' + str(import_time))
+    current_app.logger.info('Process Took: '+ str(process_time))
 
-def process_spreadsheet(df, import_type):
+def process_spreadsheet(df: pd.DataFrame, import_type):
     if import_type == 'Shifts':
         #Iterate Over Each Line
+        df_dict = df.to_dict('records')
         for index, row in df.iterrows():
             user = Users.query.filter_by(alias = row['alias']).first()
             if user:

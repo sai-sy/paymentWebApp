@@ -4,7 +4,7 @@ import os
 # HELPER FUNCTIONS
 from .helper_functions import db_filters as dbf
 from .helper_functions.uniqueHex import uniqueCampaignHex
-from .shift_route import shift_add_func
+from .shift_route import shift_add_func, paystamp_upload_func, abstract_add_func, receipt_upload_func
 
 # FLASK
 from flask import Blueprint, jsonify, redirect, render_template, current_app, request, flash, jsonify, Flask, url_for, abort
@@ -132,18 +132,6 @@ def campaign_update(id):
 
     return render_template('/campaign/campaign_update.html', form=form, campaign_to_update=campaign_to_update)
 
-@campaign_route.route('/campaign/list')
-@login_required
-def campaign_list():
-    if current_user.system_level_id < 3:
-        abort(403)
-    elif current_user.system_level_id < 8:
-        campaigns_grabbed = dbf.all_campaigns_user_admins_list(current_user)
-        return render_template('/campaign/campaign_list.html', campaigns=campaigns_grabbed)
-    else:
-        campaigns_grabbed = Campaigns.query.order_by(Campaigns.date_added)
-        return render_template('/campaign/campaign_list.html', campaigns=campaigns_grabbed)    
-
 @campaign_route.route('/campaign/delete/<int:id>')
 @login_required
 def campaign_delete(id):
@@ -183,6 +171,18 @@ def campaign_join():
     
     return render_template('/campaign/campaign_join.html', form=form)
 
+@campaign_route.route('/campaign/list')
+@login_required
+def campaign_list():
+    if current_user.system_level_id < 3:
+        abort(403)
+    elif current_user.system_level_id < 8:
+        campaigns_grabbed = dbf.all_campaigns_user_admins_list(current_user)
+        return render_template('/campaign/campaign_list.html', campaigns=campaigns_grabbed)
+    else:
+        campaigns_grabbed = Campaigns.query.order_by(Campaigns.date_added)
+        return render_template('/campaign/campaign_list.html', campaigns=campaigns_grabbed)    
+
 @campaign_route.route('campaign/dashboard/<int:id>/shift_add', methods=['GET', 'POST'])
 @login_required
 def campaign_shift_add(id):
@@ -197,12 +197,12 @@ def campaign_shift_add(id):
         if form.validate_on_submit():
             shift_add_func(form)
             return redirect(url_for('campaign_route.campaign_shift_add', id=id))
-    elif current_user.system_level_id < 8:
+    else:
         form.campaign.choices = [(str(c.id), str(c.alias))  for c in Campaigns.query.order_by(desc(Campaigns.alias))]
         form.user.choices = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
         if form.validate_on_submit():
             shift_add_func(form)
-            return redirect(url_for('shift_route.shift_add', id=id))
+            return redirect(url_for('campaign_route.campaign_shift_add', id=id))
 
     return render_template('/shift/shift_add.html', form=form)
 
@@ -340,6 +340,34 @@ def campaign_admin_remove(campaign_id, admin_id):
                 flash("Failed to promote user to administrator", category='error')
     return redirect(url_for('campaign_route.campaign_user_list', id=campaign_id))
 
+@campaign_route.route('campaign/dashboard/<int:id>/paystamp_upload', methods=['GET', 'POST'])
+@login_required
+def campaign_paystamp_upload(id):
+    form = PayStampForm()
+    admin = dbf.campaigns_user_administrating(current_user.id)
+    c = Campaigns.query.filter(Campaigns.id==id).first()
+    form.activity.choices = [str(a.activity) for a in Activities.query.order_by()]
+    if current_user.system_level_id < 3 or id not in admin:
+        return render_template('no_access.html')
+
+    elif current_user.system_level_id < 5:
+        campaigns = [(c.id, str(c.alias))]
+        form.campaign.choices = campaigns   
+        form.user.choices = dbf.users_in_campaign(id)
+        if form.validate_on_submit():
+            paystamp_upload_func(form)
+            return redirect(url_for('campaign_route.campaign_paystamp_upload', id=id))
+
+    else:
+        users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
+        campaigns = [(c.id, str(c.alias)) for c in Campaigns.query.filter_by()]
+        form.campaign.choices = campaigns
+        form.user.choices = users
+        if form.validate_on_submit():
+            paystamp_upload_func(form)
+            return redirect(url_for('campaign_route.campaign_paystamp_upload', id=id))
+    return render_template('/shift/payment_upload.html', form=form)
+
 @campaign_route.route('campaign/dashboard/<int:id>/payment_list', methods=['GET', 'POST'])
 def campaign_payment_list(id):
     admin = []
@@ -351,6 +379,32 @@ def campaign_payment_list(id):
         paystamps = PayStamps.query.filter(PayStamps.campaign_id==id).order_by(desc(PayStamps.payment_date))
         return render_template('/shift/payment_list.html', paystamps=paystamps)
 
+@campaign_route.route('campaign/dashboard/<int:id>/abstract_add', methods=['GET', 'POST'])
+@login_required
+def campaign_abstract_add(id):
+    form = AbstractForm()
+    admin = dbf.campaigns_user_administrating(current_user.id)
+    c = Campaigns.query.filter(Campaigns.id==id).first()
+    if current_user.system_level_id < 3 or id not in admin:
+        return render_template('no_access.html')
+
+    elif current_user.system_level_id < 5:
+        form.user.choices = dbf.users_in_campaign(id) 
+        campaigns = [(c.id, str(c.alias))]
+        form.campaign.choices = campaigns
+        if form.validate_on_submit():
+            abstract_add_func(form)
+            return redirect(url_for('campaign_route.campaign_abstract_upload', id=id))
+    else:
+        users = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
+        campaigns = [(c.id, str(c.alias)) for c in Campaigns.query.filter_by()]
+        form.user.choices = users
+        form.campaign.choices = campaigns
+        if form.validate_on_submit():
+            abstract_add_func(form)
+            return redirect(url_for('campaign_route.campaign_abstract_upload', id=id))
+    return render_template('/shift/abstract_add.html', form=form)
+
 @campaign_route.route('campaign/dashboard/<int:id>/abstract_list', methods=['GET', 'POST'])
 def campaign_abstract_list(id):
     admin = []
@@ -361,6 +415,32 @@ def campaign_abstract_list(id):
     else:
         abstracts = AbstractStamps.query.filter(AbstractStamps.campaign_id==id).order_by(desc(AbstractStamps.date_added))
         return render_template('/shift/abstract_list.html', abstracts=abstracts)
+
+@campaign_route.route('campaign/dashboard/<int:id>/receipt_upload', methods=['GET', 'POST'])
+@login_required
+def campaign_receipt_upload(id):
+    form = ReceiptForm()
+    admin = dbf.campaigns_user_administrating(current_user.id)
+    c = Campaigns.query.filter(Campaigns.id==id).first()
+    if current_user.system_level_id < 3 or id not in admin:
+        return render_template('no_access.html')
+
+    elif current_user.system_level_id < 5:
+        form.users.choices = dbf.users_in_campaign(id) 
+        campaigns = [(c.id, str(c.alias))]
+        form.campaigns.choices = campaigns
+        if form.validate_on_submit():
+            receipt_upload_func(form)
+            return redirect(url_for('campaign_route.campaign_receipt_upload', id=id))
+    else:
+        campaigns = [(c.id, str(c.alias)) for c in Campaigns.query.filter_by()]
+        choiceMath = [(str(u.id), str(u.first_name + ' ' + u.last_name)) for u in Users.query.order_by('first_name')]
+        form.users.choices = choiceMath
+        form.campaigns.choices = campaigns
+        if form.validate_on_submit():
+            receipt_upload_func(form)
+            return redirect(url_for('campaign_route.campaign_receipt_upload', id=id))
+    return render_template('/shift/receipt_upload.html', form=form)
 
 @campaign_route.route('campaign/dashboard/<int:id>/receipt_list', methods=['GET', 'POST'])
 def campaign_receipt_list(id):

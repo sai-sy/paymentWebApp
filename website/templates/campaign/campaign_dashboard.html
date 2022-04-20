@@ -47,13 +47,13 @@
         <a href="{{url_for('campaign_route.campaign_shift_add', id=campaign.id)}}" 
         role="button" class="btn btn-danger" >Add Shifts</a>
         
-        <a href="{{url_for('shift_route.paystamp_upload', id=campaign.id)}}" 
+        <a href="{{url_for('campaign_route.campaign_paystamp_upload', id=campaign.id)}}" 
         role="button" class="btn btn-danger" >Add Payments</a>
         
-        <a href="{{url_for('shift_route.abstract_add', id=campaign.id)}}" 
+        <a href="{{url_for('campaign_route.campaign_abstract_add', id=campaign.id)}}" 
         role="button" class="btn btn-danger" >Add Abstracts</a>
 
-        <a href="{{url_for('shift_route.receipt_upload', id=campaign.id)}}"
+        <a href="{{url_for('campaign_route.campaign_receipt_upload', id=campaign.id)}}"
         role="button" class="btn btn-danger">Add Receipts</a>
     
     </div>

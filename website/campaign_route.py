@@ -107,11 +107,11 @@ def campaign_update(id):
     form = CreateCampaignForm()
     form.gov_level.choices=[level.level for level in GovLevels.query.filter_by()]
     campaign_to_update = Campaigns.query.get_or_404(id)
+    form.gov_level.default = campaign_to_update.gov_level_id
     
     if request.method=='GET':
         if current_user.system_level_id < 3 or current_user.id != campaign_to_update.owner_id:
             return render_template('no_access.html')
-        form.gov_level.default = campaign_to_update.gov_level_id
         form.process()
 
     if request.method=='POST':

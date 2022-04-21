@@ -1,4 +1,6 @@
 from sqlalchemy import Column, ForeignKey, true
+
+from paymentWebApp.website.models.users import Users
 from .. import db
 from datetime import datetime
 #Flask WTF
@@ -160,6 +162,25 @@ class Campaigns(db.Model):
 
         db.session.commit()
 
+    def get_users(self, format):
+        '''
+        get admins based on format provided. id_list format is a list of admin ids. vlp format is value label pairs
+        '''
+        contract: Campaign_Contracts
+        
+        if format == 'id_list':
+            return [contract.user_id for contract in self.user_contracts]
+        elif format == 'vlp':
+            arr = []
+            contract: Users
+            for contract in self.user_contracts:
+                label = contract.user.alias + ' - ' +  contract.user.first_name + ' ' + contract.user.last_name
+                t = (contract.user.id, label)
+                arr.append(t)
+
+            return arr
+
+
     def add_admin():
         pass
 
@@ -168,15 +189,15 @@ class Campaigns(db.Model):
 
     def get_admins(self, format):
         '''
-        get admins based on format provided. id format is a list of admin ids. vlp format is value label pairs
+        get admins based on format provided. id_list format is a list of admin ids. vlp format is value label pairs
         '''
-        if format == 'id':
+        if format == 'id_list':
             return [admin.id for admin in self.admins]
         elif format == 'vlp':
             arr = []
             admin: Users
             for admin in self.admins:
-                label = admin.first_name + ' ' + admin.last_name + ' ' + admin.alias 
+                label =  admin.alias + ' - ' +  admin.first_name + ' ' + admin.last_name
                 t = (admin.id, label)
                 arr.append(t)
 

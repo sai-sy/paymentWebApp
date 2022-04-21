@@ -474,7 +474,7 @@ def campaign_dashboard(id):
 @campaign_route.route("/campaign/dashboard/<int:campaign_id>/output", methods=['GET'])
 @login_required
 def campaign_output(campaign_id):
-    admin_ids = Campaigns.query.get_or_404(campaign_id).get_admins('id')
+    admin_ids = Campaigns.query.get_or_404(campaign_id).get_admins('id_list')
     if current_user.id not in admin_ids:
         return render_template('no_access.html')
     else:

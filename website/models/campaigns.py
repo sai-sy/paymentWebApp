@@ -194,7 +194,6 @@ class Campaigns(db.Model):
             return [admin.id for admin in self.admins]
         elif format == 'vlp':
             arr = []
-            admin: Users
             for admin in self.admins:
                 label =  admin.alias + ' - ' +  admin.first_name + ' ' + admin.last_name
                 t = (admin.id, label)

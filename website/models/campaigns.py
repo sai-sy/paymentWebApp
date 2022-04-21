@@ -10,7 +10,6 @@ from datetime import datetime
 
 from functools import reduce
 
-from ..models.users import Users
 from ..models.abstracts import AbstractStamps
 from ..models.paystamps import PayStamps
 from ..models.receipts import Receipts

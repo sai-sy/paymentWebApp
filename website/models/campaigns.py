@@ -1,5 +1,3 @@
-from email.policy import default
-from flask import current_app
 from sqlalchemy import Column, ForeignKey, true
 from .. import db
 from datetime import datetime
@@ -12,6 +10,7 @@ from datetime import datetime
 
 from functools import reduce
 
+from ..models.users import Users
 from ..models.abstracts import AbstractStamps
 from ..models.paystamps import PayStamps
 from ..models.receipts import Receipts
@@ -167,6 +166,22 @@ class Campaigns(db.Model):
 
     def remove_admin():
         pass
+
+    def get_admins(self, format):
+        '''
+        get admins based on format provided. id format is a list of admin ids. vlp format is value label pairs
+        '''
+        if format == 'id':
+            return [admin.id for admin in self.admins]
+        elif format == 'vlp':
+            arr = []
+            admin: Users
+            for admin in self.admins:
+                label = admin.first_name + ' ' + admin.last_name + ' ' + admin.alias 
+                t = (admin.id, label)
+                arr.append(t)
+
+            return arr
 
     def process_new_shift(self, shift: ShiftStamps):
         user_contract: Campaign_Contracts = Campaign_Contracts.query.filter_by(user_id=shift.user_id, campaign_id=self.id).first()

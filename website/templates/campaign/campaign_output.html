@@ -1,0 +1,17 @@
+{%extends 'base.html'%}
+{% block content %}
+<div class="shadow p-3 mb-5 bg-body rounded">
+    <h3 id='list_header' align="center">Campaign Output</h3>
+</div>
+<table class="table table-hover table-border table-striped">
+{% for contract in contracts%}
+    <tr>
+        <td id="displayData">{{contract.user.first_name}} {{contract.user.last_name}}</td>
+        <td id="displayData">{{ contract.user.alias }} </td>
+        <td id="displayData">{{ contract.pay_out['total_earned'] }} </td>
+        <td id="displayData">{{ contract.pay_out['paystamps']['total'] }} </td>
+        <td id="displayData">{{ contract.pay_out['owed']['total'] }} </td>
+    </tr>
+{%endfor%}
+</table>
+{% endblock %}

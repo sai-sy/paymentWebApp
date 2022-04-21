@@ -162,6 +162,23 @@ class Campaigns(db.Model):
 
         db.session.commit()
 
+    def add_admin():
+        pass
+
+    def remove_admin():
+        pass
+
+    def process_new_shift(self, shift: ShiftStamps):
+        user_contract: Campaign_Contracts = Campaign_Contracts.query.filter_by(user_id=shift.user_id, campaign_id=self.id).first()
+        sum: float = 0
+        if user_contract.getting_paid == 1:
+            if user_contract.getting_commute_pay == 1:    
+                sum = (float(shift.minutes) * (float(shift.hourly_rate)/60)) + float(user_contract.commute_pay)
+            else:
+                sum = (float(shift.minutes) * (float(shift.hourly_rate)/60))
+        user_contract.pay_out[shift.activity_id] = sum
+        db.session.commit()
+
     def process_pay(self):
         '''Process the pay in a Pay_Per_Users object
         user_id: int
@@ -193,9 +210,12 @@ class Campaigns(db.Model):
         user_contract: Campaign_Contracts
         for user_contract in self.user_contracts:
             cout = user_contract.user.alias + ' ' + user_contract.campaign.alias + ' contract'
+            
             out = {}
+            earnings = {}
             shift_based = {}
             receipts_abstracts = {}
+            paid = {}
             paystamps = {}
             owed = {}
 
@@ -203,7 +223,7 @@ class Campaigns(db.Model):
             total_earned = 0
             
             # Calculate every shift based earning
-            for pay_rate, pay_rate_amount in user_contract.pay_rates.items():
+            for pay_rate in user_contract.pay_rates:
                 search_term = str(pay_rate).replace('_rate', '')
                 shifts = ShiftStamps.query.filter_by(user_id=user_contract.user_id, activity_id=search_term, campaign_id=user_contract.campaign_id)
                 shift_total = 0
@@ -257,7 +277,7 @@ class Campaigns(db.Model):
             for p in paystamp_arr:
                 total_paid += p.amount
 
-            paystamps['paystamps_sum'] = total_paid
+            paid['total'] = total_paid
 
             total = 0
             for total_values in shift_based.values():
@@ -270,10 +290,13 @@ class Campaigns(db.Model):
                 owed['total'] = 0
 
             #Output
-            out['shift_based'] = shift_based
-            out.update(receipts_abstracts)
-            out['total_earned'] = total_earned
-            out['paystamps'] = paystamps
+            earnings['shift_based'] = shift_based
+            earnings.update(receipts_abstracts)
+            earnings['total_earned'] = total_earned
+            paid['paystamps'] = paystamps
+
+            out['earnings'] = earnings
+            out['paid'] = paid
             out['owed'] = owed
 
             user_contract.pay_out = out

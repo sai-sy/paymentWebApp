@@ -37,6 +37,7 @@
     <br>
 
     <div class="d-grid gap-2 mx-auto">
+        <a href="{{url_for('campaign_route.campaign_output', campaign_id=campaign.id)}}" role="button" class="btn btn-outline-dark"  style="margin-bottom: 1rem">Create Output</a>
         <a href="{{url_for('campaign_route.campaign_user_list', id=campaign.id)}}" role="button" class="btn btn-outline-danger" >View Users</a>
     </div>
 

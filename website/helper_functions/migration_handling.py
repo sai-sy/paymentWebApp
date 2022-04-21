@@ -1,6 +1,10 @@
 from flask import current_app
 from ..models.campaigns import Campaigns
 from .. import db
+from .. import celery
+
+import threading
+import requests
 
 '''
 Build functions here that will populate the old data up to date with the new features/collumns you're adding and migrating
@@ -17,7 +21,7 @@ def all_hex_codes_to_upper():
     db.session.commit()
     current_app.logger.info('Done Hex Code To Upper Process')
 
-
+@celery.task(name='app.tasks.campaign_pay_out_process')
 def campaign_pay_out_process():
     '''
     Process Every Campaigns Pay
@@ -36,5 +40,7 @@ def run_back_check():
     '''
     current_app.logger.info('Running First Request Checks')
     all_hex_codes_to_upper()
-    campaign_pay_out_process()
+    threading.stack_size(7000000)
+    #threading.Thread(target=campaign_pay_out_process).start()
+    campaign_pay_out_process.apply_aysnc(args=[])
     

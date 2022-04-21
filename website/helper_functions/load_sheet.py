@@ -16,6 +16,10 @@ import_start = 0
 import_end = 0
 process_start = 0
 process_end = 0
+query_start = 0
+query_end = 0
+iter_time_start = 0
+iter_time_end = 0
 
 def main():
     filename = 'import_saihaan_payments_2022-04-16.xlsx'
@@ -44,6 +48,8 @@ def prod_start(filename, import_type):
     global import_end
     global process_start
     global process_end
+    global iter_time_start
+    global iter_time_end
     import_start = t.perf_counter()
     path_value = os.path.join(os.path.dirname(current_app.instance_path), current_app.config['IMPORT_FOLDER'], filename)
     df = load_sheet_as_df(path_value, import_type)
@@ -53,20 +59,35 @@ def prod_start(filename, import_type):
     import_end = t.perf_counter()
     import_time = import_end - import_start
     process_time = process_end = process_start
+    query_time = query_end - query_start
+    iter_time = iter_time_end - iter_time_start
     current_app.logger.info('Import Took: ' + str(import_time))
     current_app.logger.info('Process Took: '+ str(process_time))
+    current_app.logger.info('Query Took: '+ str(query_time))
+    current_app.logger.info('Iteration Took: '+ str(iter_time))
 
 def process_spreadsheet(df: pd.DataFrame, import_type):
+    global iter_time_start
+    global iter_time_end
+
+    
     if import_type == 'Shifts':
         #Iterate Over Each Line
-        df_dict = df.to_dict('records')
-        for index, row in df.iterrows():
+        df_dict = df.to_dict(orient='records')
+        iter_time_start = t.perf_counter()
+        for row in df_dict:
+            global query_start
+            global query_end
+            query_start = t.perf_counter()
             user = Users.query.filter_by(alias = row['alias']).first()
+            query_end = t.perf_counter()
             if user:
                 #Process Row
                 process_row(user, row)
             else:
                 db.session.commit()
+        iter_time_end = t.perf_counter()
+            
 
 def process_row(user, row):
     campaign = Campaigns.query.filter_by(alias=row['campaign_alias']).first()

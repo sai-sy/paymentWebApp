@@ -60,6 +60,8 @@ def shift_add_func(form: ShiftStampForm):
     else:
         founduser = Users.query.filter_by(id=form.user.data).first()
         foundactivity = Activities.query.filter_by(activity=form.activity.data).first()
+        campaign: Campaigns = Campaigns.query.filter_by(id=form.campaign.data).first()
+
         shiftstamp = ShiftStamps(user_id=founduser.id, user=founduser, start_time=calcedStart,
             end_time=dt.datetime.combine(form.date.data, dt.datetime.strptime(form.end_time.data, '%H:%M:%S').time()),
             campaign_id=form.campaign.data,
@@ -67,6 +69,7 @@ def shift_add_func(form: ShiftStampForm):
 
         shiftstamp.minutes = (shiftstamp.end_time - shiftstamp.start_time).total_seconds() / 60
         db.session.add(shiftstamp)
+        campaign.process_new_shift(shiftstamp)
         db.session.commit()
 
         form.user.data = ''

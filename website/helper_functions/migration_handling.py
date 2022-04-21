@@ -3,7 +3,6 @@ from ..models.campaigns import Campaigns
 from .. import db
 
 import threading
-import requests
 
 '''
 Build functions here that will populate the old data up to date with the new features/collumns you're adding and migrating

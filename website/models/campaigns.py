@@ -1,9 +1,9 @@
 from sqlalchemy import Column, ForeignKey, true
 
-from paymentWebApp.website.models.users import Users
 from .. import db
 from datetime import datetime
 #Flask WTF
+from flask import current_app
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, EmailField, SelectField, IntegerField, SelectMultipleField, FloatField, BooleanField
 from wtforms.validators import DataRequired, EqualTo
@@ -167,17 +167,16 @@ class Campaigns(db.Model):
         get admins based on format provided. id_list format is a list of admin ids. vlp format is value label pairs
         '''
         contract: Campaign_Contracts
-        
+
         if format == 'id_list':
             return [contract.user_id for contract in self.user_contracts]
         elif format == 'vlp':
             arr = []
-            contract: Users
             for contract in self.user_contracts:
                 label = contract.user.alias + ' - ' +  contract.user.first_name + ' ' + contract.user.last_name
                 t = (contract.user.id, label)
+                current_app.logger.info(t)
                 arr.append(t)
-
             return arr
 
 

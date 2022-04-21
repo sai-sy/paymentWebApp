@@ -35,6 +35,7 @@ restart nginx:  `sudo systemctl restart nginx`
 restart gunicorn: `sudo supervisorctl reload`  
 nginx config: `sudo nano /etc/nginx/sites-enabled/paymentwebapp`  
 gunicorn config: `sudo nano /etc/supervisor/conf.d/paymentwebapp.conf`  
+start venv: `~paymentwebapp$ sourve venv/bin/activate`
 nginx logs: `sudo tail -n 5 -f /var/log/nginx/access.log`  
 gunicorn and app logs: `sudo tail -n 5 -f /var/log/paymentwebapp/paymentwebapp.err.log`  
   

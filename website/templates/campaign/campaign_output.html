@@ -8,8 +8,8 @@
     <tr>
         <td id="displayData">{{contract.user.first_name}} {{contract.user.last_name}}</td>
         <td id="displayData">{{ contract.user.alias }} </td>
-        <td id="displayData">{{ contract.pay_out['total_earned'] }} </td>
-        <td id="displayData">{{ contract.pay_out['paystamps']['total'] }} </td>
+        <td id="displayData">{{ contract.pay_out['earnings']['total_earned'] }} </td>
+        <td id="displayData">{{ contract.pay_out['paid']['paystamps']['total'] }} </td>
         <td id="displayData">{{ contract.pay_out['owed']['total'] }} </td>
     </tr>
 {%endfor%}

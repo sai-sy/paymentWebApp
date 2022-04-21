@@ -471,3 +471,12 @@ def campaign_dashboard(id):
     else:
         return render_template('no_access.html')
 
+@campaign_route.route("/campaign/dashboard/<int:campaign_id>/output", methods=['GET'])
+@login_required
+def campaign_output(campaign_id):
+    admin = dbf.campaigns_user_administrating(current_user.id)
+    if current_user.system_level_id < 3 or current_user.id not in admin:
+        return render_template('no_access.html')
+    else:
+        contracts: Campaign_Contracts = Campaign_Contracts.query.filter_by(campaign_id=campaign_id)
+        return render_template('campaign/campaign_output.html', contracts=contracts)

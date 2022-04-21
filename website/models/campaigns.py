@@ -186,19 +186,23 @@ class Campaigns(db.Model):
         campaign_id: int
         campaign: relationship
         pay_sum = {
-            shift_based: {
-                each_activity: float
-                total: int
-            },
-            receipts: float,
-            abstracts: float,
-            total_earned: float,
-            paystamps_sum: float,
-            paystamps_total: {
-                each_activity: float,
-                no_category: float
-                total: float
-            },
+            earnings: {
+                shift_based: {
+                    each_activity: float
+                    total: int
+                },
+                receipts: float,
+                abstracts: float,
+                total_earned: float,
+            }
+            paid: {
+                paystamps_sum: float,
+                paystamps_total: {
+                    each_activity: float,
+                    no_category: float
+                    total: float
+                }
+            }
             owed = {
                 each_activity: float
                 all_activites: float
@@ -277,7 +281,7 @@ class Campaigns(db.Model):
             for p in paystamp_arr:
                 total_paid += p.amount
 
-            paid['total'] = total_paid
+            
 
             total = 0
             for total_values in shift_based.values():
@@ -294,6 +298,7 @@ class Campaigns(db.Model):
             earnings.update(receipts_abstracts)
             earnings['total_earned'] = total_earned
             paid['paystamps'] = paystamps
+            paid['paystamps']['total'] = total_paid
 
             out['earnings'] = earnings
             out['paid'] = paid

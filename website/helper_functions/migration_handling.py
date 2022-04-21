@@ -1,7 +1,6 @@
 from flask import current_app
 from ..models.campaigns import Campaigns
 from .. import db
-from .. import celery
 
 import threading
 import requests
@@ -21,7 +20,6 @@ def all_hex_codes_to_upper():
     db.session.commit()
     current_app.logger.info('Done Hex Code To Upper Process')
 
-@celery.task(name='app.tasks.campaign_pay_out_process')
 def campaign_pay_out_process():
     '''
     Process Every Campaigns Pay
@@ -42,5 +40,6 @@ def run_back_check():
     all_hex_codes_to_upper()
     threading.stack_size(7000000)
     #threading.Thread(target=campaign_pay_out_process).start()
-    campaign_pay_out_process.apply_aysnc(args=[])
+    #campaign_pay_out_process.apply_aysnc(args=[])
+    campaign_pay_out_process()
     

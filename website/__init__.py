@@ -5,8 +5,6 @@ from flask_migrate import Migrate
 from flask_wtf import CSRFProtect
 import logging
 
-import celery
-
 #Path Math
 import sys
 import os
@@ -15,7 +13,6 @@ from . import config
 db:SQLAlchemy = SQLAlchemy()
 migrate = Migrate()
 csrf = CSRFProtect()
-celery: celery.Celery
 
 DB_NAME = "main"
 
@@ -37,8 +34,6 @@ def create_app(name):
     db.init_app(app)
     migrate.init_app(app, db)
     csrf.init_app(app)
-    global celery
-    celery = make_celery(app)
     
     #migrate = Migrate(app, db)
     
@@ -71,7 +66,7 @@ def create_app(name):
         app.register_blueprint(export_route, url_prefix='/')
 
         from .helper_functions import migration_handling as mgh
-        app.before_first_request(mgh.run_back_check)
+        #app.before_first_request(mgh.run_back_check)
 
         login_manager = LoginManager()
         login_manager.login_view = 'auth.login'
@@ -88,20 +83,3 @@ def create_app(name):
     app.register_error_handler(500, exc.internal_server_error)
 
     return app
-
-
-def make_celery(app):
-    celery = celery.Celery(
-        app.import_name,
-        backend=app.config['CELERY_RESULT_BACKEND'],
-        broker=app.config['CELERY_BROKER_URL']
-    )
-    celery.conf.update(app.config)
-
-    class ContextTask(celery.Task):
-        def __call__(self, *args, **kwargs):
-            with app.app_context():
-                return self.run(*args, **kwargs)
-
-    celery.Task = ContextTask
-    return celery

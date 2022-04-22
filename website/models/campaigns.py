@@ -212,6 +212,11 @@ class Campaigns(db.Model):
         user_contract.pay_out[shift.activity_id] = sum
         db.session.commit()
 
+    def process_new_payment(self, paystamp: PayStamps):
+        user_contract: Campaign_Contracts = Campaign_Contracts.query.filter_by(user_id=paystamp.user_id, campaign_id=self.id).first()
+        user_contract.pay_out[paystamp.activity_id] = sum
+        db.session.commit()
+
     def process_pay(self):
         '''Process the pay in a Pay_Per_Users object
         user_id: int

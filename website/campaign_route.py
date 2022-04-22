@@ -450,9 +450,12 @@ def campaign_dashboard(id):
 @campaign_route.route("/campaign/dashboard/<int:campaign_id>/output", methods=['GET'])
 @login_required
 def campaign_output(campaign_id):
-    admin_ids = Campaigns.query.get_or_404(campaign_id).get_admins('id_list')
+    campaign: Campaigns = Campaigns.query.get_or_404(campaign_id)
+    admin_ids = campaign.get_admins('id_list')
     if current_user.id not in admin_ids:
         return render_template('no_access.html')
     else:
+        campaign.process_pay()
         contracts: Campaign_Contracts = Campaign_Contracts.query.filter_by(campaign_id=campaign_id)
+        
         return render_template('campaign/campaign_output.html', contracts=contracts)

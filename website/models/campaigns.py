@@ -1,3 +1,4 @@
+from pytest import console_main
 from sqlalchemy import Column, ForeignKey, true
 
 from .. import db
@@ -221,6 +222,11 @@ class Campaigns(db.Model):
             user_contract.pay_out['paid']['paystamps'][paystamp.activity_id] = 0
         
         user_contract.pay_out['owed']['untrunced_sum'] = user_contract.pay_out['earnings']['total_earned'] - user_contract.pay_out['paid']['paystamps']['total']
+        user_contract.pay_out['owed']['total'] = user_contract.pay_out['earnings']['total_earned'] - user_contract.pay_out['paid']['paystamps']['total']
+        user_contract.pay_out['owed']['total'] = user_contract.pay_out['owed']['untrunced_sum']
+        if user_contract.pay_out['owed']['total'] < 0:
+            user_contract.pay_out['owed']['total'] = 0
+        current_app.logger.info(user_contract.pay_out)
 
         db.session.commit()
 

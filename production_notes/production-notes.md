@@ -5,6 +5,40 @@ Please preview `/paymentwebapp/README.md`
 ### Main Pages
 - UPDATE DELETE BUTTONS
 - [ ] Campaign Dash
+    - [ ] Admins
+        - [x] lists
+        - [ ] remove
+        - [ ] add
+    - [ ] Shifts
+        - [x] List
+        - [ ] Edit
+        - [x] Add
+    - [ ] Payments
+        - [ ] List
+        - [ ] Edit
+        - [ ] Add campaign function to update pay out info
+    - [ ] Receipts
+        -[x] List
+        -[ ] Add
+            - [ ] Pay Out
+        -[ ] Click thru on receipt to open image of receipt
+        -[ ] Let choice of receipt payment or not and add a default bool for that
+        -[ ] Edit
+            - do not edit the image name!
+        -[ ] add accept or deny
+    - [ ] User List
+        - [x] List
+        - [ ] Remove User
+        - [ ] Click Name
+            - [ ] Opens Profile Info
+            - [ ] Contract Info On Right
+            - [ ] Change Contract btn IF ADMIN, View Shifts, View Paystampts, View Receipts, View Abstracts
+        - [ ] User Contract
+            - [ ] Apply to certain a certain date back
+            - [ ] Any changes to the getting paid values need to go in and update the campaign object output
+            - [x] Display all contract values
+    - [ ] Create Output
+        - [x] Create the output
     - [ ] Intuitive way to edit campaign properties
         - [x] Campaign Heading Info
         - [ ] Campaign Pay Info
@@ -16,33 +50,10 @@ Please preview `/paymentwebapp/README.md`
                     - [ ] after submit button make a list of all the users
                     - [ ] checkbox checked or not based on if they get paid or not
                 - [ ] (Future might need ajax) Toggle switch for getting paid that live updates the database
-    - [ ] Admins
-        - [x] lists
-        - [ ] remove
-        - [ ] add
-    - [ ] View
-        - [ ] Shifts
-            - [x] List
-            - [ ] Edit
-        - [ ] Payments
-            - [ ] List
-            - [ ] Edit
-        - [ ] Receipts
-            -[x] List
-            -[ ] Click thru on receipt to open image of receipt
-            -[ ] Let choice of receipt payment or not and add a default bool for that
-            -[ ] Edit
-                - do not edit the image name!
-        - [ ] User List
-            - [x] List
-            - [ ] Click Name
-                - [ ] Opens Profile Info
-                - [ ] Contract Info On Right
-                - [ ] Change Contract btn IF ADMIN, View Shifts, View Paystampts, View Receipts, View Abstracts
-            - [ ] edit user contract
-            - [ ] Display all contract values
-            - [ ] edit contract
-            - [ ] remove user
+
+
+
+
 
 - [ ] Output backend
     - [ ] Make each paystamp include an activity drop down

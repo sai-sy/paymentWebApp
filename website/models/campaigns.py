@@ -220,7 +220,7 @@ class Campaigns(db.Model):
         except KeyError:
             user_contract.pay_out['paid']['paystamps'][paystamp.activity_id] = 0
         
-        user_contract.pay_out['owed']['untrunced_sum'] = user_contract.pay_out['earnings'] - user_contract.pay_out['paid']['paystamps']['total']
+        user_contract.pay_out['owed']['untrunced_sum'] = user_contract.pay_out['earnings']['total_earned'] - user_contract.pay_out['paid']['paystamps']['total']
 
         db.session.commit()
 

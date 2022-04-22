@@ -292,7 +292,7 @@ def paystamp_upload():
 def paystamp_upload_func(form: PayStampForm):
     # Load variables
     user = Users.query.filter_by(id=form.user.data).first()
-    campaign = Campaigns.query.filter_by(id=form.campaign.data).first()
+    campaign: Campaigns = Campaigns.query.filter_by(id=form.campaign.data).first()
     searched_paystamp = PayStamps.query.filter_by(user_id=form.user.data, payment_date=form.date.data, campaign_id=form.campaign.data).first()
 
     # Search for this paystamp, if non-existent, add to database
@@ -306,6 +306,7 @@ def paystamp_upload_func(form: PayStampForm):
             campaign_id = form.campaign.data,
             activity_id = form.activity.data,
         )
+        campaign.process_new_payment(paystamp)
         db.session.add(paystamp)
         db.session.commit()
 

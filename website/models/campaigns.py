@@ -176,7 +176,6 @@ class Campaigns(db.Model):
             for contract in self.user_contracts:
                 label = contract.user.alias + ' - ' +  contract.user.first_name + ' ' + contract.user.last_name
                 t = (contract.user.id, label)
-                current_app.logger.info(t)
                 arr.append(t)
             return arr
 
@@ -205,6 +204,7 @@ class Campaigns(db.Model):
     def process_new_shift(self, shift: ShiftStamps):
         user_contract: Campaign_Contracts = Campaign_Contracts.query.filter_by(user_id=shift.user_id, campaign_id=self.id).first()
         sum: float = 0
+        d = user_contract.pay_out.copy()
         if user_contract.getting_paid == 1:
             if user_contract.getting_commute_pay == 1:    
                 sum = (float(shift.minutes) * (float(shift.hourly_rate)/60)) + float(user_contract.commute_pay)
@@ -215,20 +215,29 @@ class Campaigns(db.Model):
 
     def process_new_payment(self, paystamp: PayStamps):
         user_contract: Campaign_Contracts = Campaign_Contracts.query.filter_by(user_id=paystamp.user_id, campaign_id=self.id).first()
-        user_contract.pay_out['paid']['paystamps']['total'] += paystamp.amount
+        d = user_contract.pay_out.copy()
+        d['paid']['paystamps']['total'] += paystamp.amount
         try:
-            user_contract.pay_out['paid']['paystamps'][paystamp.activity_id] += paystamp.amount
+            d['paid']['paystamps'][paystamp.activity_id] += paystamp.amount
         except KeyError:
-            user_contract.pay_out['paid']['paystamps'][paystamp.activity_id] = 0
+            d['paid']['paystamps'][paystamp.activity_id] = 0
         
-        user_contract.pay_out['owed']['untrunced_sum'] = user_contract.pay_out['earnings']['total_earned'] - user_contract.pay_out['paid']['paystamps']['total']
-        user_contract.pay_out['owed']['total'] = user_contract.pay_out['earnings']['total_earned'] - user_contract.pay_out['paid']['paystamps']['total']
-        user_contract.pay_out['owed']['total'] = user_contract.pay_out['owed']['untrunced_sum']
-        if user_contract.pay_out['owed']['total'] < 0:
-            user_contract.pay_out['owed']['total'] = 0
-        current_app.logger.info(user_contract.pay_out)
-
+        user_contract.pay_out = d
         db.session.commit()
+
+    def process_totals(self):
+        user_contract: Campaign_Contracts
+        for user_contract in self.user_contracts:
+            d = user_contract.pay_out.copy()
+            d['owed']['untrunced_sum'] = d['earnings']['total_earned'] - d['paid']['paystamps']['total']
+            d['owed']['total'] = d['owed']['untrunced_sum']
+            if d['owed']['total'] < 0:
+                d['owed']['total'] = 0
+            
+            user_contract.pay_out = d
+
+
+            db.session.commit()
 
     def process_pay(self):
         '''Process the pay in a Pay_Per_Users object

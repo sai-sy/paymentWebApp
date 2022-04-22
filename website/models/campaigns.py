@@ -266,7 +266,7 @@ class Campaigns(db.Model):
                 shifts = ShiftStamps.query.filter_by(user_id=user_contract.user_id, activity_id=search_term, campaign_id=user_contract.campaign_id)
                 shift_total = 0
                 shift: ShiftStamps
-                if user_contract.getting_paid == 1:
+                if user_contract.getting_paid == 0:
                         for shift in shifts:
                             if user_contract.getting_commute_pay == 1:    
                                 shift_total = shift_total + (float(shift.minutes) * (float(shift.hourly_rate)/60)) + float(user_contract.commute_pay)

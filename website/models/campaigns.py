@@ -260,14 +260,15 @@ class Campaigns(db.Model):
 
             total = 0
             total_earned = 0
+            total_paid = 0
             
-            # Calculate every shift based earning
+            # Calculate Shift Based Earnings
             for pay_rate in user_contract.pay_rates:
                 search_term = str(pay_rate).replace('_rate', '')
                 shifts = ShiftStamps.query.filter_by(user_id=user_contract.user_id, activity_id=search_term, campaign_id=user_contract.campaign_id)
                 shift_total = 0
                 shift: ShiftStamps
-                if user_contract.getting_paid == 0:
+                if user_contract.getting_paid == 1:
                         for shift in shifts:
                             if user_contract.getting_commute_pay == 1:    
                                 shift_total = shift_total + (float(shift.minutes) * (float(shift.hourly_rate)/60)) + float(user_contract.commute_pay)

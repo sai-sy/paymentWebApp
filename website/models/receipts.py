@@ -30,6 +30,7 @@ class Receipts(db.Model):
     date = db.Column(db.DateTime, nullable=False)
     amount = db.Column(db.Float, nullable=False)
     image_name = db.Column(db.String(1000), nullable=False)
+    accepted = db.Column(db.Boolean, default=0)
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
     
     __mapper_args__ = {

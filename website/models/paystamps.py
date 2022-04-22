@@ -24,7 +24,7 @@ class PayStamps(db.Model):
     payment_date = db.Column(db.DateTime, nullable=False)
     campaign_id = db.Column(db.Integer, ForeignKey('campaigns.id'))
     campaign = db.relationship('Campaigns', back_populates='paystamps_on_campaign')
-    activity = db.Column(db.String(500), db.ForeignKey('activities.activity'), default='overall')
+    activity_id =db.Column(db.String(500), db.ForeignKey('activities.activity'), default='overall')
     note = db.Column(db.String(500))
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
 

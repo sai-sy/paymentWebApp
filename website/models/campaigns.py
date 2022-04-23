@@ -152,6 +152,36 @@ class Campaign_Contracts(db.Model):
         self.pay_out = d
         db.session.commit()
 
+    def process_new_receipt(self, receipt: Receipts):
+        d = copy.deepcopy(self.pay_out.copy())
+        if receipt.accepted == 1:
+            try:
+                d['earnings']['receipts'] += receipt.amount
+            except KeyError:
+                d['earnings']['receipts'] = receipt.amount
+            try:
+                d['earnings']['total'] += receipt.amount
+            except KeyError:
+                d['earnings']['total'] = receipt.amount
+
+        self.pay_out = d
+        db.session.commit()
+
+    def process_new_abstract(self, abstract: AbstractStamps):
+        d = copy.deepcopy(self.pay_out.copy())
+        if abstract.accepted == 1:
+            try:
+                d['earnings']['abstracts'] += abstract.amount
+            except KeyError:
+                d['earnings']['abstracts'] = abstract.amount
+            try:
+                d['earnings']['total'] += abstract.amount
+            except KeyError:
+                d['earnings']['total'] = abstract.amount
+
+        self.pay_out = d
+        db.session.commit()       
+
     def process_totals(self):
         d = copy.deepcopy(self.pay_out.copy())
         d['owed']['untrunced_sum'] = d['earnings']['total'] - d['paystamps']['total']
@@ -262,6 +292,7 @@ class Campaigns(db.Model):
         user_contract.process_new_paystamp(paystamp)
         db.session.commit()
 
+
     def process_totals(self):
         user_contract: Campaign_Contracts
         for user_contract in self.user_contracts:
@@ -282,7 +313,7 @@ class Campaigns(db.Model):
                 },
                 receipts: float,
                 abstracts: float,
-                total_earned: float,
+                total: float,
             }
             paystamps: {
                 each_activity: float

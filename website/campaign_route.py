@@ -455,7 +455,7 @@ def campaign_output(campaign_id):
     if current_user.id not in admin_ids:
         return render_template('no_access.html')
     else:
-        campaign.process_pay()
+        campaign.process_totals()
         contracts: Campaign_Contracts = Campaign_Contracts.query.filter_by(campaign_id=campaign_id)
         
         return render_template('campaign/campaign_output.html', contracts=contracts)

@@ -1,8 +1,9 @@
-from pytest import console_main
 from sqlalchemy import Column, ForeignKey, true
 
 from .. import db
 from datetime import datetime
+import copy
+
 #Flask WTF
 from flask import current_app
 from flask_wtf import FlaskForm
@@ -17,6 +18,8 @@ from ..models.abstracts import AbstractStamps
 from ..models.paystamps import PayStamps
 from ..models.receipts import Receipts
 from ..models.shiftstamps import ShiftStamps
+
+from ..helper_functions import program_functions as pf
 
 
 class GovLevels(db.Model):
@@ -62,12 +65,12 @@ payment_exceptions = db.Table('payment_exceptions',
 )
 
 default_pay_rates = {
-    'admin_rate' : '15.0',
-    'canvass_rate' : '15.0',
-    'calling_rate' : '15.0',
-    'general_rate' : '15.0',
-    'litdrop_rate' : '15.0',
-    'commute_rate' : '6.50'
+    'admin' : '15.0',
+    'canvass' : '15.0',
+    'calling' : '15.0',
+    'general' : '15.0',
+    'litdrop' : '15.0',
+    'commute' : '6.50'
 }
 
 class Pay_Per_Users(db.Model):
@@ -109,6 +112,54 @@ class Campaign_Contracts(db.Model):
     commute_pay = db.Column(db.Float, default=0)
     pay_rates = db.Column(db.JSON, nullable=False, default=default_pay_rates)
     pay_out = db.Column(db.JSON, nullable=False, default=default_pay_out)
+
+    def process_new_shift(self, shift: ShiftStamps):
+        d = copy.deepcopy(self.pay_out.copy())
+        if self.getting_paid == 1:
+            if self.getting_commute_pay == 1:    
+                sum = (float(shift.minutes) * (float(shift.hourly_rate)/60)) + float(self.commute_pay)
+            else:
+                sum = (float(shift.minutes) * (float(shift.hourly_rate)/60))
+        try:
+            d['earnings']['shift_based'][shift.activity_id] += sum
+        except KeyError as e:
+            d['earnings']['shift_based'][shift.activity_id] = sum
+
+        try:
+            d['earnings']['shift_based']['total'] += sum
+        except KeyError as e:
+            d['earnings']['shift_based']['total'] = sum
+
+        try:
+            d['earnings']['total'] += sum
+        except KeyError as e:
+            d['earnings']['total'] = sum
+
+        self.pay_out = d
+        db.session.commit()
+
+    def process_new_paystamp(self, paystamp: PayStamps):
+        d = copy.deepcopy(self.pay_out.copy())
+        try:
+            d['paystamps'][paystamp.activity_id] += paystamp.amount
+        except KeyError:
+            d['paystamps'][paystamp.activity_id] = paystamp.amount
+        try:
+            d['paystamps']['total'] += paystamp.amount
+        except KeyError:
+            d['paystamps']['total'] = paystamp.amount
+        
+        self.pay_out = d
+        db.session.commit()
+
+    def process_totals(self):
+        d = copy.deepcopy(self.pay_out.copy())
+        d['owed']['untrunced_sum'] = d['earnings']['total'] - d['paystamps']['total']
+        d['owed']['total'] = pf.negtrunc(d['owed']['untrunced_sum'])
+        
+        self.pay_out = d
+        db.session.commit()
+
 
 class Campaigns(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -203,40 +254,18 @@ class Campaigns(db.Model):
 
     def process_new_shift(self, shift: ShiftStamps):
         user_contract: Campaign_Contracts = Campaign_Contracts.query.filter_by(user_id=shift.user_id, campaign_id=self.id).first()
-        sum: float = 0
-        d = user_contract.pay_out.copy()
-        if user_contract.getting_paid == 1:
-            if user_contract.getting_commute_pay == 1:    
-                sum = (float(shift.minutes) * (float(shift.hourly_rate)/60)) + float(user_contract.commute_pay)
-            else:
-                sum = (float(shift.minutes) * (float(shift.hourly_rate)/60))
-        user_contract.pay_out[shift.activity_id] = sum
+        user_contract.process_new_shift(shift)
         db.session.commit()
 
-    def process_new_payment(self, paystamp: PayStamps):
+    def process_new_paystamp(self, paystamp: PayStamps):
         user_contract: Campaign_Contracts = Campaign_Contracts.query.filter_by(user_id=paystamp.user_id, campaign_id=self.id).first()
-        d = user_contract.pay_out.copy()
-        d['paid']['paystamps']['total'] += paystamp.amount
-        try:
-            d['paid']['paystamps'][paystamp.activity_id] += paystamp.amount
-        except KeyError:
-            d['paid']['paystamps'][paystamp.activity_id] = 0
-        
-        user_contract.pay_out = d
+        user_contract.process_new_paystamp(paystamp)
         db.session.commit()
 
     def process_totals(self):
         user_contract: Campaign_Contracts
         for user_contract in self.user_contracts:
-            d = user_contract.pay_out.copy()
-            d['owed']['untrunced_sum'] = d['earnings']['total_earned'] - d['paid']['paystamps']['total']
-            d['owed']['total'] = d['owed']['untrunced_sum']
-            if d['owed']['total'] < 0:
-                d['owed']['total'] = 0
-            
-            user_contract.pay_out = d
-
-
+            user_contract.process_totals()
             db.session.commit()
 
     def process_pay(self):
@@ -255,15 +284,11 @@ class Campaigns(db.Model):
                 abstracts: float,
                 total_earned: float,
             }
-            paid: {
-                paystamps_sum: float,
-                paystamps_total: {
-                    each_activity: float,
-                    no_category: float
-                    total: float
-                }
+            paystamps: {
+                each_activity: float
+                total: float
             }
-            owed = {
+            owed: {
                 each_activity: float
                 all_activites: float
                 total: float
@@ -273,44 +298,38 @@ class Campaigns(db.Model):
         # Iterate every contract
         user_contract: Campaign_Contracts
         for user_contract in self.user_contracts:
-            cout = user_contract.user.alias + ' ' + user_contract.campaign.alias + ' contract'
-            
             out = {}
             earnings = {}
             shift_based = {}
             receipts_abstracts = {}
-            paid = {}
+            paystamps = {}
             paystamps = {}
             owed = {}
 
             total = 0
-            total_earned = 0
             total_paid = 0
             
+            # Earnings
             # Calculate Shift Based Earnings
+            total = 0
             for pay_rate in user_contract.pay_rates:
                 search_term = str(pay_rate).replace('_rate', '')
                 shifts = ShiftStamps.query.filter_by(user_id=user_contract.user_id, activity_id=search_term, campaign_id=user_contract.campaign_id)
-                shift_total = 0
                 shift: ShiftStamps
+                activity_total = 0
                 if user_contract.getting_paid == 0:
                         for shift in shifts:
                             if user_contract.getting_commute_pay == 1:    
-                                shift_total = shift_total + (float(shift.minutes) * (float(shift.hourly_rate)/60)) + float(user_contract.commute_pay)
+                                activity_total = activity_total + (float(shift.minutes) * (float(shift.hourly_rate)/60)) + float(user_contract.commute_pay)
                             else:
-                                shift_total = shift_total + (float(shift.minutes) * (float(shift.hourly_rate)/60))
-                            if pay_rate == 'canvass_rate':
-                                couta = cout + ' ' + pay_rate + ' ' + str(shift_total) + ' ' + str(shift.start_time) + str(shift.minutes) + ' ' + str(shift.hourly_rate)
+                                activity_total = activity_total + (float(shift.minutes) * (float(shift.hourly_rate)/60))
 
-                        shift_based[str(pay_rate).replace('_rate', '')] = shift_total
+                        shift_based[str(pay_rate).replace('_rate', '')] = activity_total
                 else:
                     shift_based[str(pay_rate).replace('_rate', '')] = 0
 
-            for v in shift_based.values():
-                total_earned += v
-            shift_based['total'] = total_earned
-
-            total = 0
+                total += activity_total
+            shift_based['total'] = total
 
             # Receipts and Abstracts
             receipts_abstracts['receipts'] = 0
@@ -318,14 +337,14 @@ class Campaigns(db.Model):
             r: Receipts
             for r in receipts:
                 receipts_abstracts['receipts'] += float(r.amount)
-                total_earned += float(r.amount)
+                total += float(r.amount)
 
             receipts_abstracts['abstracts'] = 0
             abstracts = AbstractStamps.query.filter_by(user_id=user_contract.user_id)
             a: AbstractStamps
             for a in abstracts:
                 receipts_abstracts['abstracts'] += float(a.amount)
-                total_earned += float(a.amount)
+                total += float(a.amount)
 
             # Paystamps
             '''
@@ -337,32 +356,29 @@ class Campaigns(db.Model):
                     total_paid =+ paystamp_item.amount
             '''
             total_paid = 0
-            paystamp_arr = PayStamps.query.filter_by(user_id=user_contract.user_id)
-            p: PayStamps
-            for p in paystamp_arr:
-                total_paid += p.amount
-
-            
-
-            total = 0
-            for total_values in shift_based.values():
-                total += total_values
+            paystamps_arr = PayStamps.query.filter_by(user_id=user_contract.user_id)
+            paystamp: PayStamps
+            for paystamp in paystamps_arr:
+                txt = paystamp.activity_id
+                try:
+                    paystamps[txt] += paystamp.amount
+                
+                except KeyError:
+                    paystamps[txt] = paystamp.amount
+                total_paid += paystamp.amount
 
             #Owed
-            owed['untrunced_sum'] = total_earned - total_paid
-            owed['total'] = owed['untrunced_sum']
-            if owed['total'] < 0:
-                owed['total'] = 0
+            owed['untrunced_sum'] = total - total_paid 
+            owed['total'] = pf.negtrunc(owed['untrunced_sum'])
 
             #Output
             earnings['shift_based'] = shift_based
             earnings.update(receipts_abstracts)
-            earnings['total_earned'] = total_earned
-            paid['paystamps'] = paystamps
-            paid['paystamps']['total'] = total_paid
+            earnings['total'] = total
+            paystamps['total'] = total_paid
 
             out['earnings'] = earnings
-            out['paid'] = paid
+            out['paystamps'] = paystamps
             out['owed'] = owed
 
             user_contract.pay_out = out

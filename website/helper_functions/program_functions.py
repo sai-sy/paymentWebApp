@@ -1,5 +1,3 @@
-from ..models.campaigns import Campaigns
-
 def partition(array, start, end):
     pivot = array[start]
     low = start + 1
@@ -47,8 +45,16 @@ def custom_sort(arr):
     quick_sort(arr, 0, len(arr), -1)
     return arr
 
+def negtrunc(number):
+    '''
+    If number is less then 0, returns 0. Otherwise returns the number passed
+    '''
+    if number < 0:
+        return 0
+    else:
+        return number
+
 if __name__ == "__main__":
-    campaign = Campaigns.query.filter(Campaigns.id==1).first()
-    array = campaign.get_users('vlp')
+    array = [(1, 'sai - Saihaan Syed'), (8, 'ishmam - Ishmam Saidur'), (19, 'irfan - Hamza Irfan')]
     custom_sort(array)
     print(array)

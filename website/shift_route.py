@@ -306,7 +306,7 @@ def paystamp_upload_func(form: PayStampForm):
             campaign_id = form.campaign.data,
             activity_id = form.activity.data,
         )
-        campaign.process_new_payment(paystamp)
+        campaign.process_new_paystamp(paystamp)
         db.session.add(paystamp)
         db.session.commit()
 

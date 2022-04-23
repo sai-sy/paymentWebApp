@@ -292,6 +292,16 @@ class Campaigns(db.Model):
         user_contract.process_new_paystamp(paystamp)
         db.session.commit()
 
+    def process_new_receipt(self, receipt: Receipts):
+        user_contract: Campaign_Contracts = Campaign_Contracts.query.filter_by(user_id=receipt.user_id, campaign_id=self.id).first()
+        user_contract.process_new_receipt(receipt)
+        db.session.commit()
+
+    def process_new_abstract(self, abstract: AbstractStamps):
+        user_contract: Campaign_Contracts = Campaign_Contracts.query.filter_by(user_id=abstract.user_id, campaign_id=self.id).first()
+        user_contract.process_new_abstract(abstract)
+        db.session.commit()  
+
 
     def process_totals(self):
         user_contract: Campaign_Contracts

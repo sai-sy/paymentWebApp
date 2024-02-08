@@ -1,3 +1,7 @@
+# Project Info
+This is a time clock app developed using Flask. The software can handle multiple projects users have to join, user auths, and advanced payment contracts. This software was later made private and expanded upon as contracted by a client for Chester Hill Solutions. The version of this code here is not the most updated one but will be the most updated publically available version. 
+# archive info
+
 This is a web app made for internal use by various political campaigns around the Greater Toronto Area to manage volunteer shifts, hours, and honourarium. This project is led by Saihaan Syed and maintained by him and Shakib Ahmed. We used Flask to develop the the apps backend, Flask-SQLAlchemy as the ORM tool, and Jinja2 for the HTML. The app is deployed onto a private linode linux nginx server with gunicorn as the WSGI, and the MySQL database is on private linode MYSQL server.
 
 ## Contributors
